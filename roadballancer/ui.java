@@ -41,6 +41,7 @@ public class ui extends Actor
     public void act()
     {
         selectedTile();
+        money();
     }
     public void selectedTile(){
         GreenfootImage img = new GreenfootImage(96, 120);
@@ -59,5 +60,8 @@ public class ui extends Actor
         int textX = (96 - textWidth) / 2;
         img.drawString(tileNames[Level.selected_tile], textX, 108);
         setImage(img);
+    }
+    public void money(){
+        getWorld().showText("money: "+Level.money, 550, 50);
     }
 }

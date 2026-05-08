@@ -13,13 +13,14 @@ public class Level extends World
     private int effected_col;
     private int effected_row;
     private boolean rKeyWasDown = false;
-    private boolean game_started = false;
     
+    public static boolean game_started = false;
     public static int selected_tile = 1;
     public static int row_depot_pickup_1 = 5;
     public static int col_depot_pickup_1 = 5;
     public static int row_depot_dropof_1 = 18;
     public static int col_depot_dropof_1 = 18;
+    public static int money = 100;
     
     public static int[][] map = {
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -62,12 +63,24 @@ public class Level extends World
      15 = depot (up)
      16 = resource_b
      17 = resource_r
-     18 = resource_yp   A 
+     18 = resource_y 
      19 = -
      20 = factory_b
      21 = factory_r
      22 = factory_y
-     23 = -
+     23 = sellpoint
+     24 = river_v
+     25 = rivr_h
+     26 = river_crosing_v
+     27 = river_crosing_h
+     28 = river_corner_NE
+     29 = river_corner_NW
+     30 = river_corner_SW
+     31 = river_corner_SE
+     32 = forest
+     33 = house
+     34 = -
+     35 = -
     */
     /**
      * Constructor for objects of class MyWorld.
@@ -92,13 +105,16 @@ public class Level extends World
         }
     }
     private void loadTiles(){
-        GreenfootImage sheet = new  GreenfootImage("tilemap_concept.png");
-        tiles = new GreenfootImage[24];
-        for (int i = 0; i < 24; i++){
+        GreenfootImage sheet = new GreenfootImage("tilemap_concept.png");
+        tiles = new GreenfootImage[36];
+        
+        for (int i = 0; i < 36; i++){
             int col = i % 4;
             int row = i / 4;
+        
             GreenfootImage tile = new GreenfootImage(Tile_Size, Tile_Size);
             tile.drawImage(sheet, -(col * Tile_Size), -(row * Tile_Size));
+    
             tiles[i] = tile;
         }
     }
@@ -122,9 +138,19 @@ public class Level extends World
             if (Greenfoot.mouseClicked(null)){
                 if (game_started == false){
                     if (mouse.getButton() == 1){
-                        map[effected_row][effected_col] = selected_tile;
+                        if (money != 0){
+                            if (map[effected_row][effected_col] == 0) {
+                                money--; 
+                                map[effected_row][effected_col] = selected_tile;
+                            }
+                            if (map[effected_row][effected_col] == 32) {
+                                money -= 2; 
+                                map[effected_row][effected_col] = selected_tile;
+                            }
+                         }
                     }
                     if (mouse.getButton() == 3){
+                        if (map[effected_row][effected_col] != 0) {money++;};
                         map[effected_row][effected_col] = 0;
                     }
                 }
