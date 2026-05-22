@@ -108,7 +108,6 @@ public class Vehicle extends Actor
         posY = current_row * 32 + 16;
         setLocation((int)Math.round(posX), (int)Math.round(posY));
         path = findPath(current_row, current_col, target_row, target_col);
-        System.out.println("path calculated: " + path);
     }       
     public Vehicle(int start_row, int start_col, int target_row, int target_col){
         this.current_row = start_row;
@@ -118,10 +117,6 @@ public class Vehicle extends Actor
     }
     private List<int[]> findPath(int start_row, int start_col, int target_row, int target_col){
         int[][] map = Level.map;
-        System.out.println("start tile: " + map[start_row][start_col]);
-        System.out.println("target tile: " + map[target_row][target_col]);
-        System.out.println("start: " + start_row + "," + start_col);
-        System.out.println("target: " + target_row + "," + target_col);
         boolean[][] visited = new boolean[20][20];
         int[][] came_from_row = new int[20][20];
         int[][] came_from_col = new int[20][20];
