@@ -1,0 +1,21 @@
+#BlueJ class context
+comment0.target=Vehicle
+comment0.text=\r\n\ Write\ a\ description\ of\ class\ Vehicle\ here.\r\n\ \r\n\ @author\ (your\ name)\ \r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment1.params=
+comment1.target=void\ act()
+comment1.text=\r\n\ Act\ -\ do\ whatever\ the\ Vehicle\ wants\ to\ do.\ This\ method\ is\ called\ whenever\r\n\ the\ 'Act'\ or\ 'Run'\ button\ gets\ pressed\ in\ the\ environment.\r\n
+comment2.params=world
+comment2.target=void\ addedToWorld(greenfoot.World)
+comment3.params=start_row\ start_col\ target_row\ target_col\ color\ isFull
+comment3.target=Vehicle(int,\ int,\ int,\ int,\ java.lang.String,\ boolean)
+comment4.params=
+comment4.target=void\ setImageVariant()
+comment5.params=newColor\ newIsFull
+comment5.target=void\ changeVariant(java.lang.String,\ boolean)
+comment6.params=start_row\ start_col\ target_row\ target_col
+comment6.target=findPath(int,\ int,\ int,\ int)
+comment7.params=came_from_row\ came_from_col\ start_row\ start_col\ target_row\ target_col
+comment7.target=tracePath(int[][],\ int[][],\ int,\ int,\ int,\ int)
+comment8.params=tile\ dr\ dc
+comment8.target=boolean\ canMove(int,\ int,\ int)
+numComments=9
