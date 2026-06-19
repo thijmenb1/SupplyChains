@@ -1,5 +1,18 @@
 {
     "cSpell.words": [
-        "Greenfoot"
+        "Cooldown",
+        "dropoff",
+        "Greenfoot",
+        "hotbar",
+        "Pathfinding",
+        "Quike",
+        "RECALC",
+        "SELLPOINT",
+        "spritesheet",
+        "TILEMAP",
+        "topdown"
+    ],
+    "java.project.referencedLibraries": [
+        "C:\\Program Files\\Greenfoot\\lib\\**/*.jar"
     ]
 }

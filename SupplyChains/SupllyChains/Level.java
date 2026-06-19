@@ -1,5 +1,6 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
 * Level - the main game world
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 * - spawnVehicle()          Helper function for creation of the vehicle
 * - getDrillColor()         Helper function to check adjacent drill colors
 * - isAdjacentToPickup()    Helper function to check for valid route
-* - isAdjeacntToDropof()    Helper function to check for valid route
+* - isAdjacentToDropoff()    Helper function to check for valid route
 * - loadTiles()             Extracts all tiles out of spritesheet
 * - drawMap()               Draws tiles in the viewport
 * - getAnimatedTileId()     Returns next frame for animated tiles
@@ -89,8 +90,6 @@ public class Level extends World
     private static final int CORNER_NW = 11;
 
     // TILE IDS - Depots
-    private static final int DEPOT_START = 12;
-    private static final int DEPOT_END = 15;
     private static final int DEPOT_PICKUP_LEFT = 12;
     private static final int DEPOT_PICKUP_DOWN = 13;
     private static final int DEPOT_PICKUP_RIGHT = 14;
@@ -150,6 +149,7 @@ public class Level extends World
     public static int[][] map = new int[100][100];
     
     public static ArrayList<Route> routes = new ArrayList<>();
+    public static HashMap<String, Factory> factories = new java.util.HashMap<>();
     
     // Route is a inner class that handles the routes
     public static class Route 
@@ -187,6 +187,36 @@ public class Level extends World
         public void     setRouteColor(String routeColor)    { this.routeColor = routeColor; }
         public boolean  getSell()                           { return Sell;}
         public void     setSell(boolean Sell)               { this.Sell = Sell;}
+    }
+
+    // Factory is a inner class that handles the factories
+    public static class Factory
+    {
+        private int storedResources;
+        private int constructionTime;
+        private String factoryColor;
+
+        public Factory(int storedResources, int constructionTime, String factoryColor)
+        {
+            this.storedResources = storedResources;
+            this.constructionTime = constructionTime;
+            this.factoryColor = factoryColor;
+        }
+
+        public boolean pickupResource()
+        {
+            if (this.storedResources > 0)
+            {
+                this.storedResources--;
+                return true;
+            }
+            return false;
+        }
+
+        public int      getStoredResources()                {return storedResources; }
+        public int      getConstructionTime()               {return constructionTime; }
+        public String   getFactoryColor()                   {return factoryColor; }
+        public void     addResource()                       {this.storedResources++; }
     }
 
     // Constructor
@@ -510,7 +540,6 @@ public class Level extends World
         effected_row = (mouse.getY() + cameraY) / TILE_SIZE;
 
         if (!isValidPosition(effected_row, effected_col)) return;
-        if (!ui.isOpen) return;
         
         // Begin dragging
         if (Greenfoot.mousePressed(null))
@@ -628,92 +657,117 @@ public class Level extends World
             return;
         }
 
+        if (!ui.isOpen)
+        {
+            String coordinateKey = effected_row + "," + effected_col;
+            if (factories.containsKey(coordinateKey))
+            {
+                Factory currentFactory = Level.factories.get(coordinateKey);
+
+                ui.factoryRecoursesLeft = currentFactory.getStoredResources();
+                ui.craftTimeLeft = currentFactory.getConstructionTime();
+                ui.clickedFactory = true;
+                return;
+            }
+            else
+            {
+                ui.clickedFactory = false;
+            }
+        }
+        else
+        {
+            ui.clickedFactory = false;
+        }
+
         // Build mode
         int currentTile = map[effected_row][effected_col];
         
         if (currentTile == selected_tile) return;
 
-        if (ui.activeTab != 0) return;
-
-        switch (currentTile)
+        if (ui.isOpen)
         {
-            // Terrain tiles can be replaced by roads/depots or factories
-            case GRASS:
-            case FOREST:
-            case HOUSE:
-                int cost = (currentTile == FOREST) ? COST_FOREST
-                         : (currentTile == HOUSE)  ? COST_HOUSE
-                         :                           COST_GRASS;
-                boolean isFactory = (selected_tile == FACTORY_1 ||
-                                     selected_tile == FACTORY_2 ||
-                                     selected_tile == FACTORY_3);
-                if (selected_tile != DRILL)
-                {
-                    money -= isFactory ? COST_FACTORY : cost;
+            switch (currentTile)
+            {
+                // Terrain tiles can be replaced by roads/depots or factories
+                case GRASS:
+                case FOREST:
+                case HOUSE:
+                    int cost = (currentTile == FOREST) ? COST_FOREST : (currentTile == HOUSE)  ? COST_HOUSE : COST_GRASS;
+
+                    boolean isFactory = (selected_tile == FACTORY_1 || selected_tile == FACTORY_2 || selected_tile == FACTORY_3);
+
+                    if (selected_tile != DRILL)
+                    {
+                        money -= isFactory ? COST_FACTORY : cost;
+                        map[effected_row][effected_col] = selected_tile;
+
+                        if (isFactory)
+                        {
+                            String coordinateKey = effected_row + "," + effected_col;
+                            String factoryColor = (selected_tile == FACTORY_1) ? "red" : (selected_tile == FACTORY_2) ? "blue" : "yellow";
+                            factories.put(coordinateKey, new Factory(0, 120, factoryColor));
+                        }
+                    }
+                    break;
+                
+                // Building a river crossing
+                case RIVER_V:
+                    if (selected_tile == ROAD_H)
+                    {
+                        money -= COST_RIVER_CROSSING;
+                        map[effected_row][effected_col] = RIVER_CROSSING_H;
+                    }
+                    break;
+
+                case RIVER_H:
+                    if (selected_tile == ROAD_V)
+                    {
+                        money -= COST_RIVER_CROSSING;
+                        map[effected_row][effected_col] = RIVER_CROSSING_V;
+                    }
+                    break;
+
+                //  Placing a drill
+                case RESOURCE_1:
+                    if (selected_tile == DRILL)
+                    {
+                        money -= COST_DRILL;
+                        map[effected_row][effected_col] = DRILL_RESOURCE_1;
+                    }
+                    break;
+
+                case RESOURCE_2:
+                    if (selected_tile == DRILL)
+                    {
+                        money -= COST_DRILL;
+                        map[effected_row][effected_col] = DRILL_RESOURCE_2;
+                    }
+                    break;
+                
+                case RESOURCE_3:
+                    if (selected_tile == DRILL)
+                    {
+                        money -= COST_DRILL;
+                        map[effected_row][effected_col] = DRILL_RESOURCE_3;
+                    }
+                    break;
+                
+                // Cannot place on these tiles
+                case RIVER_CORNER_NE:
+                case RIVER_CORNER_NW:
+                case RIVER_CORNER_SW:
+                case RIVER_CORNER_SE:
+                case RIVER_CROSSING_V:
+                case RIVER_CROSSING_H:
+                case DRILL_RESOURCE_1:
+                case DRILL_RESOURCE_2:
+                case DRILL_RESOURCE_3:
+                    break;
+                
+                // If there is already something build it overwrites
+                default:
                     map[effected_row][effected_col] = selected_tile;
-                }
-                break;
-            
-            // Building a river crossing
-            case RIVER_V:
-                if (selected_tile == ROAD_H)
-                {
-                    money -= COST_RIVER_CROSSING;
-                    map[effected_row][effected_col] = RIVER_CROSSING_H;
-                }
-                break;
-
-            case RIVER_H:
-                if (selected_tile == ROAD_V)
-                {
-                    money -= COST_RIVER_CROSSING;
-                    map[effected_row][effected_col] = RIVER_CROSSING_V;
-                }
-                break;
-
-            //  Placing a drill
-            case RESOURCE_1:
-                if (selected_tile == DRILL)
-                {
-                    money -= COST_DRILL;
-                    map[effected_row][effected_col] = DRILL_RESOURCE_1;
-                }
-                break;
-
-            case RESOURCE_2:
-                if (selected_tile == DRILL)
-                {
-                    money -= COST_DRILL;
-                    map[effected_row][effected_col] = DRILL_RESOURCE_2;
-                }
-                break;
-            
-            case RESOURCE_3:
-                if (selected_tile == DRILL)
-                {
-                    money -= COST_DRILL;
-                    map[effected_row][effected_col] = DRILL_RESOURCE_3;
-                }
-                break;
-            
-            // Cannot place on these tiles
-            case RIVER_CORNER_NE:
-            case RIVER_CORNER_NW:
-            case RIVER_CORNER_SW:
-            case RIVER_CORNER_SE:
-            case RIVER_CROSSING_V:
-            case RIVER_CROSSING_H:
-            case DRILL_RESOURCE_1:
-            case DRILL_RESOURCE_2:
-            case DRILL_RESOURCE_3:
-            case FACTORY_1:
-            case FACTORY_2:
-            case FACTORY_3:
-                break;
-            
-            // If there is already something build it overwrites
-            default:
-                map[effected_row][effected_col] = selected_tile;
+            }
         }
     }
 
@@ -770,6 +824,14 @@ public class Level extends World
             case DRILL_RESOURCE_3:
                 money += COST_DRILL;
                 map[effected_row][effected_col] = RESOURCE_3;
+                break;
+
+            case FACTORY_1:
+            case FACTORY_2:
+            case FACTORY_3:
+                money += COST_FACTORY;
+                map[effected_row][effected_col] = GRASS;
+                factories.remove(effected_row + "," + effected_col);
                 break;
 
             // cannot be removed

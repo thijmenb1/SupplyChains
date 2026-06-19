@@ -132,23 +132,49 @@ public class Vehicle extends Actor
     // Called when arriving at depot updating the vehicle state
     private void handleDestinationReached()
     {
-        if (current_row == pickup_row && current_col == pickup_col) {
-            // At pickup: fill up and head to factory
-            isFull = true;
-            setImageVariant();
-            target_row = factory_row;
-            target_col = factory_col;
-            path = findPath(current_row, current_col, target_row, target_col);
-            recalcCooldown = 0;
-        } else if (current_row == factory_row && current_col == factory_col) {
-            // At factory: empty and head back to pickup
-            if (Sell){Level.money++;}
+        // Occurs when the vehicle arrives at the Factory/Dropoff Depot
+        if (current_row == factory_row && current_col == factory_col)
+        {
+            if (Sell)
+            {
+                Level.money++; // Instantly make money at a selling depot
+            }
+            else
+            {
+                // Call your helper method to search for adjacent factories
+                String adjacentFactoryKey = getAdjacentFactoryKey();
+                
+                if (adjacentFactoryKey != null)
+                {
+                    // A factory is adjacent to this depot. Drop off the resource.
+                    Level.factories.get(adjacentFactoryKey).addResource();
+                }
+            }
+            
             isFull = false;
             setImageVariant();
+            
+            // Set up variables for the trip back to the pickup depot
             target_row = pickup_row;
             target_col = pickup_col;
+            
+            // Rebuild path back to the drill 
             path = findPath(current_row, current_col, target_row, target_col);
-            recalcCooldown = 0;
+            return;
+        }
+
+        // Occurs when the vehicle arrives back at the Drill/Pickup Depot
+        if (current_row == pickup_row && current_col == pickup_col)
+        {
+            isFull = true;
+            setImageVariant();
+            
+            target_row = factory_row;
+            target_col = factory_col;
+            
+            //  Rebuild path out to the factory
+            path = findPath(current_row, current_col, target_row, target_col);
+            return;
         }
     }
 
@@ -384,5 +410,25 @@ public class Vehicle extends Actor
         {
             getWorld().removeObject(this);
         }
+    }
+    private String getAdjacentFactoryKey()
+    {
+        // Check all directions
+        int[][] directions = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
+        
+        for (int[] dir : directions)
+        {
+            int neighborRow = current_row + dir[0];
+            int neighborCol = current_col + dir[1];
+            
+            String checkKey = neighborRow + "," + neighborCol;
+            
+            // If it is in the hashmap return Key
+            if (Level.factories.containsKey(checkKey))
+            {
+                return checkKey;
+            }
+        }
+        return null; // No factory found
     }
 }

@@ -1,5 +1,4 @@
 import greenfoot.*;
-import java.util.ArrayList;
 
 /**
  * UI - the hud of the game
@@ -11,7 +10,7 @@ import java.util.ArrayList;
  * - handleInput()              Handles all clicking on the ui
  * - renderTabs()               draws the bare UI
  * - drawTileSelectionTab()     Draws the hotbar (Tab 0)
- * - drawRoute()                Draws the route managment panel (Tab 1)
+ * - drawRoute()                Draws the route management panel (Tab 1)
  * - drawMoney()                Draws the money at the bottom
  * - getTileImage()             Helper for hotbar returns the correct img
  * - isSelectedQuikeSlot()      Helper for hotbar returns if tile is on hotbar
@@ -48,6 +47,11 @@ public class ui extends Actor
     private static final int TAB_START_Y = 50;
     private static final int cancelX = PANEL_START_X + 10;
     private static final int cancelY = 152;
+
+    // Factory stats
+    public static boolean clickedFactory = false;
+    public static int factoryRecoursesLeft;
+    public static int craftTimeLeft;
 
     // Route building state
     public static int routeStep = 0;
@@ -283,12 +287,18 @@ public class ui extends Actor
             {
                 drawRoute(panelImg, contentStartX, contentStartY);
             }
+
+
             
             // Always draw money at bottom
             drawMoney(panelImg);
             
             // Draw panel onto display image
             displayImg.drawImage(panelImg, PANEL_START_X, 0);
+        }
+        else if (clickedFactory)
+        {
+            drawFactoryUI(displayImg);
         }
         
         setImage(displayImg);
@@ -538,5 +548,24 @@ public class ui extends Actor
             }
         }
         return QUICK_SELECT_TILES[slotIndex];
+    }
+
+    public static void drawFactoryUI(GreenfootImage img)
+    {
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        int mx = mouse.getX();
+        int my = mouse.getY();
+
+        int panelX = mx;
+        int panelY = my - 40;
+
+        img.setColor(new Color(0, 0, 0, 50));
+        img.fillRect(panelX, panelY, 100, 70);
+
+        img.setFont(new Font("Arial", false, false, 12));
+        img.setColor(Color.WHITE);
+        img.drawString("factory:", panelX + 10, panelY + 15);
+        img.drawString("Resources: " + factoryRecoursesLeft, panelX + 10, panelY + 35);
+        img.drawString("TimeLeft: " + craftTimeLeft/60 + "s" , panelX + 10, panelY + 52);
     }
 }
