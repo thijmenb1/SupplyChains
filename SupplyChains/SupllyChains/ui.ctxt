@@ -1,6 +1,6 @@
 #BlueJ class context
 comment0.target=ui
-comment0.text=\r\n\ UI\ -\ the\ hud\ of\ the\ game\r\n\ \r\n\ Functions\:\r\n\ -\ addedToWorld()\ \ \ \ \ \ \ \ \ \ \ \ \ Makes\ sure\ it\ is\ centred\r\n\ -\ act()\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Main\ loop\r\n\ -\ toggleOpen()\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Opens\ and\ closes\ ui\r\n\ -\ handleInput()\ \ \ \ \ \ \ \ \ \ \ \ \ \ Handles\ all\ clicking\ on\ the\ ui\r\n\ -\ renderTabs()\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ draws\ the\ bare\ UI\r\n\ -\ drawTileSelectionTab()\ \ \ \ \ Draws\ the\ hotbar\ (Tab\ 0)\r\n\ -\ drawRoute()\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Draws\ the\ route\ managment\ panel\ (Tab\ 1)\r\n\ -\ drawMoney()\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Draws\ the\ money\ at\ the\ bottom\r\n\ -\ getTileImage()\ \ \ \ \ \ \ \ \ \ \ \ \ Helper\ for\ hotbar\ returns\ the\ correct\ img\r\n\ -\ isSelectedQuikeSlot()\ \ \ \ \ \ Helper\ for\ hotbar\ returns\ if\ tile\ is\ on\ hotbar\r\n\ -\ getDisplayTileIdForSlot()\ \ Helper\ for\ hotbar\ returns\ the\ tile\ to\ display\ in\ hotbar\r\n\ -\ drawRoaIcon()\ \ \ \ \ \ \ \ \ \ \ \ \ \ draws\ icon\ for\ Tab\ 0\r\n\ -\ drawLocationPin()\ \ \ \ \ \ \ \ \ \ draws\ icon\ for\ tab\ 1\r\n\ -\ isMouseOverUI()\ \ \ \ \ \ \ \ \ \ \ \ Returns\ whether\ mouse\ is\ over\ ui\r\n\ -\ routExists()\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Checks\ whether\ a\ route\ already\ exists\r\n
+comment0.text=\r\n\ UI\ -\ the\ hud\ of\ the\ game\r\n\ \r\n\ Functions\:\r\n\ -\ addedToWorld()\ \ \ \ \ \ \ \ \ \ \ \ \ Makes\ sure\ it\ is\ centred\r\n\ -\ act()\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Main\ loop\r\n\ -\ toggleOpen()\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Opens\ and\ closes\ ui\r\n\ -\ handleInput()\ \ \ \ \ \ \ \ \ \ \ \ \ \ Handles\ all\ clicking\ on\ the\ ui\r\n\ -\ renderTabs()\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ draws\ the\ bare\ UI\r\n\ -\ drawTileSelectionTab()\ \ \ \ \ Draws\ the\ hotbar\ (Tab\ 0)\r\n\ -\ drawRoute()\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Draws\ the\ route\ management\ panel\ (Tab\ 1)\r\n\ -\ drawMoney()\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Draws\ the\ money\ at\ the\ bottom\r\n\ -\ getTileImage()\ \ \ \ \ \ \ \ \ \ \ \ \ Helper\ for\ hotbar\ returns\ the\ correct\ img\r\n\ -\ isSelectedQuikeSlot()\ \ \ \ \ \ Helper\ for\ hotbar\ returns\ if\ tile\ is\ on\ hotbar\r\n\ -\ getDisplayTileIdForSlot()\ \ Helper\ for\ hotbar\ returns\ the\ tile\ to\ display\ in\ hotbar\r\n\ -\ drawRoaIcon()\ \ \ \ \ \ \ \ \ \ \ \ \ \ draws\ icon\ for\ Tab\ 0\r\n\ -\ drawLocationPin()\ \ \ \ \ \ \ \ \ \ draws\ icon\ for\ tab\ 1\r\n\ -\ isMouseOverUI()\ \ \ \ \ \ \ \ \ \ \ \ Returns\ whether\ mouse\ is\ over\ ui\r\n\ -\ routExists()\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Checks\ whether\ a\ route\ already\ exists\r\n
 comment1.params=world
 comment1.target=void\ addedToWorld(greenfoot.World)
 comment10.params=img\ startX\ startY
@@ -17,8 +17,8 @@ comment15.params=slotIndex
 comment15.target=boolean\ isSelectedQuickSlot(int)
 comment16.params=slotIndex
 comment16.target=int\ getDisplayTileIdForSlot(int)
-comment17.params=storedResources\ recipeTime
-comment17.target=void\ factoryUI(int,\ int)
+comment17.params=img
+comment17.target=void\ drawFactoryUI(greenfoot.GreenfootImage)
 comment2.params=
 comment2.target=void\ act()
 comment3.params=

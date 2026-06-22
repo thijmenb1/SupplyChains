@@ -51,7 +51,13 @@ public class ui extends Actor
     // Factory stats
     public static boolean clickedFactory = false;
     public static int factoryRecoursesLeft;
-    public static int craftTimeLeft;
+    public static float craftTimeLeft;
+    public static int processed;
+
+    public static int factoryUIX;
+    public static int factoryUIY;
+    public static String activeFactoryKey = "";
+    public static String activeFactoryColor = "";
 
     // Route building state
     public static int routeStep = 0;
@@ -59,6 +65,7 @@ public class ui extends Actor
     public static int vehicleCount = 0;
 
     public static int selectedRouteIndex = -1;
+    private int startVehicleCount = 0;
 
     private static final int[] QUICK_SELECT_TILES = {1, 11, 3, 4, 14, 39, 20};
 
@@ -225,7 +232,68 @@ public class ui extends Actor
                         return;
                     }
                 }
-            
+
+            if (selectedRouteIndex != -1 && routeMode.equals("viewing"))
+            {
+                int editX = PANEL_START_X + contentStartX + 5;
+                int editY = contentStartY + 152;
+                if (mx >= editX && mx <= editX + 80 && my >= editY - 12 && my <= editY + 5)
+                {
+                    startVehicleCount = Level.routes.get(selectedRouteIndex).getVehicleCount();
+                    routeMode = "editing";
+                    return;
+                }
+            }
+
+            if (selectedRouteIndex != -1 && routeMode.equals("editing"))
+            {
+                int minusX = PANEL_START_X + 60;
+                int minusY = contentStartY + 100; // Adjusted to match your text drawing geometry
+
+                if (mx >= minusX && mx <= minusX + 15 &&
+                    my >= minusY - 12 && my <= minusY + 5)
+                {
+                    if (Level.routes.get(selectedRouteIndex).getVehicleCount() > 0)
+                    {
+                        Level.money += 10;
+                        Level.routes.get(selectedRouteIndex).setVehicleCount(Level.routes.get(selectedRouteIndex).getVehicleCount() - 1);
+                        vehicleCount = Level.routes.get(selectedRouteIndex).getVehicleCount();
+                    }
+                    return;
+                }
+
+                int plusX = PANEL_START_X + 75;
+                int plusY = contentStartY + 100;
+                if (mx >= plusX && mx <= plusX + 15 &&
+                    my >= plusY - 12 && my <= plusY + 5)
+                {
+                    if (Level.money >= 10)
+                    {   
+                        Level.money -= 10;
+                        Level.routes.get(selectedRouteIndex).setVehicleCount(Level.routes.get(selectedRouteIndex).getVehicleCount() + 1);
+                        vehicleCount = Level.routes.get(selectedRouteIndex).getVehicleCount();
+                        Level level = (Level)getWorld();
+                        level.spawnVehicle(Level.routes.get(selectedRouteIndex).getStartRow(), Level.routes.get(selectedRouteIndex).getStartCol(), Level.routes.get(selectedRouteIndex).getEndRow(), Level.routes.get(selectedRouteIndex).getEndCol(), selectedRouteIndex, Level.routes.get(selectedRouteIndex).getVehicleCount());
+                    }
+                    return;
+                }
+
+                int ActionBtnX = PANEL_START_X + contentStartX + 5;
+                int ActionBtnY = contentStartY + 122;
+                if (mx >= ActionBtnX && mx <= ActionBtnX + 90 &&
+                    my >= ActionBtnY - 12 && my <= ActionBtnY + 5)
+                {
+                    if (startVehicleCount == Level.routes.get(selectedRouteIndex).getVehicleCount())
+                    {
+                        Level.money += Level.routes.get(selectedRouteIndex).getVehicleCount() * 10;
+                        Level.routes.remove(selectedRouteIndex);
+                    }
+                    
+                    routeMode = "home";
+                    selectedRouteIndex = -1;
+                    return;
+                }
+            }
         }
     }    
     private void renderTabs()
@@ -301,6 +369,15 @@ public class ui extends Actor
             drawFactoryUI(displayImg);
         }
         
+        if (clickedFactory && Level.factories.containsKey(activeFactoryKey))
+        {
+            Level.Factory currentFactory = Level.factories.get(activeFactoryKey);
+            factoryRecoursesLeft = currentFactory.getStoredResources();
+            craftTimeLeft = currentFactory.getConstructionTime();
+            processed = currentFactory.getProcessedResources();
+            activeFactoryColor = currentFactory.getFactoryColor();
+        }
+
         setImage(displayImg);
     }
 
@@ -411,29 +488,63 @@ public class ui extends Actor
             img.setFont(new Font("Arial", false, false, 12));
             img.setColor(Color.WHITE);
             img.drawString("Route " + (selectedRouteIndex + 1) + ":", startX + 5, startY + 10);
-            img.drawString("Drill: (" + route.getStartRow() + "," + route.getStartCol() + ")", startX + 5, startY + 32);
-            img.drawString("Factory: (" + route.getEndRow() + "," + route.getEndCol() + ")", startX + 5, startY + 66);
+            img.drawString("Pickup: (" + route.getStartRow() + "," + route.getStartCol() + ")", startX + 5, startY + 32);
+            img.drawString("Dropoff: (" + route.getEndRow() + "," + route.getEndCol() + ")", startX + 5, startY + 66);
             img.drawString("Vehicles: " + route.getVehicleCount(), startX + 5, startY + 100);
             img.setColor(Color.YELLOW);
             img.drawString("Edit Route", startX + 5, startY + 152);
+        }
+
+        if (selectedRouteIndex != -1 && routeMode.equals("editing"))
+        {
+            Level.Route route = Level.routes.get(selectedRouteIndex);
+            boolean set = false;
+
+            if (!set)
+            {
+                startVehicleCount = route.getVehicleCount();
+                set = true;
+            }
+
+            img.setFont(new Font("Arial", false, false, 12));
+            img.setColor(Color.WHITE);
+            img.drawString("Route " + (selectedRouteIndex + 1) + ":", startX + 5, startY + 10);
+            img.drawString("Pickup: (" + route.getStartRow() + "," + route.getStartCol() + ")", startX + 5, startY + 32);
+            img.drawString("Dropoff: (" + route.getEndRow() + "," + route.getEndCol() + ")", startX + 5, startY + 66);
+            img.drawString("Vehicles:    " + route.getVehicleCount(), startX + 5, startY + 100);
+            img.drawString("-", startX + 60, startY + 100);
+            img.drawString("+", startX + 75, startY + 100);
+            if (startVehicleCount == route.getVehicleCount())
+            {
+                img.setColor(Color.RED);
+                img.drawString("Cancel", startX + 5, startY + 122);
+            }
+            else
+            {
+                img.setColor(Color.YELLOW);
+                img.drawString("Commit changes", startX + 5, startY + 122);
+            }
+            img.setColor(Color.RED);
+            img.drawString("Delete", startX + 5, startY + 140);
+
         }
 
         if (selectedRouteIndex != -1 && routeMode.equals("adding"))
         {
             img.setFont(new Font("Arial", false, false, 12));
             img.setColor(Color.WHITE);
-            img.drawString("Drill:", startX + 5, startY + 32);
-            img.drawString("Factory:", startX + 5, startY + 66);
+            img.drawString("Pickup:", startX + 5, startY + 32);
+            img.drawString("Dropoff:", startX + 5, startY + 66);
             if (routeStep == 0)
             {
-                img.drawString("Click the drill depot", startX + 5, startY + 44);
+                img.drawString("Click on a depot", startX + 5, startY + 44);
                 img.setColor(Color.RED);
                 img.drawString("Cancel", startX + 5, startY + 122);
             }
             else if (routeStep == 1)
             {
                 img.drawString("Selected: (" + Level.routes.get(selectedRouteIndex).getStartRow() + "," + Level.routes.get(selectedRouteIndex).getStartCol() + ")", startX + 5, startY + 44);
-                img.drawString("Click the factory depot", startX + 5, startY + 78);
+                img.drawString("Click on a depot", startX + 5, startY + 78);
                 img.setColor(Color.RED);
                 img.drawString("Cancel", startX + 5, startY + 122);
             }
@@ -552,20 +663,64 @@ public class ui extends Actor
 
     public static void drawFactoryUI(GreenfootImage img)
     {
-        MouseInfo mouse = Greenfoot.getMouseInfo();
-        int mx = mouse.getX();
-        int my = mouse.getY();
+        int panelX = factoryUIX;
+        int panelY = factoryUIY;
 
-        int panelX = mx;
-        int panelY = my - 40;
-
-        img.setColor(new Color(0, 0, 0, 50));
-        img.fillRect(panelX, panelY, 100, 70);
+        // Background panel box
+        img.setColor(new Color(0, 0, 0, 180)); 
+        img.fillRect(panelX, panelY, 120, 85);   
 
         img.setFont(new Font("Arial", false, false, 12));
         img.setColor(Color.WHITE);
-        img.drawString("factory:", panelX + 10, panelY + 15);
+        img.drawString("Factory:", panelX + 10, panelY + 15);
         img.drawString("Resources: " + factoryRecoursesLeft, panelX + 10, panelY + 35);
-        img.drawString("TimeLeft: " + craftTimeLeft/60 + "s" , panelX + 10, panelY + 52);
+        
+        // --- PROGRESS BAR LOGIC (BASED ON 180 FRAMES) ---
+        int barX = panelX + 10;
+        int barY = panelY + 44;
+        int barWidth = 100;
+        int barHeight = 10;
+
+        // 1. Draw the empty background of the progress bar (Dark Gray)
+        img.setColor(Color.DARK_GRAY);
+        img.fillRect(barX, barY, barWidth, barHeight);
+
+        if (factoryRecoursesLeft > 0)
+        {
+            // 2. Calculate progress (how many frames out of 180 have finished)
+            // Starts at 180f (0% filled) and finishes at 0f (100% filled)
+            float progressFraction = (180f - craftTimeLeft) / 180f;
+            
+            // Cap it between 0.0 and 1.0 just to be safe
+            progressFraction = Math.max(0.0f, Math.min(1.0f, progressFraction));
+            
+            int fillWidth = (int)(barWidth * progressFraction);
+
+            // 3. Draw the moving progress fill (factory color)
+            Color fillHardwareColor = Color.GREEN;
+            if (activeFactoryColor != null) {
+                switch(activeFactoryColor.toLowerCase()) {
+                    case "red":
+                        fillHardwareColor = Color.BLUE;
+                        break;
+                    case "blue":
+                        fillHardwareColor = Color.RED;
+                        break;
+                    case "yellow":
+                        fillHardwareColor = Color.YELLOW;
+                        break;
+                }
+            }
+            img.setColor(fillHardwareColor);
+            img.fillRect(barX, barY, fillWidth, barHeight);
+        }
+        
+        // Outline the progress bar for a cleaner look (Black outline)
+        img.setColor(Color.BLACK);
+        img.drawRect(barX, barY, barWidth, barHeight);
+        // ------------------------------------------------
+
+        img.setColor(Color.WHITE);
+        img.drawString("Processed: " + processed, panelX + 10, panelY + 72);
     }
 }

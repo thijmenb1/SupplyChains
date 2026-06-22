@@ -60,7 +60,7 @@ public class Vehicle extends Actor
     private int waitTimer = 0;
 
     // Constants
-    private static final int WAIT_TIME = 120;  // 2 seconds at 60 FPS
+    private static final int WAIT_TIME = 180;  // 2 seconds at 60 FPS
     private static final int TILE_SIZE = 32;
 
 
@@ -144,10 +144,18 @@ public class Vehicle extends Actor
                 // Call your helper method to search for adjacent factories
                 String adjacentFactoryKey = getAdjacentFactoryKey();
                 
-                if (adjacentFactoryKey != null)
+                if (adjacentFactoryKey != null && Level.factories.get(adjacentFactoryKey).getFactoryColor() == color)
                 {
                     // A factory is adjacent to this depot. Drop off the resource.
                     Level.factories.get(adjacentFactoryKey).addResource();
+                }
+                else
+                {
+                    System.out.println("Wrong color. Should be: " + color);
+                    target_row = pickup_row;
+                    target_col = pickup_col;
+                    path = findPath(current_row, current_col, target_row, target_col);
+                    return;
                 }
             }
             
@@ -165,16 +173,44 @@ public class Vehicle extends Actor
 
         // Occurs when the vehicle arrives back at the Drill/Pickup Depot
         if (current_row == pickup_row && current_col == pickup_col)
-        {
-            isFull = true;
-            setImageVariant();
-            
-            target_row = factory_row;
-            target_col = factory_col;
-            
-            //  Rebuild path out to the factory
-            path = findPath(current_row, current_col, target_row, target_col);
-            return;
+        {   
+            if (Sell)
+            {
+                String adjacentFactoryKey = getAdjacentFactoryKey();
+                if (adjacentFactoryKey != null && Level.factories.get(adjacentFactoryKey).getProcessedResources() > 0)
+                {
+                    Level.factories.get(adjacentFactoryKey).pickupResource();
+                    
+                    isFull = true;
+                    setImageVariant();
+                    
+                    target_row = factory_row;
+                    target_col = factory_col;
+                    
+                    //  Rebuild path out to the factory
+                    path = findPath(current_row, current_col, target_row, target_col);
+                    return;
+                }
+                else
+                {
+                    lastWaitLocation_row = -1;
+                    lastWaitLocation_col = -1;
+                    waitTimer = WAIT_TIME;
+                    return;
+                }
+            }
+            else
+            {
+                isFull = true;
+                setImageVariant();
+                
+                target_row = factory_row;
+                target_col = factory_col;
+                
+                //  Rebuild path out to the factory
+                path = findPath(current_row, current_col, target_row, target_col);
+                return;
+            }
         }
     }
 
@@ -249,11 +285,10 @@ public class Vehicle extends Actor
     // Checks whether the vehicle has arrived at a depot
     private void checkDestinationArrival()
     {
-        boolean atPickup = (current_row == pickup_row && current_col == pickup_col);
-        boolean atFactory = (current_row == factory_row && current_col == factory_col);
+        boolean atActiveTarget = (current_row == target_row && current_col == target_col);
         boolean justWaitedHere = (current_row == lastWaitLocation_row && current_col == lastWaitLocation_col);
         
-        if ((atPickup || atFactory) && !justWaitedHere) {
+        if (atActiveTarget && !justWaitedHere) {
             waitTimer = WAIT_TIME;
             lastWaitLocation_row = current_row;
             lastWaitLocation_col = current_col;
@@ -266,13 +301,14 @@ public class Vehicle extends Actor
         GreenfootImage tilemap = new GreenfootImage("trucks_topdown_spritesheet.png");
         int variantIndex = getVariantIndex();
         
-        // Calculate row and column in the tilemap (2 rows, 3 columns)
+        // Calculate row and column in the tilemap (2 rows, 4 columns)
+        int row = variantIndex / 4;
+        int col = variantIndex % 4;
         final int SPRITE_WIDTH = 11;
-        final int SPRITE_HEIGHT = 32;
-        int row = variantIndex / 3;
-        int col = variantIndex % 3;
+        final int SPRITE_HEIGHT = 36;
         int x = col * SPRITE_WIDTH;
         int y = row * SPRITE_HEIGHT;
+
         
         // Create a new image for this vehicle with the correct sprite
         GreenfootImage vehicleImage = new GreenfootImage(SPRITE_WIDTH, SPRITE_HEIGHT);
@@ -283,12 +319,15 @@ public class Vehicle extends Actor
     // Returns the correct sprite
     private int getVariantIndex()
     {
-        if ("red".equalsIgnoreCase(color)) {
-            return isFull ? 3 : 0;
+        if (!isFull){  
+            return Sell ? 4 : 0;
+        
         } else if ("blue".equalsIgnoreCase(color)) {
-            return isFull ? 4 : 1;
+            return Sell ? 6 : 2;
+        } else if ("red".equalsIgnoreCase(color)) {
+            return Sell ? 5 : 1;
         } else if ("yellow".equalsIgnoreCase(color)) {
-            return isFull ? 5 : 2;
+            return Sell ? 7 : 3;
         }
         return 0;
     }

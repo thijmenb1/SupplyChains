@@ -193,7 +193,8 @@ public class Level extends World
     public static class Factory
     {
         private int storedResources;
-        private int constructionTime;
+        private float constructionTime;
+        private int processedResources;
         private String factoryColor;
 
         public Factory(int storedResources, int constructionTime, String factoryColor)
@@ -205,18 +206,42 @@ public class Level extends World
 
         public boolean pickupResource()
         {
-            if (this.storedResources > 0)
+            if (this.processedResources > 0)
             {
-                this.storedResources--;
+                this.processedResources--;
                 return true;
             }
             return false;
         }
 
-        public int      getStoredResources()                {return storedResources; }
-        public int      getConstructionTime()               {return constructionTime; }
-        public String   getFactoryColor()                   {return factoryColor; }
-        public void     addResource()                       {this.storedResources++; }
+        public void processesResources()
+        {   if (storedResources > 0)
+            {
+                if (constructionTime > 0)
+                {
+                    constructionTime--;
+                }
+
+                if (constructionTime <= 0)
+                {
+                    System.out.println(constructionTime);
+                    storedResources--;
+                    processedResources++;
+                    constructionTime = 360;
+                }
+            }
+        }
+
+        public void act()
+        {
+            processesResources();
+        }
+
+        public int      getStoredResources()        {return storedResources; }
+        public float    getConstructionTime()       {return constructionTime; }
+        public String   getFactoryColor()           {return factoryColor; }
+        public void     addResource()               {this.storedResources++; }
+        public int      getProcessedResources()     {return processedResources;}
     }
 
     // Constructor
@@ -242,6 +267,11 @@ public class Level extends World
         handleCameraMovement();
 
         animationCounter++;
+
+        for (Factory factory : factories.values())
+        {
+            factory.act();
+        }
 
         drawMap();
         drawRoads();
@@ -662,16 +692,23 @@ public class Level extends World
             String coordinateKey = effected_row + "," + effected_col;
             if (factories.containsKey(coordinateKey))
             {
-                Factory currentFactory = Level.factories.get(coordinateKey);
+                // Capture the exact mouse coordinates at the frame of the click
+                MouseInfo mouse = Greenfoot.getMouseInfo();
+                if (mouse != null)
+                {
+                    ui.factoryUIX = mouse.getX();
+                    ui.factoryUIY = mouse.getY();
+                }
 
-                ui.factoryRecoursesLeft = currentFactory.getStoredResources();
-                ui.craftTimeLeft = currentFactory.getConstructionTime();
+                // Tell the UI which factory key it needs to pull real-time updates from
+                ui.activeFactoryKey = coordinateKey;
                 ui.clickedFactory = true;
                 return;
             }
             else
             {
                 ui.clickedFactory = false;
+                ui.activeFactoryKey = ""; // Clear active factory if clicking away
             }
         }
         else
@@ -705,7 +742,7 @@ public class Level extends World
                         {
                             String coordinateKey = effected_row + "," + effected_col;
                             String factoryColor = (selected_tile == FACTORY_1) ? "red" : (selected_tile == FACTORY_2) ? "blue" : "yellow";
-                            factories.put(coordinateKey, new Factory(0, 120, factoryColor));
+                            factories.put(coordinateKey, new Factory(0, 360, factoryColor));
                         }
                     }
                     break;
