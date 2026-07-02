@@ -42,7 +42,7 @@ public class Vehicle extends Actor
 
     // Identification
     private int vehicleNumber;
-    private boolean Sell;
+    private Trailer myTrailer;
 
     // Movement
     private int lastWaitLocation_row = -1;
@@ -65,10 +65,10 @@ public class Vehicle extends Actor
 
 
     // Sprite variant selection
-    private String color; // "red", "blue", "yellow"
-    private boolean isFull;
+    private String currentCargo = null;
+    private String vehicleType; // "Bulk", "Flatbed" 
 
-    public Vehicle(int start_row, int start_col, int target_row, int target_col, String color, boolean isFull, int routeNumber, int vehicleNumber, boolean Sell)
+    public Vehicle(int start_row, int start_col, int target_row, int target_col, int routeNumber, int vehicleNumber)
     {
         this.current_row    = start_row;
         this.current_col    = start_col;
@@ -78,11 +78,8 @@ public class Vehicle extends Actor
         this.pickup_col     = start_col;
         this.factory_row    = target_row;
         this.factory_col    = target_col;
-        this.color          = color;
-        this.isFull         = isFull;
         this.routeNumber    = routeNumber;
         this.vehicleNumber  = vehicleNumber;
-        this.Sell           = Sell;
     }
 
     // Runs on creation prepares for route
@@ -91,8 +88,12 @@ public class Vehicle extends Actor
         posY = current_row * TILE_SIZE + TILE_SIZE / 2;
         Level level = (Level) world;
         setLocation((int)Math.round(posX - level.getCameraX()), (int)Math.round(posY - level.getCameraY()));
+
         setImageVariant();
         path = findPath(current_row, current_col, target_row, target_col);
+
+        myTrailer = new Trailer(this, vehicleType, currentCargo);
+        world.addObject(myTrailer, getX(), getY());
     }
 
     // Main loop
@@ -129,44 +130,68 @@ public class Vehicle extends Actor
         }
     }
 
+    private String getResourceNameFromTile(int tileId)
+    {
+        switch (tileId) {
+            case 16: case 40: case 36: return "Steel_Ore";
+            case 17: case 41: case 37: return "Copper_Ore";
+            case 18: case 42: case 38: return "Sulfur";
+            default: return null;
+        }
+    }
+
+    private boolean canVehicleCarry(String resourceName)
+    {
+        if (resourceName == null) return false;
+
+        if (vehicleType.equals("Bulk"))
+        {
+            return resourceName.endsWith("_Ore");
+        }
+        else if (vehicleType.equals("Flatbed"))
+        {
+            return resourceName.endsWith("_Pallet") || resourceName.endsWith("_IBC") || resourceName.endsWith("_Beam") || resourceName.endsWith("_Spool"); 
+        }
+        return false;
+    }
+
+
     // Called when arriving at depot updating the vehicle state
     private void handleDestinationReached()
     {
+        String adjacentFactoryKey = getAdjacentFactoryKey();
+        Level.Factory adjacentFactory = Level.factories.get(adjacentFactoryKey);
+
         // Occurs when the vehicle arrives at the Factory/Dropoff Depot
         if (current_row == factory_row && current_col == factory_col)
         {
-            if (Sell)
+            if (adjacentFactory != null && currentCargo != null)
             {
-                Level.money++; // Instantly make money at a selling depot
-            }
-            else
-            {
-                // Call your helper method to search for adjacent factories
-                String adjacentFactoryKey = getAdjacentFactoryKey();
-                
-                if (adjacentFactoryKey != null && Level.factories.get(adjacentFactoryKey).getFactoryColor() == color)
+                if (adjacentFactory.acceptsResource(currentCargo))
                 {
-                    // A factory is adjacent to this depot. Drop off the resource.
-                    Level.factories.get(adjacentFactoryKey).addResource();
+                    adjacentFactory.addResource(currentCargo);
+                    currentCargo = null;
                 }
+                
                 else
                 {
-                    System.out.println("Wrong color. Should be: " + color);
-                    target_row = pickup_row;
-                    target_col = pickup_col;
-                    path = findPath(current_row, current_col, target_row, target_col);
-                    return;
+                    System.out.println("Factory rejects cargo: " + currentCargo);
                 }
             }
             
-            isFull = false;
+            if (adjacentFactory != null && adjacentFactory.getProcessedResources() > 0 && currentCargo == null)
+            {
+                String outputGood = adjacentFactory.getOutputResource();
+                if (canVehicleCarry(outputGood))
+                {
+                    currentCargo = adjacentFactory.pickupResource();
+                }
+            }
+
+            // Head back to pickup depot
             setImageVariant();
-            
-            // Set up variables for the trip back to the pickup depot
             target_row = pickup_row;
             target_col = pickup_col;
-            
-            // Rebuild path back to the drill 
             path = findPath(current_row, current_col, target_row, target_col);
             return;
         }
@@ -174,43 +199,47 @@ public class Vehicle extends Actor
         // Occurs when the vehicle arrives back at the Drill/Pickup Depot
         if (current_row == pickup_row && current_col == pickup_col)
         {   
-            if (Sell)
+            if (adjacentFactory != null && currentCargo != null && adjacentFactory.acceptsResource(currentCargo))
             {
-                String adjacentFactoryKey = getAdjacentFactoryKey();
-                if (adjacentFactoryKey != null && Level.factories.get(adjacentFactoryKey).getProcessedResources() > 0)
+                adjacentFactory.addResource(currentCargo);
+                currentCargo = null;
+            }
+
+            int[][] directions = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
+            String availableResource = null;
+
+            for (int[] dir: directions)
+            {
+                int r = current_row + dir[0];
+                int c = current_col + dir[1];
+                if (r >= 0 && r < Level.map.length && c >= 0 && c < Level.map[0].length) {
+                    int tileId = Level.map[r][c];
+                    availableResource = getResourceNameFromTile(tileId);
+                    if (availableResource != null) break;
+                }
+            }
+
+            if (availableResource == null && adjacentFactory != null && adjacentFactory.getProcessedResources() > 0)
+            {
+                availableResource = adjacentFactory.getOutputResource();
+            }
+
+            if (currentCargo == null && canVehicleCarry(availableResource))
+            {
+                if (adjacentFactory != null && availableResource.equals(adjacentFactory.getOutputResource()))
                 {
-                    Level.factories.get(adjacentFactoryKey).pickupResource();
-                    
-                    isFull = true;
-                    setImageVariant();
-                    
-                    target_row = factory_row;
-                    target_col = factory_col;
-                    
-                    //  Rebuild path out to the factory
-                    path = findPath(current_row, current_col, target_row, target_col);
-                    return;
+                    currentCargo = adjacentFactory.pickupResource();
                 }
                 else
                 {
-                    lastWaitLocation_row = -1;
-                    lastWaitLocation_col = -1;
-                    waitTimer = WAIT_TIME;
-                    return;
+                    currentCargo = availableResource;
                 }
             }
-            else
-            {
-                isFull = true;
-                setImageVariant();
-                
-                target_row = factory_row;
-                target_col = factory_col;
-                
-                //  Rebuild path out to the factory
-                path = findPath(current_row, current_col, target_row, target_col);
-                return;
-            }
+            setImageVariant();
+            target_row = factory_row;
+            target_col = factory_col;
+            path = findPath(current_row, current_col, target_row, target_col);
+            return;
         }
     }
 
@@ -301,11 +330,11 @@ public class Vehicle extends Actor
         GreenfootImage tilemap = new GreenfootImage("trucks_topdown_spritesheet.png");
         int variantIndex = getVariantIndex();
         
-        // Calculate row and column in the tilemap (2 rows, 4 columns)
+        // Calculate row and column in the tilemap (4 rows, 4 columns)
         int row = variantIndex / 4;
         int col = variantIndex % 4;
         final int SPRITE_WIDTH = 11;
-        final int SPRITE_HEIGHT = 36;
+        final int SPRITE_HEIGHT = 27;
         int x = col * SPRITE_WIDTH;
         int y = row * SPRITE_HEIGHT;
 
@@ -319,24 +348,19 @@ public class Vehicle extends Actor
     // Returns the correct sprite
     private int getVariantIndex()
     {
-        if (!isFull){  
-            return Sell ? 4 : 0;
-        
-        } else if ("blue".equalsIgnoreCase(color)) {
-            return Sell ? 6 : 2;
-        } else if ("red".equalsIgnoreCase(color)) {
-            return Sell ? 5 : 1;
-        } else if ("yellow".equalsIgnoreCase(color)) {
-            return Sell ? 7 : 3;
+
+        if (vehicleType.equals("Bulk"))
+        {
+            return (currentCargo.equals("Steel_Ore"))? 1 : (currentCargo.equals("Copper_Ore"))? 2 : (currentCargo.equals("Sulfur_Ore"))? 3 : 0;
         }
-        return 0;
-    }
-    
-    // Changes the color and load state
-    public void changeVariant(String newColor, boolean newIsFull) {
-        this.color = newColor;
-        this.isFull = newIsFull;
-        setImageVariant();
+        else if (vehicleType.equals("Flatbed"))
+        {
+            return (currentCargo.equals("Steel_Beam"))? 5 : (currentCargo.equals("Copper_Spool"))? 6 : (currentCargo.equals("Sulfur_Create"))? 7 : (currentCargo.equals("Pcb_Create"))? 8 : (currentCargo.equals("HardenedSteel_Beam"))? 9 : (currentCargo.equals("Cable_Spool"))? 10 : (currentCargo.equals("CopperSulfate_IBC"))? 11 : 4;
+        }
+        else
+        {
+            return 0;
+        }
     }
     
     // Pathfinding with BFS finds the shortest valid route between two tiles
@@ -470,4 +494,8 @@ public class Vehicle extends Actor
         }
         return null; // No factory found
     }
+
+    double getPosX() {return posX; }
+    double getPosY() {return posY; }
+
 }

@@ -1,0 +1,19 @@
+#BlueJ class context
+comment0.target=ConstructionVehicles
+comment1.params=
+comment1.target=void\ initializeVehicleSpecs()
+comment2.params=
+comment2.target=void\ act()
+comment3.params=targetRow\ targetCol\ tileSize
+comment3.target=void\ driveToCoordinate(int,\ int,\ int)
+comment4.params=level\ row\ col
+comment4.target=void\ processTileWork(Level,\ int,\ int)
+comment5.params=level\ row\ col
+comment5.target=void\ alterWorldTileMap(Level,\ int,\ int)
+comment6.params=frameIndex
+comment6.target=void\ updateVehicleSprite(int)
+comment7.params=row\ col
+comment7.target=void\ addToWorkQueue(int,\ int)
+comment8.params=
+comment8.target=java.lang.String\ getVehicleType()
+numComments=9

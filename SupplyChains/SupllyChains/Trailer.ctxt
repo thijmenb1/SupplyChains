@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=Trailer
+comment1.params=head\ vehicleType\ currentCargo
+comment1.target=Trailer(Vehicle,\ java.lang.String,\ java.lang.String)
+comment2.params=
+comment2.target=void\ trackHead()
+comment3.params=cargo
+comment3.target=void\ updateCargo(java.lang.String)
+comment4.params=
+comment4.target=void\ updateTrailerSprite()
+comment5.params=
+comment5.target=int\ getVariantIndex()
+numComments=6

@@ -1,6 +1,7 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
 * Level - the main game world
@@ -16,7 +17,7 @@ import java.util.HashMap;
 * - spawnVehicle()          Helper function for creation of the vehicle
 * - getDrillColor()         Helper function to check adjacent drill colors
 * - isAdjacentToPickup()    Helper function to check for valid route
-* - isAdjacentToDropoff()    Helper function to check for valid route
+* - isAdjacentToDropoff()   Helper function to check for valid route
 * - loadTiles()             Extracts all tiles out of spritesheet
 * - drawMap()               Draws tiles in the viewport
 * - getAnimatedTileId()     Returns next frame for animated tiles
@@ -35,18 +36,18 @@ import java.util.HashMap;
 public class Level extends World
 {
     // Display & rendering constants
-    private static final int TILE_SIZE = 32;
-    public static final int WORLD_WIDTH = 1280;
-    public static final int WORLD_HEIGHT = 720;
+    private static final int tileSize = 32;
+    public static final int worldWidth = 1280;
+    public static final int worldHight = 720;
     
     // Camera
     private static int cameraX = 0;
     private static int cameraY = 0;
-    private static final int CAMERA_SPEED = 5;
+    private static final int cameraSpeed = 5;
 
     // Ui coordinates
-    private static final int UI_PANEL_X = 1550;
-    private static final int UI_PANEL_Y = 650;
+    private static final int UIPanel_X = 1550;
+    private static final int UIPanel_Y = 650;
 
     //All tiles
     public static GreenfootImage[] tiles;
@@ -54,100 +55,139 @@ public class Level extends World
     // Tile placement / removal tracking
     private int effected_col;
     private int effected_row;
-    public static int selected_tile = 1;
+    public static int selectedTile = 1;
     private boolean building = false;
     private boolean removing = false;
     private boolean rKeyWasDown = false;
 
     // Animation
     private int animationCounter = 0;
-    private static final int ANIMATION_SPEED = 15;
+    private static final int animationSpeed = 15;
 
     // Terrain Generation
-    private static final int FOREST_SPAWN_CHANCE = 10;
-    private static final int HOUSE_SPAWN_CHANCE = 3;
-    private static final int RESOURCE_SPAWN_CHANCE = 1;
-
-    // Direction vectors
-    private static final int[][] ADJACENT_DIRECTIONS = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    private static final int forest_SpawnChance = 10;
+    private static final int house_SpawnChance = 3;
+    private static final int resource_SpawnChance = 1;
 
     // TILE IDS - Terrain
-    private static final int GRASS = 0;
-    private static final int FOREST = 32;
-    private static final int HOUSE = 33;
+    private static final int grass = 0;
+    private static final int forest = 56;
+    private static final int house = 57;
 
     // TILE IDS - Roads
-    private static final int ROAD_V = 1;
-    private static final int ROAD_H = 2;
-    private static final int CROSS = 3;
-    private static final int T_JUNCTION_UP = 4;
-    private static final int T_JUNCTION_RIGHT = 5;
-    private static final int T_JUNCTION_DOWN = 6;
-    private static final int T_JUNCTION_LEFT = 7;
-    private static final int CORNER_NE = 8;
-    private static final int CORNER_SE = 9;
-    private static final int CORNER_SW = 10;
-    private static final int CORNER_NW = 11;
+    private static final int road_V_gravel = 1;
+    private static final int road_H_gravel = 2;
+    private static final int cross_gravel = 3;
+    private static final int tJunction_up_gravel = 4;
+    private static final int tJunction_right_gravel = 5;
+    private static final int tJunction_down_gravel = 6;
+    private static final int tJunction_left_gravel = 7;
+    private static final int corner_NE_gravel = 8;
+    private static final int corner_NW_gravel = 9;
+    private static final int corner_SW_gravel = 10;
+    private static final int corner_SE_gravel = 11;
+
+    private static final int road_V_cement = 16;
+    private static final int road_H_cement = 17;
+    private static final int cross_cement = 18;
+    private static final int tJunction_up_cement = 19;
+    private static final int tJunction_right_cement = 20;
+    private static final int tJunction_down_cement = 21;
+    private static final int tJunction_left_cement = 22;
+    private static final int corner_NE_cement = 23;
+    private static final int corner_NW_cement = 24;
+    private static final int corner_SW_cement = 25;
+    private static final int corner_SE_cement = 26;
+
+    private static final int road_V_asphalt = 32;
+    private static final int road_H_asphalt = 33;
+    private static final int cross_asphalt = 34;
+    private static final int tJunction_up_asphalt = 35;
+    private static final int tJunction_right_asphalt = 36;
+    private static final int tJunction_down_asphalt = 37;
+    private static final int tJunction_left_asphalt = 38;
+    private static final int corner_NE_asphalt = 39;
+    private static final int corner_NW_asphalt = 40;
+    private static final int corner_SW_asphalt = 41;
+    private static final int corner_SE_asphalt = 42;
 
     // TILE IDS - Depots
-    private static final int DEPOT_PICKUP_LEFT = 12;
-    private static final int DEPOT_PICKUP_DOWN = 13;
-    private static final int DEPOT_PICKUP_RIGHT = 14;
-    private static final int DEPOT_PICKUP_UP = 15;
+    private static final int depot_left_gravel = 12;
+    private static final int depot_down_gravel = 13;
+    private static final int depot_right_gravel = 14;
+    private static final int depot_up_gravel = 15;
 
-    // TILE IDS - Resources & Factories
-    private static final int RESOURCE_1 = 16;
-    private static final int RESOURCE_2 = 17;
-    private static final int RESOURCE_3 = 18;
-    private static final int FACTORY_1 = 20;
-    private static final int FACTORY_2 = 21;
-    private static final int FACTORY_3 = 22;
-    private static final int SELLPOINT = 23;
+    private static final int depot_left_cement = 28;
+    private static final int depot_down_cement = 29;
+    private static final int depot_right_cement = 30;
+    private static final int depot_up_cement = 27;
+
+    private static final int depot_left_asphalt = 44;
+    private static final int depot_down_asphalt = 45;
+    private static final int depot_right_asphalt = 31;
+    private static final int depot_up_asphalt = 43;
+
+    // TILE IDS - Resources
+    private static final int sand = 58;
+    private static final int gravel = 59;
+    private static final int steel_oreDeposit = 60;
+    private static final int copper_oreDeposit = 61;
+    private static final int sulfur_oreDeposit = 62;
+
+    // TILE IDS - Factories
+    private static final int factory_steel = 76;
+    private static final int factory_copper = 77;
+    private static final int factory_sulfur = 78;
+    private static final int factory_cable = 79;
+    private static final int factory_copperSulfate = 80;
+    private static final int factory_hardenedSteel = 81;
+    private static final int factory_PCB = 82;
+    private static final int factory_cement = 83;
+
+    // Tile IDS - Storages Places
+    private static final int warehouse = 84;
+    private static final int bulkStorage_plant = 85;
 
     // TILE IDS - Rivers
-    private static final int RIVER_V = 24;
-    private static final int RIVER_H = 25;
-    private static final int RIVER_CROSSING_V = 26;
-    private static final int RIVER_CROSSING_H = 27;
-    private static final int RIVER_CORNER_NE = 28;
-    private static final int RIVER_CORNER_NW = 29;
-    private static final int RIVER_CORNER_SW = 30;
-    private static final int RIVER_CORNER_SE = 31;
+    private static final int river_V = 48;
+    private static final int river_H = 49;
+    private static final int riverCrossing_V_cement = 50;
+    private static final int riverCrossing_H_cement = 51;
+    private static final int riverCrossing_V_asphalt = 46;
+    private static final int riverCrossing_H_asphalt = 47;
+    private static final int riverCorner_NE = 52;
+    private static final int riverCorner_NW = 53;
+    private static final int riverCorner_SW = 54;
+    private static final int riverCorner_SE = 55;
 
     // TILE IDS - Drills & Animation
-    private static final int DRILL = 39;
-    private static final int DRILL_RESOURCE_1 = 40;
-    private static final int DRILL_RESOURCE_1_2 = 36;
-    private static final int DRILL_RESOURCE_2 = 41;
-    private static final int DRILL_RESOURCE_2_2 = 37;
-    private static final int DRILL_RESOURCE_3 = 42;
-    private static final int DRILL_RESOURCE_3_2 = 38;
+    private static final int drill = 67;
+    private static final int drill_steel_1_1 = 68;
+    private static final int drill_steel_1_2 = 64;
+    private static final int drill_copper_1_1 = 69;
+    private static final int drill_copper_1_2 = 65;
+    private static final int drill_sulfur_1_1 = 70;
+    private static final int drill_sulfur_1_2 = 66;
+    private static final int drill_steel_2 = 72;
+    private static final int drill_copper_2 = 73;
+    private static final int drill_sulfur_2 = 74;
+    private static final int excavator = 75;
 
-    // Costs
-    private static final int COST_GRASS = 1;
-    private static final int COST_FOREST = 2;
-    private static final int COST_HOUSE = 5;
-    private static final int COST_RIVER_CROSSING = 3;
-    private static final int COST_DRILL = 5;
-    private static final int COST_FACTORY = 5;
-    private static final int REFUND_FOREST = 1;
-    private static final int REFUND_HOUSE = 4;
+    private static final int[] gravel_tiles = {road_H_gravel, road_V_gravel, cross_gravel, tJunction_down_gravel, tJunction_left_gravel, tJunction_right_gravel, tJunction_up_gravel, corner_NE_gravel, corner_NW_gravel, corner_SE_gravel, corner_SW_gravel, depot_down_gravel, depot_left_gravel, depot_right_gravel, depot_up_gravel};
+    private static final int[] cement_tiles = {road_H_cement, road_V_cement, cross_cement, tJunction_down_cement, tJunction_left_cement, tJunction_right_cement, tJunction_up_cement, corner_NE_cement, corner_NW_cement, corner_SE_cement, corner_SW_cement, depot_down_cement, depot_left_cement, depot_right_cement, depot_up_cement};
+    private static final int[] asphalt_tiles = {road_H_asphalt, road_V_asphalt, cross_asphalt, tJunction_down_asphalt, tJunction_left_asphalt, tJunction_right_asphalt, tJunction_up_asphalt, corner_NE_asphalt, corner_NW_asphalt, corner_SE_asphalt, corner_SW_asphalt, depot_down_asphalt, depot_left_asphalt, depot_right_asphalt, depot_up_asphalt};
 
-    // Quick select keys
-    public static final int[] QUICK_SELECT_TILES = {
-        ROAD_V,
-        CORNER_NW,
-        ROAD_H,
-        T_JUNCTION_UP,
-        DEPOT_PICKUP_RIGHT,
-        DRILL,
-        FACTORY_1
-    };
+    public static int base_row = 1;
+    public static int base_col = 1;
 
-    public static int money = 100;
+    public static int[] storedResources = {100, 100, 100, 100, 100, 100, 100, 100, 100, 100}; // 1 = steel_ore, 2 = copper_ore, 3 = sulfur_ore, 4 = cables, 5 = copperSulfate, 6 = hardenedSteel, 7 = PCB, 8 = cement, 9 = gravel , 10 = sand
+
+    // Direction vectors
+    private static final int[][] adjacentDirections = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
     public static int[][] map = new int[100][100];
     
+    public static HashMap <String, Integer> garage = new HashMap<>();
     public static ArrayList<Route> routes = new ArrayList<>();
     public static HashMap<String, Factory> factories = new java.util.HashMap<>();
     
@@ -159,18 +199,14 @@ public class Level extends World
         private int endRow;
         private int endCol;
         private int vehicleCount;
-        private String routeColor;
-        private boolean Sell;
         
-        public Route(int startRow, int startCol, int endRow, int endCol, int vehicleCount, String routeColor, boolean Sell)
+        public Route(int startRow, int startCol, int endRow, int endCol, int vehicleCount)
         {
             this.startRow = startRow;
             this.startCol = startCol;
             this.endRow = endRow;
             this.endCol = endCol;
             this.vehicleCount = vehicleCount;
-            this.routeColor = routeColor;
-            this.Sell = Sell;
         }
         
         public int      getStartRow()                       { return startRow; }
@@ -183,51 +219,157 @@ public class Level extends World
         public void     setEndCol(int endCol)               { this.endCol = endCol; }
         public int      getVehicleCount()                   { return vehicleCount; }
         public void     setVehicleCount(int count)          { this.vehicleCount = count; }
-        public String   getRouteColor()                     { return routeColor; }
-        public void     setRouteColor(String routeColor)    { this.routeColor = routeColor; }
-        public boolean  getSell()                           { return Sell;}
-        public void     setSell(boolean Sell)               { this.Sell = Sell;}
     }
 
     // Factory is a inner class that handles the factories
     public static class Factory
     {
-        private int storedResources;
-        private float constructionTime;
-        private int processedResources;
-        private String factoryColor;
+        private String factoryType;
+        private String outputResource;  // What resources the factory can produce
 
-        public Factory(int storedResources, int constructionTime, String factoryColor)
+        private HashMap<String, Integer> inputInventory;      // Resource name, Current count stored
+        private HashMap<String, Integer> recipeRequirements;  // Resource name, Amount needed to craft
+
+        private float constructionTime;
+        private int processedOutputs;
+
+        public Factory(String factoryType)
         {
-            this.storedResources = storedResources;
-            this.constructionTime = constructionTime;
-            this.factoryColor = factoryColor;
+            this.constructionTime = 180f;
+            this.factoryType = factoryType;
+            this.processedOutputs = 0;
+            this.inputInventory = new HashMap<>();
+            this.recipeRequirements = new HashMap<>();
+
+            setRecipe();
         }
 
-        public boolean pickupResource()
+        private void setRecipe()
         {
-            if (this.processedResources > 0)
+            switch (factoryType) {
+                case "steel":
+                    recipeRequirements.put("steel_ore", 2);
+                    this.outputResource = "steel_beam";
+                    break;
+            
+                case "copper":
+                    recipeRequirements.put("copper_ore", 2);
+                    this.outputResource = "copper_spool";
+                    break;
+                
+                case "sulfur":
+                    recipeRequirements.put("sulfur_ore", 2);
+                    this.outputResource = "sulfur_pallet";
+                    break;
+
+                case "cable":
+                    recipeRequirements.put("copper_spool", 1);
+                    this.outputResource = "cable_spool";
+                    constructionTime = 360f;
+                    break;
+                
+                case "copperSulfate":
+                    recipeRequirements.put("copper_ore", 1);
+                    recipeRequirements.put("sulfur_pallet", 1);
+                    this.outputResource = "copperSulfate_IBC";
+                    break;
+
+                case "hardenedSteel":
+                    recipeRequirements.put("steel_beam", 1);
+                    recipeRequirements.put("copperSulfate_IBC", 1);
+                    this.outputResource = "hardenedSteel_beam";
+                    break;
+                
+                case  "PCB":
+                    recipeRequirements.put("steel_beam", 1);
+                    recipeRequirements.put("copper_spool", 2);
+                    this.outputResource = "PCB_pallet";
+                    break;
+
+                case "cement":
+                    recipeRequirements.put("gravel", 1);
+                    recipeRequirements.put("sand", 1);
+                    this.outputResource = "cement";
+                    break;
+
+                default:
+                    System.out.println("No valid factoryType found");
+                    System.out.println(factoryType + "Is not a valid type");
+                    break;
+            }          
+        }
+
+
+        public boolean acceptsResource(String resourceName)
+        {
+            return this.recipeRequirements.containsKey(resourceName);
+        }
+
+        public void addResource(String resourceName)
+        {
+            if (acceptsResource(resourceName))
             {
-                this.processedResources--;
-                return true;
+                int currentAmount = inputInventory.getOrDefault(resourceName, 0);
+                int maxBuffer = recipeRequirements.get(resourceName) * 3; // Buffer up to 3 batches max
+
+                if (currentAmount < maxBuffer)
+                {
+                    inputInventory.put(resourceName, currentAmount + 1);
+                }
             }
-            return false;
+        }
+
+        public boolean hasAllIngredients()
+        {
+            for (String resName : recipeRequirements.keySet())
+            {
+                int stored = inputInventory.getOrDefault(resName, 0);
+                int needed = recipeRequirements.get(resName);
+                if (stored < needed)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private void consumeIngredients()
+        {
+            for (String resName : recipeRequirements.keySet())
+            {
+                int currentAmount = inputInventory.get(resName);
+                int needed = recipeRequirements.get(resName);
+                inputInventory.put(resName, currentAmount - needed);
+            }
+        }
+
+        public String pickupResource()
+        {
+            if (this.processedOutputs > 0)
+            {
+                this.processedOutputs--;
+                return this.outputResource;
+            }
+            return null;
         }
 
         public void processesResources()
-        {   if (storedResources > 0)
+        {   if (hasAllIngredients())
             {
                 if (constructionTime > 0)
                 {
                     constructionTime--;
                 }
 
+                if (constructionTime == 180)
+                {
+                    consumeIngredients();
+                }
+
                 if (constructionTime <= 0)
                 {
-                    System.out.println(constructionTime);
-                    storedResources--;
-                    processedResources++;
-                    constructionTime = 360;
+                    processedOutputs++;
+                    constructionTime = 180;
                 }
             }
         }
@@ -237,23 +379,31 @@ public class Level extends World
             processesResources();
         }
 
-        public int      getStoredResources()        {return storedResources; }
+        public int getStoredResources()
+        {
+            int total = 0;
+            for (int count : inputInventory.values())
+            {
+                total += count;
+            }
+            return total;
+        }
+
         public float    getConstructionTime()       {return constructionTime; }
-        public String   getFactoryColor()           {return factoryColor; }
-        public void     addResource()               {this.storedResources++; }
-        public int      getProcessedResources()     {return processedResources;}
+        public int      getProcessedResources()     {return processedOutputs;}
+        public String   getOutputResource()         {return outputResource; }
     }
 
     // Constructor
     public Level()
     {
-        super(WORLD_WIDTH, WORLD_HEIGHT, 1, false);
+        super(worldWidth, worldHight, 1, false);
         loadTiles();
         generateTerrain();
         generateRiver();
-        placeTileRandomly(SELLPOINT);
+        placeTileRandomly(warehouse);
         drawMap();
-        addObject(new ui(), UI_PANEL_X, UI_PANEL_Y);
+        addObject(new ui(), UIPanel_X, UIPanel_Y);
     }
     
     // Returns camera offsets
@@ -284,26 +434,26 @@ public class Level extends World
         int newCameraX = cameraX;
         int newCameraY = cameraY;
         
-        if (Greenfoot.isKeyDown("w")|| Greenfoot.isKeyDown("up"))
+        if (Greenfoot.isKeyDown("w"))
         {
-            newCameraY -= CAMERA_SPEED;
+            newCameraY -= cameraSpeed;
         }
-        if (Greenfoot.isKeyDown("s")|| Greenfoot.isKeyDown("down"))
+        if (Greenfoot.isKeyDown("s"))
         {
-            newCameraY += CAMERA_SPEED;
+            newCameraY += cameraSpeed;
         }
-        if (Greenfoot.isKeyDown("a")|| Greenfoot.isKeyDown("left"))
+        if (Greenfoot.isKeyDown("a"))
         {
-            newCameraX -= CAMERA_SPEED;
+            newCameraX -= cameraSpeed;
         }
-        if (Greenfoot.isKeyDown("d")|| Greenfoot.isKeyDown("right"))
+        if (Greenfoot.isKeyDown("d"))
         {
-            newCameraX += CAMERA_SPEED;
+            newCameraX += cameraSpeed;
         }
         
         // Clamp camera to map bounds
-        int maxCameraX = (map[0].length * TILE_SIZE) - WORLD_WIDTH;
-        int maxCameraY = (map.length * TILE_SIZE) - WORLD_HEIGHT;
+        int maxCameraX = (map[0].length * tileSize) - worldWidth;
+        int maxCameraY = (map.length * tileSize) - worldHight;
         
         cameraX = Math.max(0, Math.min(newCameraX, maxCameraX));
         cameraY = Math.max(0, Math.min(newCameraY, maxCameraY));
@@ -313,7 +463,7 @@ public class Level extends World
     private void generateTerrain()
     {
         // Track if each resource has been placed yet
-        boolean[] resourcePlaced = new boolean[3]; //0 = resource16, 1 = resource17, 2 = resource18
+        boolean[] resourcePlaced = new boolean[5]; //0 = sand, 1 = gravel, 2 = steel_ore, 3 = copper_ore, 4 = sulfur_ore
 
         for (int row = 0; row < map.length; row++)
         {
@@ -321,34 +471,34 @@ public class Level extends World
             {
                 int random = Greenfoot.getRandomNumber(100);
 
-                if (random < FOREST_SPAWN_CHANCE)
+                if (random < forest_SpawnChance)
                 {
-                    map[row][col] = FOREST;
+                    map[row][col] = forest;
                 }
-                else if (random < FOREST_SPAWN_CHANCE + HOUSE_SPAWN_CHANCE)
+                else if (random < forest_SpawnChance + house_SpawnChance)
                 {
-                    map[row][col] = HOUSE;
+                    map[row][col] = house;
                 }
-                else if (random < FOREST_SPAWN_CHANCE + HOUSE_SPAWN_CHANCE + RESOURCE_SPAWN_CHANCE)
+                else if (random < forest_SpawnChance + house_SpawnChance + resource_SpawnChance)
                 {
-                    // Pick a random resource type (16, 17, or 18)
-                    int resourceIndex = Greenfoot.getRandomNumber(3);
-                    map[row][col] = 16 + resourceIndex;
+                    // Pick a random resource type
+                    int resourceIndex = Greenfoot.getRandomNumber(5);
+                    map[row][col] = sand + resourceIndex;
                     resourcePlaced[resourceIndex] = true;
                 }
                 else
                 {
-                    map[row][col] = GRASS;
+                    map[row][col] = grass;
                 }
             }
         }
 
         // Guarantee at least 1 of each resource type
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 5; i++)
         {
             if (!resourcePlaced[i])
             {
-                placeTileRandomly(16 + i);
+                placeTileRandomly(sand + i);
             }
         }
     }
@@ -361,35 +511,35 @@ public class Level extends World
 
         while (col < map[0].length)
         {
-            map[row][col] = RIVER_H;
+            map[row][col] = river_H;
             int turnChance = Greenfoot.getRandomNumber(100);
 
             // 20% chance to go up
             if (turnChance < 20 && row > 2 && col < map[0].length - 1)
             {
-                map[row][col] = RIVER_CORNER_NW;
+                map[row][col] = riverCorner_NW;
                 int verticalLength = 1 + Greenfoot.getRandomNumber(3);
                 for (int i = 0; i < verticalLength && row > 0; i++)
                 {
                     row--;
-                    map[row][col] = RIVER_V;
+                    map[row][col] = river_V;
                 }
                 if (col + 1 < map[0].length)
                 {
-                    map[row][col] = RIVER_CORNER_SE;
+                    map[row][col] = riverCorner_SE;
                 }
             }
             // 20% chance to go down
             else if (turnChance > 80 && row < map.length - 3 && col < map[0].length - 1)
             {
-                map[row][col] = RIVER_CORNER_SW;
+                map[row][col] = riverCorner_SW;
                 int verticalLength = 1 + Greenfoot.getRandomNumber(3);
                 for (int i = 0; i < verticalLength && row < map.length - 1; i++)
                 {
                     row++;
-                    map[row][col] = RIVER_V;
+                    map[row][col] = river_V;
                 }
-                map[row][col] = RIVER_CORNER_NE;
+                map[row][col] = riverCorner_NE;
             }
 
             col++;
@@ -404,7 +554,7 @@ public class Level extends World
             int row = Greenfoot.getRandomNumber(map.length);
             int col = Greenfoot.getRandomNumber(map[0].length);
 
-            if (map[row][col] == GRASS)
+            if (map[row][col] == grass)
             {
                 map[row][col] = tileType;
                 return;
@@ -415,55 +565,23 @@ public class Level extends World
     // Vehicle spawning
     public void spawnVehicle(int pickupRow, int pickupCol, int dropoffRow, int dropoffCol, int routeNumber, int vehicleNumber)
     {
-        String color = getDrillColor(pickupRow, pickupCol);
         int x = pickupCol * 32 + 16;
         int y = pickupRow * 32 + 16;
         
-        routes.get(ui.selectedRouteIndex).setRouteColor(color);
-        addObject(new Vehicle(pickupRow, pickupCol, dropoffRow, dropoffCol, color, true, routeNumber, vehicleNumber, routes.get(ui.selectedRouteIndex).getSell()), x, y);        
-    }
-    
-    // Checking adjacent tiles for color
-    private String getDrillColor(int row, int col)
-    {
-        for (int[] dir : ADJACENT_DIRECTIONS)
-        {
-            int newRow = row + dir[0];
-            int newCol = col + dir[1];
-            
-            if (isValidPosition(newRow, newCol))
-            {
-                int tile = map[newRow][newCol];
-                
-                if (tile == DRILL_RESOURCE_1 || tile == DRILL_RESOURCE_1_2 || tile == RESOURCE_1 || tile == FACTORY_1)
-                {
-                    return "red";
-                }
-                else if (tile == DRILL_RESOURCE_2 || tile == DRILL_RESOURCE_2_2 || tile == RESOURCE_2 || tile == FACTORY_2)
-                {
-                    return "blue";
-                }
-                else if (tile == DRILL_RESOURCE_3 || tile == DRILL_RESOURCE_3_2 || tile == RESOURCE_3 || tile == FACTORY_3)
-                {
-                    return "yellow";
-                }
-            }
-        }
-        
-        return "red"; // Default to red if no adjacent drill found
+        addObject(new Vehicle(pickupRow, pickupCol, dropoffRow, dropoffCol, routeNumber, vehicleNumber), x, y);        
     }
 
     // Returns if their are neighboring tiles with a output 
     private boolean isAdjacentToPickup(int row, int col)
     {
-        for (int[] dir : ADJACENT_DIRECTIONS)
+        for (int[] dir : adjacentDirections)
         {
             int r = row + dir[0];
             int c = col + dir[1];
             if (!isValidPosition(r, c)) continue;
             int t = map[r][c];
             // Drills (all variants) and factories count as pickup sources
-            if (t == DRILL_RESOURCE_1 || t == DRILL_RESOURCE_1_2 || t == DRILL_RESOURCE_2 || t == DRILL_RESOURCE_2_2 || t == DRILL_RESOURCE_3 || t == DRILL_RESOURCE_3_2 || t == FACTORY_1 || t == FACTORY_2 || t == FACTORY_3)
+            if (t == drill_steel_1_1 || t == drill_steel_1_2 || t == drill_copper_1_1 || t == drill_copper_1_2 || t == drill_sulfur_1_1 || t == drill_sulfur_1_2 || t == factory_steel || t == factory_copper || t == factory_sulfur)
             {
                 return true;
             }
@@ -474,20 +592,19 @@ public class Level extends World
     // Returns if their are neighboring tiles with a input
     private boolean isAdjacentToDropoff(int row, int col)
     {
-        for (int[] dir : ADJACENT_DIRECTIONS)
+        for (int[] dir : adjacentDirections)
         {
             int r = row + dir[0];
             int c = col + dir[1];
             if (!isValidPosition(r, c)) continue;
             int t = map[r][c];
             // Sell point and factories are valid dropoff destinations
-            if (t == FACTORY_1 || t == FACTORY_2 || t == FACTORY_3)
+            if (t == factory_steel || t == factory_copper || t == factory_sulfur)
             {
                 return true;
             }
-            else if (t == SELLPOINT)
+            else if (t == warehouse)
             {   
-                routes.get(ui.selectedRouteIndex).setSell(true);
                 return true;
             }
         }
@@ -498,16 +615,16 @@ public class Level extends World
     private void loadTiles()
     {
         final int TILEMAP_COLS = 4;
-        final int TOTAL_TILES = 44;
+        final int totalTiles = 88;
         GreenfootImage sheet = new GreenfootImage("tilemap_concept.png");
-        tiles = new GreenfootImage[TOTAL_TILES];
+        tiles = new GreenfootImage[totalTiles];
 
-        for (int i = 0; i < TOTAL_TILES; i++)
+        for (int i = 0; i < totalTiles; i++)
         {
             int col = i % TILEMAP_COLS;
             int row = i / TILEMAP_COLS;
-            GreenfootImage tile = new GreenfootImage(TILE_SIZE, TILE_SIZE);
-            tile.drawImage(sheet, -(col * TILE_SIZE), -(row * TILE_SIZE));
+            GreenfootImage tile = new GreenfootImage(tileSize, tileSize);
+            tile.drawImage(sheet, -(col * tileSize), -(row * tileSize));
             tiles[i] = tile;
         }
     }
@@ -518,10 +635,10 @@ public class Level extends World
         GreenfootImage bg = getBackground();
         
         // Calculate which tiles are visible
-        int startCol = cameraX / TILE_SIZE;
-        int endCol = (cameraX + WORLD_WIDTH) / TILE_SIZE + 1;
-        int startRow = cameraY / TILE_SIZE;
-        int endRow = (cameraY + WORLD_HEIGHT) / TILE_SIZE + 1;
+        int startCol = cameraX / tileSize;
+        int endCol = (cameraX + worldWidth) / tileSize + 1;
+        int startRow = cameraY / tileSize;
+        int endRow = (cameraY + worldHight) / tileSize + 1;
         
         // Clamp to map bounds
         startCol = Math.max(0, startCol);
@@ -534,8 +651,8 @@ public class Level extends World
             for (int col = startCol; col < endCol; col++)
             {
                 int tileId = getAnimatedTileId(map[row][col]);
-                int screenX = col * TILE_SIZE - cameraX;
-                int screenY = row * TILE_SIZE - cameraY;
+                int screenX = col * tileSize - cameraX;
+                int screenY = row * tileSize - cameraY;
                 bg.drawImage(tiles[tileId], screenX, screenY);
             }
         }
@@ -544,15 +661,98 @@ public class Level extends World
     // Returns next frame for animated tiles
     private int getAnimatedTileId(int tileId)
     {
-        int frame = (animationCounter / ANIMATION_SPEED) % 2;
-        if (tileId == DRILL_RESOURCE_1 || tileId == DRILL_RESOURCE_1_2) {
-            return frame == 0 ? DRILL_RESOURCE_1 : DRILL_RESOURCE_1_2;
-        } else if (tileId == DRILL_RESOURCE_2 || tileId == DRILL_RESOURCE_2_2) {
-            return frame == 0 ? DRILL_RESOURCE_2 : DRILL_RESOURCE_2_2;
-        } else if (tileId == DRILL_RESOURCE_3 || tileId == DRILL_RESOURCE_3_2) {
-            return frame == 0 ? DRILL_RESOURCE_3 : DRILL_RESOURCE_3_2;
+        int frame = (animationCounter / animationSpeed) % 2;
+        if (tileId == drill_steel_1_1 || tileId == drill_steel_1_2) {
+            return frame == 0 ? drill_steel_1_1 : drill_steel_1_2;
+        } else if (tileId == drill_copper_1_1 || tileId == drill_copper_1_2) {
+            return frame == 0 ? drill_copper_1_1 : drill_copper_1_2;
+        } else if (tileId == drill_sulfur_1_1 || tileId == drill_sulfur_1_2) {
+            return frame == 0 ? drill_sulfur_1_1 : drill_sulfur_1_2;
         }
         return tileId;
+    }
+
+    public static int getUpgradedTileId(int current, int selected)
+    {
+        if (selected == road_V_cement)
+        {
+            for (int i = 0; i < gravel_tiles.length; i++)
+            {
+                if (current == gravel_tiles[i]) return cement_tiles[i];
+            }
+        }
+        if (selected == road_V_asphalt)
+        {
+            for (int i = 0; i < gravel_tiles.length; i++)
+            {
+                if (current == gravel_tiles[i] || current == cement_tiles[i]) return asphalt_tiles[i];
+            }
+        }
+        return -1;
+    }
+
+    public static int[] getPrice(int tileId)
+    {
+        if (grass < tileId && tileId <road_V_cement)
+        {
+            return new int[] {0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
+        }
+        else if (tileId == road_V_cement)
+        {
+            return new int[] {0, 0, 0, 0, 0, 0, 0, 1, 0, 0};
+        }
+        else if (tileId == road_V_asphalt)
+        {
+            System.out.println("asphalt not implemented jet");
+            return null;
+        }
+        else if (tileId == riverCrossing_H_cement || tileId == riverCrossing_V_cement)
+        {
+            return new int[] {0, 0, 0, 0, 0, 0, 0, 2, 0, 0};
+        }
+        else if (tileId == drill)
+        {
+            return new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        }
+        else if (factory_steel - 1 < tileId || tileId < factory_cement + 1)
+        {
+            return new int[] {1, 0, 0, 0, 0, 0, 0, 1, 0, 0};
+        }
+        else if (tileId == -1)
+        {
+            return new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        }
+        return null;
+    }
+
+    public static boolean payResourceCost(int[] cost)
+    {
+        if (cost == null) return true;
+
+        for (int i = 0; i < storedResources.length; i++)
+        {
+            if (storedResources[i] < cost[i])
+            {
+                System.out.println("Not enough resources to build this");
+                return false;
+            }
+        }
+
+        for (int i = 0; i < storedResources.length; i++)
+        {
+            storedResources[i] -= cost[i];
+        }
+        return true;
+    }
+
+    public static void refundResourceCost(int[] cost)
+    {
+        if (cost == null) return;
+
+        for (int i = 0; i < storedResources.length; i++)
+        {
+            storedResources[i] += cost[i];
+        }
     }
 
     // Passes click trough to the right function and helps with dragging
@@ -566,8 +766,8 @@ public class Level extends World
         }
 
         //  Convert screen coordinates to tile coordinates
-        effected_col = (mouse.getX() + cameraX) / TILE_SIZE;
-        effected_row = (mouse.getY() + cameraY) / TILE_SIZE;
+        effected_col = (mouse.getX() + cameraX) / tileSize;
+        effected_row = (mouse.getY() + cameraY) / tileSize;
 
         if (!isValidPosition(effected_row, effected_col)) return;
         
@@ -641,52 +841,6 @@ public class Level extends World
     {
         if (!isValidPosition(effected_row, effected_col)) return;
 
-        // Route making mode
-        if (ui.activeTab == 1)
-        {
-            int tile = map[effected_row][effected_col];
-            if (tile >= 12 && tile <= 15)
-            {
-                if (ui.routeStep == 0)
-                {
-                    if (!isAdjacentToPickup(effected_row, effected_col))
-                    {
-                        System.out.println("Pickup depot must be next to a drill or factory!");
-                        return;
-                    }
-                    routes.get(ui.selectedRouteIndex).setStartRow(effected_row);
-                    routes.get(ui.selectedRouteIndex).setStartCol(effected_col);
-                    ui.routeStep = 1;
-                }
-                else if (ui.routeStep == 1)
-                {
-                    if (effected_row == routes.get(ui.selectedRouteIndex).getStartRow()
-                        && effected_col == routes.get(ui.selectedRouteIndex).getStartCol())
-                    {
-                        System.out.println("Cannot select the same depot for pickup and dropoff!");
-                    }
-                    else if (ui.routeExists(routes.get(ui.selectedRouteIndex).getStartRow(),
-                                            routes.get(ui.selectedRouteIndex).getStartCol(),
-                                            effected_row, effected_col))
-                    {
-                        System.out.println("Route already exists!");
-                    }
-                    // NEW: second depot must be adjacent to a dropoff (sell point or factory)
-                    else if (!isAdjacentToDropoff(effected_row, effected_col))
-                    {
-                        System.out.println("Dropoff depot must be next to a sell point or factory!");
-                    }
-                    else
-                    {
-                        routes.get(ui.selectedRouteIndex).setEndRow(effected_row);
-                        routes.get(ui.selectedRouteIndex).setEndCol(effected_col);
-                        ui.routeStep = 2;
-                    }
-                }
-            }
-            return;
-        }
-
         if (!ui.isOpen)
         {
             String coordinateKey = effected_row + "," + effected_col;
@@ -718,92 +872,138 @@ public class Level extends World
 
         // Build mode
         int currentTile = map[effected_row][effected_col];
+        int[] cost = getPrice(selectedTile);
         
-        if (currentTile == selected_tile) return;
+        if (currentTile == selectedTile) return;
 
         if (ui.isOpen)
         {
             switch (currentTile)
             {
+
                 // Terrain tiles can be replaced by roads/depots or factories
-                case GRASS:
-                case FOREST:
-                case HOUSE:
-                    int cost = (currentTile == FOREST) ? COST_FOREST : (currentTile == HOUSE)  ? COST_HOUSE : COST_GRASS;
+                case grass:
+                case forest:
+                case house:
 
-                    boolean isFactory = (selected_tile == FACTORY_1 || selected_tile == FACTORY_2 || selected_tile == FACTORY_3);
+                    boolean isFactory = (selectedTile == factory_steel || selectedTile == factory_copper || selectedTile == factory_sulfur || selectedTile == factory_cable || selectedTile == factory_copperSulfate || selectedTile == factory_hardenedSteel || selectedTile == factory_PCB || selectedTile == factory_cement);
 
-                    if (selected_tile != DRILL)
+                    if (selectedTile!= drill)
                     {
-                        money -= isFactory ? COST_FACTORY : cost;
-                        map[effected_row][effected_col] = selected_tile;
-
-                        if (isFactory)
-                        {
-                            String coordinateKey = effected_row + "," + effected_col;
-                            String factoryColor = (selected_tile == FACTORY_1) ? "red" : (selected_tile == FACTORY_2) ? "blue" : "yellow";
-                            factories.put(coordinateKey, new Factory(0, 360, factoryColor));
+                        if (payResourceCost(cost))
+                        {   
+                            map[effected_row][effected_col] = selectedTile;
+                        
+                            if (isFactory)
+                            {
+                                String coordinateKey = effected_row + "," + effected_col;
+                                String factoryType = (selectedTile == factory_steel) ? "steel" : (selectedTile == factory_copper) ? "copper" : (selectedTile == factory_sulfur) ? "sulfur" : (selectedTile == factory_cable) ? "cable" : (selectedTile == factory_copperSulfate) ? "copperSulfate" : (selectedTile == factory_hardenedSteel) ? "hardenedSteel" : (selectedTile == factory_PCB) ? "PCB" : (selectedTile == factory_cement) ? "cement" : null;
+                                factories.put(coordinateKey, new Factory(factoryType));
+                            }
                         }
                     }
                     break;
                 
                 // Building a river crossing
-                case RIVER_V:
-                    if (selected_tile == ROAD_H)
+                case river_V:
+                    if (selectedTile == riverCrossing_H_cement)
                     {
-                        money -= COST_RIVER_CROSSING;
-                        map[effected_row][effected_col] = RIVER_CROSSING_H;
+                        if (payResourceCost(cost))
+                        {
+                            map[effected_row][effected_col] = riverCrossing_H_cement;
+                        }
                     }
                     break;
 
-                case RIVER_H:
-                    if (selected_tile == ROAD_V)
+                case river_H:
+                    if (selectedTile == riverCrossing_V_cement)
                     {
-                        money -= COST_RIVER_CROSSING;
-                        map[effected_row][effected_col] = RIVER_CROSSING_V;
+                        if (payResourceCost(cost))
+                        {
+                            map[effected_row][effected_col] = riverCrossing_V_cement;
+                        }
                     }
                     break;
 
                 //  Placing a drill
-                case RESOURCE_1:
-                    if (selected_tile == DRILL)
+                case steel_oreDeposit:
+                    if (selectedTile == excavator)
                     {
-                        money -= COST_DRILL;
-                        map[effected_row][effected_col] = DRILL_RESOURCE_1;
+                        map[effected_row][effected_col] = drill_steel_2;
+                    }
+                    if (selectedTile == drill)
+                    {
+                        if (payResourceCost(cost))
+                        {
+                            map[effected_row][effected_col] = drill_steel_1_1;
+                        }
                     }
                     break;
 
-                case RESOURCE_2:
-                    if (selected_tile == DRILL)
+                case copper_oreDeposit:
+                    if (selectedTile == excavator)
                     {
-                        money -= COST_DRILL;
-                        map[effected_row][effected_col] = DRILL_RESOURCE_2;
+                        map[effected_row][effected_col] = drill_copper_2;
+                    }
+
+                    if (selectedTile == drill)
+                    {
+                        if (payResourceCost(cost))
+                        {
+                            map[effected_row][effected_col] = drill_copper_1_1;
+                        }
                     }
                     break;
                 
-                case RESOURCE_3:
-                    if (selected_tile == DRILL)
+                case sulfur_oreDeposit:
+                    if (selectedTile == excavator)
                     {
-                        money -= COST_DRILL;
-                        map[effected_row][effected_col] = DRILL_RESOURCE_3;
+                        map[effected_row][effected_col] = drill_sulfur_2;
+                    }
+                    if (selectedTile == drill)
+                    {
+                        if (payResourceCost(cost))
+                        {
+                            map[effected_row][effected_col] = drill_sulfur_1_1;
+                        }
                     }
                     break;
-                
+
                 // Cannot place on these tiles
-                case RIVER_CORNER_NE:
-                case RIVER_CORNER_NW:
-                case RIVER_CORNER_SW:
-                case RIVER_CORNER_SE:
-                case RIVER_CROSSING_V:
-                case RIVER_CROSSING_H:
-                case DRILL_RESOURCE_1:
-                case DRILL_RESOURCE_2:
-                case DRILL_RESOURCE_3:
+                case riverCorner_NE:
+                case riverCorner_NW:
+                case riverCorner_SW:
+                case riverCorner_SE:
+                case riverCrossing_V_asphalt:
+                case riverCrossing_H_asphalt:
+                case drill_steel_1_1:
+                case drill_steel_1_2:
+                case drill_copper_1_1:
+                case drill_copper_1_2:
+                case drill_sulfur_1_1:
+                case drill_sulfur_1_2:
                     break;
                 
                 // If there is already something build it overwrites
                 default:
-                    map[effected_row][effected_col] = selected_tile;
+                    if (selectedTile != excavator)
+                    {
+                        if (payResourceCost(cost))
+                        {
+                            map[effected_row][effected_col] = selectedTile;
+                    
+                        }
+                    }
+                    int upgradedTile = getUpgradedTileId(currentTile, selectedTile);
+
+                    if (upgradedTile != -1)
+                    {
+                        if (payResourceCost(cost))
+                        {
+                            map[effected_row][effected_col] = upgradedTile;
+                        }
+                    }
+                    break;
             }
         }
     }
@@ -825,80 +1025,81 @@ public class Level extends World
 
         switch (currentTile)
         {
-            case GRASS:
+            case grass:
                 break;
             
-            case RIVER_CROSSING_V:
-                money += COST_RIVER_CROSSING;
-                map[effected_row][effected_col] = RIVER_H;
+            case riverCrossing_V_cement:
+            case riverCrossing_V_asphalt:
+                refundResourceCost(getPrice(currentTile));
+                map[effected_row][effected_col] = river_H;
                 break;
             
-            case RIVER_CROSSING_H:
-                money += COST_RIVER_CROSSING;
-                map[effected_row][effected_col] = RIVER_V;
-                break;
-            
-            case HOUSE:
-                money -= REFUND_HOUSE;
-                map[effected_row][effected_col] = GRASS;
-                break;
-            
-            case FOREST:
-                money -= REFUND_FOREST;
-                map[effected_row][effected_col] = GRASS;
-                break;
-        
-            case DRILL_RESOURCE_1:
-                money += COST_DRILL;
-                map[effected_row][effected_col] = RESOURCE_1;
-                break;
-            
-            case DRILL_RESOURCE_2:
-                money += COST_DRILL;
-                map[effected_row][effected_col] = RESOURCE_2;
-                break;
-            
-            case DRILL_RESOURCE_3:
-                money += COST_DRILL;
-                map[effected_row][effected_col] = RESOURCE_3;
+            case riverCrossing_H_cement:
+            case riverCrossing_H_asphalt:
+                refundResourceCost(getPrice(currentTile));
+                map[effected_row][effected_col] = river_V;
                 break;
 
-            case FACTORY_1:
-            case FACTORY_2:
-            case FACTORY_3:
-                money += COST_FACTORY;
-                map[effected_row][effected_col] = GRASS;
+            case factory_steel:
+            case factory_copper:
+            case factory_sulfur:
+            case factory_cable:
+            case factory_copperSulfate:
+            case factory_hardenedSteel:
+            case factory_PCB:
+            case factory_cement:
+                refundResourceCost(getPrice(currentTile));
+                map[effected_row][effected_col] = grass;
                 factories.remove(effected_row + "," + effected_col);
                 break;
 
             // cannot be removed
-            case RIVER_V:
-            case RIVER_H:
-            case RIVER_CORNER_NE:
-            case RIVER_CORNER_NW:
-            case RIVER_CORNER_SW:
-            case RIVER_CORNER_SE:
-            case RESOURCE_1:
-            case RESOURCE_2:
-            case RESOURCE_3:
+            case river_V:
+            case river_H:
+            case riverCorner_NE:
+            case riverCorner_NW:
+            case riverCorner_SW:
+            case riverCorner_SE:
+            case steel_oreDeposit:
+            case copper_oreDeposit:
+            case sulfur_oreDeposit:
                 break;
             
             default:
-                money++;
-                map[effected_row][effected_col] = GRASS;
+                refundResourceCost(getPrice(currentTile));
+                callConstructionCrew("dozer", effected_row, effected_col);
         }
     }
 
     // Hotkeys for selecting tiles
     private void selectTile()
     {
-        updateSelectedTile("1", ROAD_V);
-        updateSelectedTile("2", CORNER_NW);
-        updateSelectedTile("3", CROSS);
-        updateSelectedTile("4", T_JUNCTION_UP);
-        updateSelectedTile("5", DEPOT_PICKUP_RIGHT);
-        updateSelectedTile("6", DRILL);
-        updateSelectedTile("7", FACTORY_1);
+        if (ui.activeSubTab == 0){
+            updateSelectedTile("1", road_V_gravel);
+            updateSelectedTile("2", corner_NW_gravel);
+            updateSelectedTile("3", cross_gravel);
+            updateSelectedTile("4", tJunction_up_gravel);
+            updateSelectedTile("5", depot_right_gravel);
+            updateSelectedTile("6", riverCrossing_V_cement);
+            updateSelectedTile("7", road_V_cement);
+            updateSelectedTile("8", road_V_asphalt);
+        }
+        else if (ui.activeSubTab == 1)
+        {
+            updateSelectedTile("1", factory_steel);
+            updateSelectedTile("2", factory_copper);
+            updateSelectedTile("3", factory_sulfur);
+            updateSelectedTile("4", factory_cable);
+            updateSelectedTile("5", factory_copperSulfate);
+            updateSelectedTile("6", factory_hardenedSteel);
+            updateSelectedTile("7", factory_PCB);
+            updateSelectedTile("8", factory_cement);
+        }
+        else if (ui.activeSubTab == 2)
+        {
+            updateSelectedTile("1", excavator);
+            updateSelectedTile("2", drill);
+        }
 
         if (Greenfoot.isKeyDown("r") && !rKeyWasDown)
         {
@@ -913,7 +1114,7 @@ public class Level extends World
     {
         if (Greenfoot.isKeyDown(key))
         {
-            selected_tile = tileId;
+            selectedTile = tileId;
         }
     }
 
@@ -925,21 +1126,20 @@ public class Level extends World
             return;
         }
         getBackground().setColor(new Color(0, 150, 255, 100));
-        int screenX = effected_col * TILE_SIZE - cameraX;
-        int screenY = effected_row * TILE_SIZE - cameraY;
-        getBackground().fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
+        int screenX = effected_col * tileSize - cameraX;
+        int screenY = effected_row * tileSize - cameraY;
+        getBackground().fillRect(screenX, screenY, tileSize, tileSize);
     }
 
     // Cycles through the rotations of the selected tile
     private void rotate()
     {
-        selected_tile = rotateThrough(
-            selected_tile,
-            new int[]{ROAD_V, ROAD_H},
-            new int[]{T_JUNCTION_UP, T_JUNCTION_DOWN, T_JUNCTION_LEFT, T_JUNCTION_RIGHT},
-            new int[]{CORNER_NW, CORNER_SW, CORNER_SE, CORNER_NE},
-            new int[]{DEPOT_PICKUP_RIGHT, DEPOT_PICKUP_DOWN, DEPOT_PICKUP_LEFT, DEPOT_PICKUP_UP},
-            new int[]{FACTORY_1, FACTORY_2, FACTORY_3}
+        selectedTile = rotateThrough(
+            selectedTile,
+            new int[]{road_V_gravel, road_H_gravel},
+            new int[]{tJunction_right_gravel, tJunction_down_gravel, tJunction_left_gravel, tJunction_up_gravel},
+            new int[]{corner_NW_gravel, corner_SW_gravel, corner_SE_gravel, corner_NE_gravel},
+            new int[]{depot_right_gravel, depot_down_gravel, depot_left_gravel, depot_up_gravel}
         );
     }
 
@@ -965,4 +1165,32 @@ public class Level extends World
         {
             return row >= 0 && row < map.length && col >= 0 && col < map[0].length;
         }
+
+
+    public void callConstructionCrew(String type, int row, int col)
+    {
+        ConstructionVehicles existingWorkers = null;
+        List<ConstructionVehicles> activeWorkers = getObjects(ConstructionVehicles.class);
+
+        for (ConstructionVehicles worker : activeWorkers)
+        {
+            if (worker.getVehicleType().equals(type))
+            {
+                existingWorkers = worker;
+                break;
+            }
+        }
+        if (existingWorkers != null)
+        {
+            existingWorkers.addToWorkQueue(row, col);
+        }
+        else 
+        {
+            ArrayList<int[]> initialTask = new ArrayList<int[]>();
+            initialTask.add(new int[]{row, col});
+            
+            ConstructionVehicles newWorker = new ConstructionVehicles(type, base_row, base_col, initialTask);
+            addObject(newWorker, 0, 0);
+        }
+    }
 }
