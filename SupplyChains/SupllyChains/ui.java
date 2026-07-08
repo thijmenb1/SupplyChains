@@ -1,28 +1,11 @@
 import greenfoot.*;
-
-/**
- * UI - the hud of the game
- * 
- * Functions:
- * - addedToWorld()             Makes sure it is centred
- * - act()                      Main loop
- * - toggleOpen()               Opens and closes ui
- * - handleInput()              Handles all clicking on the ui
- * - renderTabs()               draws the bare UI
- * - drawTileSelectionTab()     Draws the hotbar (Tab 0)
- * - drawRoute()                Draws the route management panel (Tab 1)
- * - drawMoney()                Draws the money at the bottom
- * - getTileImage()             Helper for hotbar returns the correct img
- * - isSelectedQuikeSlot()      Helper for hotbar returns if tile is on hotbar
- * - getDisplayTileIdForSlot()  Helper for hotbar returns the tile to display in hotbar
- * - drawRoaIcon()              draws icon for Tab 0
- * - drawLocationPin()          draws icon for tab 1
- * - isMouseOverUI()            Returns whether mouse is over ui
- * - routExists()               Checks whether a route already exists
- */
+import java.util.List;
+import java.util.ArrayList;
 
 public class ui extends Actor
 {
+    public static ui instance;
+
     // UI State
     public static boolean isOpen = true;
     public static int activeTab = 0;        // 0 = building, 1 = route making
@@ -40,7 +23,7 @@ public class ui extends Actor
     // Tab Constants
     private static final int panel_width = 120;
     private static final int panel_height = 260;
-    private static final int panel_start_X = 1280 - panel_width + 10;
+    private static final int panel_start_X = 1280 - panel_width; // Shift slightly left to fix spacing layout boundaries
     private static final int tab_width = 40;
     private static final int tab_height = 50;
     private static final int tab_spacing = 5;
@@ -62,30 +45,56 @@ public class ui extends Actor
     public static String uiMode = "home"; // "home", "adding", "viewing", "editing"
     public static int vehicleCount = 0;
 
-    public static int selectedRouteIndex = -1;
+    public static int selectedGarageIndex = -1;
+    public static int selectedShopIndex = -1;
     private static int vehicleShopScroll = 0;
     private static final int VEHICLE_SHOP_ROW_HEIGHT = 66;
     private static final int VEHICLE_SHOP_VISIBLE_ROWS = 3;
-    private int keyDelayTimer = 0;
+
+    private int popupTimer = 0;
+    private String activePopupMessage = "";
+    public static int messageTimer = 0;
+    private String activeMessage = "";
+
+    public static boolean clickedVehicle = false;
+    private int vehicleCargoQuantity;
+    private String vehicleId;
+    private String vehicleCargo;
+    private int vehicleUiX;
+    private int vehicleUiY;
+    public static Vehicle selectedVehicle = null;
+
+    public static int location_1_row;
+    public static int location_1_col;
+    public static int location_2_row;
+    public static int location_2_col;
+    public static String workType = "transport_route";
 
     private static final int [][][] categoryGroups = 
     {
         // Sub 0: Roads & Depots
-        { {1, 2}, {11, 10, 9, 8}, {3}, {4, 5, 6, 7}, {14, 13, 12, 15}, {50, 51}, {16}, {32}},
+        { {1, 2}, {11, 10, 9, 8}, {3}, {4, 5, 6, 7}, {14, 13, 12, 15}, {60, 61}, {17}, {33}},
         // Sub 1: Factories
-        { {76}, {77}, {78}, {79}, {80}, {81}, {82}, {83} },
+        { {96}, {97}, {98}, {99}, {100}, {101}, {102}, {103} },
         // Sub 2: Drills
-        { {75}, {67} }
+        { {91}, {80} },
+        // Sub 3: Base
+        { {104}, {500, 506}, {501, 507}, {502, 508}, {503, 509} }
     };
 
     private static final int[][] categoryDefaults =
     {
-        {1, 11, 3, 4, 14, 50, 16, 32},      // Roads defaults
-        {76, 77, 78, 79, 80, 81, 82, 83},   // Factories defaults
-        {75, 67}                                // Drills defaults
+        {1, 11, 3, 4, 14, 60, 17, 33},      // Roads defaults
+        {96, 97, 98, 99, 100, 101, 102, 103},   // Factories defaults
+        {91, 80},                            // Drills defaults
+        {104, 500, 501, 502, 503}           // base
     };
     
-  
+    public ui()
+    {
+        instance = this;
+    }
+
     protected void addedToWorld(World world)
     {
         setLocation(640, 360);
@@ -96,6 +105,14 @@ public class ui extends Actor
         toggleOpen();
         handleInput();
         renderTabs();
+        if (popupTimer > 0)
+        {
+            popupTimer--;
+        }
+        if (messageTimer > 0)
+        {
+            messageTimer--;
+        }
     }
     
     public void toggleOpen()
@@ -113,17 +130,13 @@ public class ui extends Actor
     private void handleInput()
     {
         MouseInfo mouse = Greenfoot.getMouseInfo();
-        if (mouse == null)
-        {
-            return;
-        }
+        if (mouse == null) return;
 
         int mx = mouse.getX();
         int my = mouse.getY();
 
         if (Greenfoot.mouseClicked(null))
         {
-            int contentStartX = 5;
             int contentStartY = 30;
 
             for (int i = 0; i < NUM_TABS; i++)
@@ -141,6 +154,8 @@ public class ui extends Actor
                     else
                     {
                         activeTab = i;
+                        activeSubTab = 0;
+                        uiMode = "home";
                         isOpen = true;
                     }
                     return;
@@ -170,74 +185,250 @@ public class ui extends Actor
                         return;
                     }
                 }
+                else if (my >= 25 && my <= 35 && activeTab == 0)
+                {
+                    if (mx >= panel_start_X + 5 && mx < panel_start_X + 45)
+                    {
+                        activeSubTab = 3;
+                        vehicleShopScroll = 0;
+                        return;
+                    }
+                }
             }
 
             if (isOpen && activeTab == 1)
             {
+                List<Vehicle> flatVehicles = getFlatVehicleList();
+                int maxVisibleRows = Math.max(1, VEHICLE_SHOP_VISIBLE_ROWS);
+                
                 if (uiMode.equals("home"))
                 {
-                    for (int i = 0; i < Level.garage.size(); i++)
-                    {
-                        int rowX = panel_start_X + contentStartX + 5;
-                        int rowY = contentStartY + 32 + i * 35;
-                        int rowW = panel_width - 30;
-                        int rowH = 30;
+                    int visibleRows = Math.min(flatVehicles.size() - vehicleShopScroll, maxVisibleRows);
+                    int nextY = contentStartY + 6;
 
-                        if (mx > rowX && mx < rowX + rowW &&
-                            my > rowY && my < rowY + rowH)
+                    for (int i = 0; i < visibleRows; i++)
+                    {
+                        int garageIndex = vehicleShopScroll + i;
+                        int rowY = contentStartY + 6 + i * VEHICLE_SHOP_ROW_HEIGHT;
+                        nextY = rowY + VEHICLE_SHOP_ROW_HEIGHT;
+
+                        if (mx >= panel_start_X + 3 && mx <= panel_start_X + panel_width - 5 &&
+                            my >= rowY && my <= rowY + VEHICLE_SHOP_ROW_HEIGHT - 6)
                         {
-                            selectedRouteIndex = i;
+                            selectedGarageIndex = garageIndex;
+                            selectedVehicle = flatVehicles.get(garageIndex); 
                             uiMode = "viewing";
                             return;
                         }
                     }
 
-                    int addButtonX = panel_start_X + contentStartX + 5;
-                    int addButtonY = contentStartY + 32 + Level.garage.size() * 35;
-                    int addButtonW = panel_width - 30;
-                    int addButtonH = 30;
+                    // Dynamic shop button location logic
+                    int btnY = nextY + 5;
+                    int btnW = panel_width - 10;
+                    int btnH = 22;
 
-                    if (mx > addButtonX && mx < addButtonX + addButtonW &&
-                        my > addButtonY && my < addButtonY + addButtonH)
+                    if (mx >= panel_start_X + 5 && mx <= panel_start_X + 5 + btnW &&
+                        my >= btnY && my <= btnY + btnH)
                     {
                         uiMode = "buying";
                         vehicleShopScroll = 0;
                         return;
                     }
                 }
+                else if (uiMode.equals("buying"))
+                {
+
+                    int actualContentStartY = 35;
+                    if (mx >= panel_start_X && mx <= panel_start_X + 30 && my >= actualContentStartY && my <= actualContentStartY + 15)
+                    {
+                        uiMode = "home";
+                        return;
+                    }
+
+                    int itemCount = getVehicleShopItemCount();
+                    int visibleRows = Math.min(itemCount - vehicleShopScroll, maxVisibleRows);
+
+                    for (int i = 0; i < visibleRows; i++)
+                    {
+                        int slotIndex = vehicleShopScroll + i;
+                        int rowY = contentStartY + 6 + i * VEHICLE_SHOP_ROW_HEIGHT;
+                        
+                        if (mx >= panel_start_X + 3 && mx <= panel_start_X + panel_width - 5 &&
+                            my >= rowY && my <= rowY + VEHICLE_SHOP_ROW_HEIGHT - 6)
+                        {
+                            selectedShopIndex = slotIndex;
+                            uiMode = "buy-viewing";
+                            return;
+                        }
+                    }
+                }
+                else if (uiMode.equals("buy-viewing"))
+                {
+                    Level level = (Level) getWorld();
+                    if (mx >= panel_start_X + 5 && mx <= panel_start_X + 35 && my >= contentStartY + 5 && my <= contentStartY + 20)
+                    {
+                        uiMode = "buying";
+                        return;
+                    }
+                    
+                    int btnY = contentStartY + 185;
+                    int btnW = (panel_width - 16) / 2;
+                    int btnH = 22;
+                    int[] cost = {getVehicleCost(selectedShopIndex), 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+                    if (mx >= panel_start_X + 5 && mx <= panel_start_X + 5 + btnW &&
+                        my >= btnY && my <= btnY + btnH)
+                    {
+                        if (Level.payResourceCost(cost))
+                        {
+                            message("Bought " + getVehicleName(selectedShopIndex), 360);
+                            level.addVehicleToGarage(getVehicleName(selectedShopIndex));
+                        }
+                    }
+                    else if (mx >= panel_start_X + 5 + btnW + 4 && mx <= panel_start_X + 5 + btnW + 4 + btnW &&
+                             my >= btnY && my <= btnY + btnH)
+                    {
+                        if (Level.resourceDebt[0] + cost[0] >= Level.maxResourceDebt)
+                        {
+                            popUpMessage("You cant lend enough resources to finance this vehicle, you need to pay off some debt first.  ", 180);
+                        }
+                        else
+                        {
+                            Level.addDebt(cost);
+                            level.addVehicleToGarage(getVehicleName(selectedShopIndex));
+                            popUpMessage("This vehicle will now take half off your steel until it got 1.5 x the price ", 180);
+                        }
+                    }
+                }
                 else if (uiMode.equals("viewing"))
                 {
-                    // Add your back/sell buttons here later!
+                    if (mx >= panel_start_X + 5 && mx <= panel_start_X + 35 && my >= contentStartY + 5 && my <= contentStartY + 20)
+                    {
+                        uiMode = "home";
+                        return;
+                    }
+
+                    // Click coordinates for "Set task" button
+                    int actualContentStartY = 35; 
+                    int cardX = 5 + 2; // contentStartX is 5, plus the padding of 2
+                    int btnY = actualContentStartY + 185; 
+                    int cardW = (panel_width - 10) - 4; 
+                    int btnH = 22;
+
+                    if (mx >= panel_start_X + cardX && mx <= panel_start_X + cardX + cardW &&
+                        my >= btnY && my <= btnY + btnH)
+                    {
+                        uiMode = "task";
+                        return;
+                    }
+                }
+                else if (uiMode.equals("task"))
+                {
+                    // Back option from task menu back to viewing details
+                    int actualContentStartY = 35;
+                    if (mx >= panel_start_X + 5 && mx <= panel_start_X + 35 && my >= actualContentStartY + 5 && my <= actualContentStartY + 20)
+                    {
+                        uiMode = "viewing";
+                        routeStep = 0;
+                        return;
+                    }
+
+                    int cardX = 5 + 2; 
+                    int cardW = (panel_width - 10) - 4;
+                    int actionBtnW = (cardW - 4) / 2;
+                    
+                    String vehType = selectedVehicle.getVehicleType();
+                    boolean isConstruction = vehType.equals("Dozer") || vehType.equals("Asphalt Paver") || vehType.equals("Excavator");
+
+                    // Click Point 1 Button
+                    if (mx >= panel_start_X + cardX && mx <= panel_start_X + cardX + cardW &&
+                        my >= contentStartY + 45 && my <= contentStartY + 45 + 20)
+                    {
+                        routeStep = 1;
+                        message("Click on the world map to set target", 180);
+                        return;
+                    }
+
+                    // Click Point 2 Button (Only accessible if not a construction machine)
+                    if (!isConstruction && mx >= panel_start_X + cardX && mx <= panel_start_X + cardX + cardW &&
+                        my >= contentStartY + 75 && my <= contentStartY + 75 + 20)
+                    {
+                        routeStep = 2;
+                        message("Click on the world map to set destination", 180);
+                        return;
+                    }
+
+                    // Bottom Action Buttons
+                    int actionBtnY = contentStartY + 185;
+                    // Cancel Button Pressed
+                    if (mx >= panel_start_X + cardX && mx <= panel_start_X + cardX + actionBtnW &&
+                        my >= actionBtnY && my <= actionBtnY + 22)
+                    {
+                        uiMode = "viewing";
+                        routeStep = 0;
+                        return;
+                    }
+                    
+                    // Send Task Button Pressed
+                    if (mx >= panel_start_X + cardX + actionBtnW + 4 && mx <= panel_start_X + cardX + cardW &&
+                        my >= actionBtnY && my <= actionBtnY + 22)
+                    {
+                        if (isConstruction)
+                        {
+                            selectedVehicle.addToWorkQueue(new Vehicle.Task(location_1_row, location_1_col, "Construction"));
+                        }
+                        else
+                        {
+                            selectedVehicle.addToWorkQueue(new Vehicle.Task(location_1_row, location_1_col, workType, location_1_row, location_1_col, location_2_row, location_2_col, ""));
+                        }
+                        message("Task dispatched to vehicle!", 200);
+                        uiMode = "home";
+                        routeStep = 0;
+                        return;
+                    }
+                }
+            }
+            if (clickedVehicle && selectedVehicle != null) 
+            {
+                int btnX = vehicleUiX + 10;
+                int btnY = vehicleUiY + 80;
+                if (mx >= btnX && mx <= btnX + 100 && my >= btnY && my <= btnY + 18)
+                {
+                    activeTab = 1; 
+                    isOpen = true;
+                    uiMode = "viewing";
+                    
+                    String typeName = selectedVehicle.getVehicleType();
+                    List<String> garageVehicles = new ArrayList<String>(Level.garage.keySet());
+                    selectedGarageIndex = garageVehicles.indexOf(typeName); 
+                    
+                    clickedVehicle = false; 
+                    return;
                 }
             }
         }
 
-        if (isOpen && activeTab == 1 && uiMode.equals("buying"))
+        if (isOpen && activeTab == 1 && (uiMode.equals("buying") || uiMode.equals("home")))
         {
-            if (keyDelayTimer > 0)
-            {
-                keyDelayTimer--;
-            }
-
+            // Fetch the key that was clicked down this frame, if any
+            String key = Greenfoot.getKey();
             int scrollDirection = 0;
 
-            if (keyDelayTimer == 0)
+            if (key != null)
             {
-                if (Greenfoot.isKeyDown("up"))
+                if (key.equals("up"))
                 {
                     scrollDirection = -1;
-                    keyDelayTimer = 12;
                 }
-                else if (Greenfoot.isKeyDown("down"))
+                else if (key.equals("down"))
                 {
                     scrollDirection = 1;
-                    keyDelayTimer = 12;
                 }
             }
 
             if (scrollDirection != 0)
             {
-                int itemCount = getVehicleShopItemCount();
+                int itemCount = uiMode.equals("buying") ? getVehicleShopItemCount() : getFlatVehicleList().size();
                 int maxScroll = Math.max(0, itemCount - VEHICLE_SHOP_VISIBLE_ROWS);
                 vehicleShopScroll = Math.max(0, Math.min(maxScroll, vehicleShopScroll + scrollDirection));
             }
@@ -269,7 +460,7 @@ public class ui extends Actor
             if (i == 0)
                 drawRoadIcon(displayImg, tabX + tab_width / 2, tabY + tab_height / 2, (i == activeTab && isOpen));
             else if (i == 1)
-                drawLocationPin(displayImg, tabX + tab_width / 2, tabY + tab_height / 2, (i == activeTab && isOpen));
+                drawGarageIcon(displayImg, tabX + tab_width / 2, tabY + tab_height / 2);
         }
         
         if (isOpen)
@@ -290,6 +481,8 @@ public class ui extends Actor
                 panelImg.drawString("Fact", 45, 15);
                 panelImg.setColor(activeSubTab == 2 ? Color.YELLOW : Color.WHITE);
                 panelImg.drawString("Drill", 85, 15);
+                panelImg.setColor(activeSubTab == 3 ? Color.YELLOW : Color.WHITE);
+                panelImg.drawString("Base", 5, 30);
 
                 drawTileSelectionTab(panelImg, contentStartX, contentStartY);
             }
@@ -315,6 +508,10 @@ public class ui extends Actor
         {
             drawFactoryUI(displayImg);
         }
+        else if (clickedVehicle)
+        {
+            drawVehicleUI(displayImg);
+        }
         
         drawResources(displayImg);
 
@@ -324,6 +521,27 @@ public class ui extends Actor
             factoryRecoursesLeft = currentFactory.getStoredResources();
             craftTimeLeft = currentFactory.getConstructionTime();
             processed = currentFactory.getProcessedResources();
+        }
+        if (popupTimer > 0 && activePopupMessage != null)
+        {
+            displayImg.setFont(new Font("Arial", true, false, 14));
+            int textWidth = activePopupMessage.length() * 7;
+            int textX = (1280 - textWidth) / 2;
+            int textY = 300;
+            displayImg.setColor(new Color(0, 0, 0, 180));
+            displayImg.fillRect(textX -20, textY - 27, textWidth + 40, 44);
+            displayImg.setColor(Color.WHITE);
+            displayImg.drawString(activePopupMessage, textX, textY);
+            displayImg.drawRect(textX - 10, textY - 17, textWidth + 20, 24);
+        }
+        if (messageTimer > 0 && activeMessage != null)
+        {
+            displayImg.setFont(new Font("Arial", true, false, 14));
+            int textWidth = activeMessage.length() * 7;
+            int textX = 640 - (textWidth / 2);
+            int textY = 60;
+            displayImg.setColor(Color.WHITE);
+            displayImg.drawString(activeMessage, textX, textY);
         }
 
         setImage(displayImg);
@@ -389,40 +607,30 @@ public class ui extends Actor
         img.drawString(keyLabel, keyX, y + slot_size + keyLabel_Y_offset);
     }
 
-    private void drawLocationPin(GreenfootImage img, int cx, int cy, boolean isActive)
+    private void drawGarageIcon(GreenfootImage img, int centerX, int centerY)
     {
-        int r = 8;
-        
-        // Circle top
+        img.setColor(Color.WHITE);
+        img.fillRect(centerX - 8, centerY - 4, 11, 8); 
+        img.fillRect(centerX + 3, centerY - 1, 6, 5); 
         img.setColor(Color.BLACK);
-        img.fillOval(cx - r, cy - r - 4, r * 2, r * 2);
-        
-        // Hole in circle
-        img.setColor(isActive ? Color.YELLOW : new Color(100, 100, 100));
-        img.fillOval(cx - r/2, cy - r/2 - 4, r, r);
-        
-        // Triangle point below circle
-        img.setColor(Color.BLACK);
-        int[] xPoints = {cx - r, cx + r, cx};
-        int[] yPoints = {cy - 4, cy - 4, cy + r + 2};
-        img.fillPolygon(xPoints, yPoints, 3);
+        img.fillRect(centerX - 6, centerY - 3, 2, 3);
+        img.setColor(Color.DARK_GRAY);
+        img.fillOval(centerX - 5, centerY + 3, 4, 4);
+        img.fillOval(centerX + 3, centerY + 3, 4, 4);
     }
 
     private void drawRoadIcon(GreenfootImage img, int cx, int cy, boolean isActive)
     {
-        // Road surface
         img.setColor(Color.BLACK);
         img.fillRect(cx - 10, cy - 14, 20, 28);
-        
-        // Lane markings (dashed center line)
         img.setColor(Color.WHITE);
         img.fillRect(cx - 1, cy - 12, 2, 6);
         img.fillRect(cx - 1, cy - 2,  2, 6);
         img.fillRect(cx - 1, cy + 8,  2, 6);
     }
+
     public static boolean isMouseOverUI(int mouseX, int mouseY)
     {
-        // Always check tabs regardless of open/closed
         for (int i = 0; i < NUM_TABS; i++)
         {
             int tabY = tab_start_X + i * (tab_height + tab_spacing);
@@ -433,7 +641,6 @@ public class ui extends Actor
             }
         }
 
-        // Check panel area
         if (isOpen && mouseX > panel_start_X && mouseX < panel_start_X + panel_width &&
             mouseY > 0 && mouseY < panel_height)
         {
@@ -447,152 +654,200 @@ public class ui extends Actor
     {
         final int icon_width = 6;
         final int icon_hight = 7;
-
         GreenfootImage iconSpriteSheet = new GreenfootImage("resources.png");
         GreenfootImage icon = new GreenfootImage(icon_width, icon_hight);
-
         icon.drawImage(iconSpriteSheet, -(index * icon_width), 0);
         icon.scale(12, 14);
         return icon;
     }
-
 
     private void drawResources(GreenfootImage mainScreenImg)
     {
         GreenfootImage resourcePanel = new GreenfootImage(525, 24);
         resourcePanel.setColor(new Color(0, 0, 0, 180));
         resourcePanel.fillRect(0, 0, 525, 24);
-
-
         resourcePanel.setFont(new Font("Arial", false, false, 10));
         resourcePanel.setColor(Color.WHITE);
         
         int start_X = 6;
         int start_Y = 2;
-
         int colSpacing = 52;
 
         for (int i = 0; i < Level.storedResources.length; i++)
         {
-
             int current_X = start_X + (i * colSpacing);
-
             GreenfootImage icon = getResourceIcon(i);
-            
             icon.scale(18, 21);
-
             resourcePanel.drawImage(icon, current_X, start_Y);
-
             resourcePanel.drawString(": " + Level.storedResources[i], current_X + 20, start_Y + 14);
         }
-
         mainScreenImg.drawImage(resourcePanel, 377, 5);
     }
-
 
     private GreenfootImage getTileImage(int tileId, int width, int height)
     {
         GreenfootImage tile;
-        if (tileId >= 0 && tileId < Level.tiles.length)
+        if (tileId >= 500)
+        {
+            try {
+                GreenfootImage upgradeSheet = new GreenfootImage("upgrade_icons.png"); 
+                int spriteW = 16; 
+                int spriteH = 16;
+                int index = tileId - 500;
+                int offsetX = index * spriteW;
+                tile = new GreenfootImage(spriteW, spriteH);
+                tile.drawImage(upgradeSheet, -offsetX, 0);
+            }
+            catch (Exception e) {
+                tile = new GreenfootImage(width, height);
+                tile.setColor(Color.DARK_GRAY);
+                tile.fillRect(0, 0, width, height);
+                tile.setColor(Color.WHITE);
+                tile.drawString("UPG " + tileId, 2, 15);
+            }
+        }
+        else if (tileId >= 0 && tileId < Level.tiles.length && Level.tiles[tileId] != null)
         {
             tile = new GreenfootImage(Level.tiles[tileId]);
         }
         else
         {
             tile = new GreenfootImage(width, height);
-            tile.setColor(Color.DARK_GRAY);
-            tile.fillRect(0, 0, width, height);
         }
-
-            tile.scale(width, height);
-            return tile;
+        tile.scale(width, height);
+        return tile;
     }
 
     public static void drawFactoryUI(GreenfootImage img)
     {
         int panelX = factoryUIX;
         int panelY = factoryUIY;
-
-        // Background panel box
         img.setColor(new Color(0, 0, 0, 180)); 
         img.fillRect(panelX, panelY, 120, 85);   
-
         img.setFont(new Font("Arial", false, false, 12));
         img.setColor(Color.WHITE);
         img.drawString("Factory:", panelX + 10, panelY + 15);
         img.drawString("Resources: " + factoryRecoursesLeft, panelX + 10, panelY + 35);
         
-        // --- PROGRESS BAR LOGIC (BASED ON 180 FRAMES) ---
         int barX = panelX + 10;
         int barY = panelY + 44;
         int barWidth = 100;
         int barHeight = 10;
 
-        // 1. Draw the empty background of the progress bar (Dark Gray)
         img.setColor(Color.DARK_GRAY);
         img.fillRect(barX, barY, barWidth, barHeight);
 
         if (factoryRecoursesLeft > 0)
         {
-            // 2. Calculate progress (how many frames out of 180 have finished)
-            // Starts at 180f (0% filled) and finishes at 0f (100% filled)
             float progressFraction = (180f - craftTimeLeft) / 180f;
-            
-            // Cap it between 0.0 and 1.0 just to be safe
             progressFraction = Math.max(0.0f, Math.min(1.0f, progressFraction));
-            
             int fillWidth = (int)(barWidth * progressFraction);
-
-            // 3. Draw the moving progress fill (factory color)
-            Color fillHardwareColor = Color.GREEN;
-        
-            img.setColor(fillHardwareColor);
+            img.setColor(Color.GREEN);
             img.fillRect(barX, barY, fillWidth, barHeight);
         }
         
-        // Outline the progress bar for a cleaner look (Black outline)
         img.setColor(Color.BLACK);
         img.drawRect(barX, barY, barWidth, barHeight);
-        // ------------------------------------------------
-
         img.setColor(Color.WHITE);
         img.drawString("Processed: " + processed, panelX + 10, panelY + 72);
     }
 
     private void drawGarage(GreenfootImage img, int startX, int startY)
     {
+        int contentWidth = panel_width - 10; 
+
         if (uiMode.equals("home"))
         {
-            img.setFont(new Font("Arial", false, false, 12));
+            List<Vehicle> flatVehicles = getFlatVehicleList();
+            int itemCount = flatVehicles.size();
+
+            img.setFont(new Font("Arial", true, false, 11));
             img.setColor(Color.WHITE);
-            img.drawString("Vehicles: " + Level.garage.size(), startX + 5, startY + 10);
+            img.drawString("Vehicles (" + itemCount + ")", startX + 5, startY - 20);
+            
+            int previewSize = 44;
+            int previewX = startX + 5;
+            int maxVisibleRows = Math.max(1, VEHICLE_SHOP_VISIBLE_ROWS);
+            int visibleRows = Math.min(itemCount - vehicleShopScroll, maxVisibleRows);
+            int nextY = startY + 6;
 
-            for (int i = 0; i < Level.garage.size(); i++)
+            for (int i = 0; i < visibleRows; i++)
             {
-                int rowY = startY + 32 + i * 35;
+                int garageIndex = vehicleShopScroll + i;
+                int rowY = startY + 6 + i * VEHICLE_SHOP_ROW_HEIGHT;
+                nextY = rowY + VEHICLE_SHOP_ROW_HEIGHT;
 
-                img.setColor(new Color(255, 255, 255, 50));
-                img.fillRect(startX + 5, rowY, panel_width - 30, 30);
-
-                img.setFont(new Font("Arial", false, false, 12));
+                img.setColor(new Color(255, 255, 255, 35));
+                img.fillRect(startX + 2, rowY, contentWidth - 4, VEHICLE_SHOP_ROW_HEIGHT - 6);
                 img.setColor(Color.WHITE);
-                img.drawString("Vehicle " + (i + 1) + ":", startX + 10, rowY + 20);
+                img.drawRect(startX + 2, rowY, contentWidth - 4, VEHICLE_SHOP_ROW_HEIGHT - 6);
+
+                Vehicle targetVehicle = flatVehicles.get(garageIndex);
+                String vehName = targetVehicle.getVehicleType();
+
+                int typeSubTab = 0;
+                int slotIndex = 0;
+
+                if (vehName.equals("Dump Truck")) { typeSubTab = 0; slotIndex = 0; }
+                else if (vehName.equals("Flatbed Truck")) { typeSubTab = 0; slotIndex = 1; }
+                else if (vehName.equals("Tractor")) { typeSubTab = 0; slotIndex = 2; }
+                else if (vehName.equals("Concrete Mixer")) { typeSubTab = 0; slotIndex = 3; }
+                else if (vehName.equals("Flatbed Trailer")) { typeSubTab = 1; slotIndex = 0; }
+                else if (vehName.equals("Bulk Trailer")) { typeSubTab = 1; slotIndex = 1; }
+                else if (vehName.equals("Dozer")) { typeSubTab = 2; slotIndex = 0; }
+                else if (vehName.equals("Asphalt Paver")) { typeSubTab = 2; slotIndex = 1; }
+                else if (vehName.equals("Excavator")) { typeSubTab = 2; slotIndex = 2; }
+
+                int oldSub = activeSubTab;
+                activeSubTab = typeSubTab;
+                GreenfootImage vehicleSprite = getVehicleSprite(slotIndex);
+                activeSubTab = oldSub;
+
+                if (vehicleSprite != null) {
+                    GreenfootImage previewCanvas = new GreenfootImage(previewSize, previewSize);
+                    previewCanvas.setColor(new Color(0, 0, 0, 0));
+                    previewCanvas.fillRect(0, 0, previewSize, previewSize);
+                    int centerX = (previewSize - vehicleSprite.getWidth()) / 2;
+                    int centerY = (previewSize - vehicleSprite.getHeight()) / 2;
+                    previewCanvas.drawImage(vehicleSprite, centerX, centerY);
+                    img.drawImage(previewCanvas, previewX, rowY + 7);
+                } else {
+                    img.setColor(Color.DARK_GRAY);
+                    img.fillRect(previewX, rowY + 7, previewSize, previewSize);
+                }
+
+                int nameY = rowY + 5 + previewSize + 8;
+                img.setFont(new Font("Arial", true, false, 9));
+                img.setColor(Color.WHITE);
+                img.drawString(vehName, previewX + 1, nameY);
+
+                img.setFont(new Font("Arial", false, false, 8));
+                img.setColor(Color.LIGHT_GRAY);
+                img.drawString("#" + (garageIndex + 1), contentWidth - 18, rowY + 14);
             }
 
-            int addButtonY = startY + 32 + Level.garage.size() * 35;
+            // Append shop button smoothly below the final visible item row
+            int btnY = nextY + 5;
+            int btnW = contentWidth - 4;
+            int btnH = 22;
 
-            img.setColor(new Color(255, 255, 255, 50));
-            img.fillRect(startX + 5, addButtonY, panel_width - 30, 30);
-
-            img.setFont(new Font("Arial", false, false, 12));
-            img.setColor(Color.GREEN);
-            img.drawString("Open shop", startX + 10, addButtonY + 20);
+            img.setColor(new Color(0, 120, 220));
+            img.fillRect(startX + 2, btnY, btnW, btnH);
+            img.setColor(Color.WHITE);
+            img.drawRect(startX + 2, btnY, btnW, btnH);
+            img.setFont(new Font("Arial", true, false, 10));
+            img.drawString("OPEN SHOP", startX + 2 + (btnW - 60) / 2, btnY + 15);
         }
         else if (uiMode.equals("buying"))
         {
+
+            img.setFont(new Font("Arial", true, false, 10));
+            img.setColor(Color.RED);
+            img.drawString("< Back", startX, startY);
+
             int itemCount = getVehicleShopItemCount();
             int previewSize = 44;
-            int previewX = startX + 8;
+            int previewX = startX + 5;
             int abilityBoxSize = 18;
             int maxVisibleRows = Math.max(1, VEHICLE_SHOP_VISIBLE_ROWS);
             int visibleRows = Math.min(itemCount - vehicleShopScroll, maxVisibleRows);
@@ -603,9 +858,9 @@ public class ui extends Actor
                 int rowY = startY + 6 + i * VEHICLE_SHOP_ROW_HEIGHT;
 
                 img.setColor(new Color(255, 255, 255, 35));
-                img.fillRect(startX + 3, rowY, panel_width - 20, VEHICLE_SHOP_ROW_HEIGHT - 6);
+                img.fillRect(startX + 2, rowY, contentWidth - 4, VEHICLE_SHOP_ROW_HEIGHT - 6);
                 img.setColor(Color.WHITE);
-                img.drawRect(startX + 3, rowY, panel_width - 20, VEHICLE_SHOP_ROW_HEIGHT - 6);
+                img.drawRect(startX + 2, rowY, contentWidth - 4, VEHICLE_SHOP_ROW_HEIGHT - 6);
 
                 GreenfootImage vehicleSprite = getVehicleSprite(slotIndex);
                 if (vehicleSprite != null)
@@ -613,7 +868,6 @@ public class ui extends Actor
                     GreenfootImage previewCanvas = new GreenfootImage(previewSize, previewSize);
                     previewCanvas.setColor(new Color(0, 0, 0, 0));
                     previewCanvas.fillRect(0, 0, previewSize, previewSize);
-
                     int centerX = (previewSize - vehicleSprite.getWidth()) / 2;
                     int centerY = (previewSize - vehicleSprite.getHeight()) / 2;
                     previewCanvas.drawImage(vehicleSprite, centerX, centerY);
@@ -626,38 +880,33 @@ public class ui extends Actor
                 }
 
                 int nameY = rowY + 5 + previewSize + 8;
-                int textX = previewX + 1;
-                img.setFont(new Font("Arial", true, false, 10));
+                img.setFont(new Font("Arial", true, false, 9));
                 img.setColor(Color.WHITE);
-                img.drawString(getVehicleName(slotIndex), textX, nameY);
+                img.drawString(getVehicleName(slotIndex), previewX + 1, nameY);
 
-                int abilityBoxX = startX + panel_width - 28 - abilityBoxSize;
+                int abilityBoxX = contentWidth - 22;
                 int abilityBoxY = rowY + 8;
-                img.setColor(new Color(255, 255, 255, 60));
-                img.fillRect(abilityBoxX, abilityBoxY, abilityBoxSize, abilityBoxSize);
-                img.setColor(Color.LIGHT_GRAY);
-                img.drawRect(abilityBoxX, abilityBoxY, abilityBoxSize, abilityBoxSize);
 
                 int[] abilityIcons = getVehicleAbilityIcons(slotIndex);
                 int boxCount = Math.min(abilityIcons.length, 2);
 
                 for (int iconIndex = 0; iconIndex < boxCount; iconIndex++)
                 {
-                    int boxGap = 4;
-                    int boxX = abilityBoxX + (iconIndex == 1 ? -(18 + boxGap) : 0);
+                    int boxGap = 2;
+                    int boxX = abilityBoxX + (iconIndex == 1 ? -(abilityBoxSize + boxGap) : 0);
                     int boxY = abilityBoxY;
 
                     img.setColor(new Color(255, 255, 255, 90));
-                    img.fillRect(boxX, boxY, 18, 18);
+                    img.fillRect(boxX, boxY, abilityBoxSize, abilityBoxSize);
                     img.setColor(Color.LIGHT_GRAY);
-                    img.drawRect(boxX, boxY, 18, 18);
+                    img.drawRect(boxX, boxY, abilityBoxSize, abilityBoxSize);
 
                     GreenfootImage abilityIcon = getAbilityIcon(abilityIcons[iconIndex]);
                     abilityIcon.scale(12, 12);
                     img.drawImage(abilityIcon, boxX + 3, boxY + 3);
                 }
 
-                int costX = abilityBoxX - 25;
+                int costX = contentWidth - 48;
                 int costY = rowY + 40;
                 img.setFont(new Font("Arial", false, false, 9));
                 img.setColor(Color.YELLOW);
@@ -665,27 +914,237 @@ public class ui extends Actor
 
                 GreenfootImage resourceIcon = getResourceIcon(0);
                 resourceIcon.scale(10, 12);
-                img.drawImage(resourceIcon, costX + 26, costY - 10);
-                img.drawString(String.valueOf(getVehicleCost(slotIndex)), costX + 36, costY);
+                img.drawImage(resourceIcon, costX + 24, costY - 10);
+                img.drawString(String.valueOf(getVehicleCost(slotIndex)), costX + 34, costY);
+            }
+        }
+        else if (uiMode.equals("buy-viewing") || uiMode.equals("viewing"))
+        {
+            int slotIndex = uiMode.equals("buy-viewing") ? selectedShopIndex : selectedGarageIndex;
+            if (slotIndex >= 0)
+            {
+                img.setFont(new Font("Arial", true, false, 10));
+                img.setColor(Color.RED);
+                img.drawString("< Back", startX, startY + 5);
+
+                int cardX = startX + 2;
+                int cardY = startY + 15;
+                int cardW = contentWidth - 4;
+                int cardH = 75;
+
+                img.setColor(new Color(255, 255, 255, 45));
+                img.fillRect(cardX, cardY, cardW, cardH);
+                img.setColor(Color.WHITE);
+                img.drawRect(cardX, cardY, cardW, cardH);
+
+                String name = "Vehicle";
+                int typeSubTab = activeSubTab;
+                int targetSlot = slotIndex;
+
+                if (uiMode.equals("viewing"))
+                {
+                    name = selectedVehicle.getVehicleType() + " #" + (selectedGarageIndex + 1);
+
+                    String typeName = selectedVehicle.getVehicleType();
+                    if (typeName.equals("Dump Truck")) { typeSubTab = 0; targetSlot = 0; }
+                    else if (typeName.equals("Flatbed Truck")) { typeSubTab = 0; targetSlot = 1; }
+                    else if (typeName.equals("Tractor")) { typeSubTab = 0; targetSlot = 2; }
+                    else if (typeName.equals("Concrete Mixer")) { typeSubTab = 0; targetSlot = 3; }
+                    else if (typeName.equals("Flatbed Trailer")) { typeSubTab = 1; targetSlot = 0; }
+                    else if (typeName.equals("Bulk Trailer")) { typeSubTab = 1; targetSlot = 1; }
+                    else if (typeName.equals("Dozer")) { typeSubTab = 2; targetSlot = 0; }
+                    else if (typeName.equals("Asphalt Paver")) { typeSubTab = 2; targetSlot = 1; }
+                    else if (typeName.equals("Excavator")) { typeSubTab = 2; targetSlot = 2; }
+                } 
+                else {
+                    name = getVehicleName(slotIndex);
+                }
+
+                int oldSub = activeSubTab;
+                activeSubTab = typeSubTab;
+                GreenfootImage vehicleSprite = getVehicleSprite(targetSlot);
+                activeSubTab = oldSub;
+
+                int previewSize = 44;
+                int pX = cardX + (cardW - previewSize) / 2;
+                int pY = cardY + 6;
+
+                if (vehicleSprite != null)
+                {
+                    GreenfootImage previewCanvas = new GreenfootImage(previewSize, previewSize);
+                    previewCanvas.setColor(new Color(0, 0, 0, 0));
+                    previewCanvas.fillRect(0, 0, previewSize, previewSize);
+                    int centerX = (previewSize - vehicleSprite.getWidth()) / 2;
+                    int centerY = (previewSize - vehicleSprite.getHeight()) / 2;
+                    previewCanvas.drawImage(vehicleSprite, centerX, centerY);
+                    img.drawImage(previewCanvas, pX, pY);
+                }
+                else
+                {
+                    img.setColor(Color.DARK_GRAY);
+                    img.fillRect(pX, pY, previewSize, previewSize);
+                }
+
+                img.setFont(new Font("Arial", true, false, 9));
+                img.setColor(Color.YELLOW);
+                int nameWidth = name.length() * 5; 
+                img.drawString(name, cardX + (cardW - nameWidth) / 2, cardY + 64);
+
+                int labelY = cardY + cardH + 15;
+                img.setFont(new Font("Arial", false, false, 10));
+                img.setColor(Color.WHITE);
+                img.drawString("Abilities:", startX + 5, labelY);
+
+                int[] abilityIcons = getVehicleAbilityIcons(targetSlot);
+                int iconY = labelY + 4;
+                int iconSize = 18;
+
+                if (abilityIcons.length == 0)
+                {
+                    img.setFont(new Font("Arial", false, true, 9));
+                    img.setColor(Color.LIGHT_GRAY);
+                    img.drawString("None", startX + 5, iconY + 10);
+                }
+                else
+                {
+                    for (int i = 0; i < abilityIcons.length; i++)
+                    {
+                        int iconX = startX + 5 + i * (iconSize + 4);
+                        img.setColor(new Color(255, 255, 255, 90));
+                        img.fillRect(iconX, iconY, iconSize, iconSize);
+                        img.setColor(Color.LIGHT_GRAY);
+                        img.drawRect(iconX, iconY, iconSize, iconSize);
+
+                        GreenfootImage abilityIcon = getAbilityIcon(abilityIcons[i]);
+                        abilityIcon.scale(12, 12);
+                        img.drawImage(abilityIcon, iconX + 3, iconY + 3); 
+                    }
+                }
+
+                int btnY = startY + 185;
+                int btnH = 22;
+
+                if (uiMode.equals("buy-viewing")) {
+                    int priceY = iconY + iconSize + 15;
+                    img.setFont(new Font("Arial", true, false, 10));
+                    img.setColor(Color.WHITE);
+                    img.drawString("Price:", startX + 5, priceY);
+
+                    GreenfootImage resourceIcon = getResourceIcon(0);
+                    resourceIcon.scale(10, 12);
+                    img.drawImage(resourceIcon, startX + 40, priceY - 10);
+                    img.setColor(Color.YELLOW);
+                    img.drawString(String.valueOf(getVehicleCost(slotIndex)), startX + 52, priceY);
+
+                    int btnW = (cardW - 4) / 2;
+                    img.setColor(new Color(0, 150, 0));
+                    img.fillRect(cardX, btnY, btnW, btnH);
+                    img.setColor(Color.WHITE);
+                    img.drawRect(cardX, btnY, btnW, btnH);
+                    img.setFont(new Font("Arial", true, false, 9));
+                    img.drawString("BUY", cardX + (btnW - 20) / 2, btnY + 15);
+
+                    img.setColor(new Color(0, 100, 200));
+                    img.fillRect(cardX + btnW + 4, btnY, btnW - 2, btnH);
+                    img.setColor(Color.WHITE);
+                    img.drawRect(cardX + btnW + 4, btnY, btnW - 2, btnH);
+                    img.drawString("FIN", cardX + btnW + 4 + ((btnW - 2) - 16) / 2, btnY + 15);
+                } else {
+                    img.setColor(new Color(0, 150, 0));
+                    img.fillRect(cardX, btnY, cardW, btnH);
+                    img.setColor(Color.WHITE);
+                    img.drawRect(cardX, btnY, cardW, btnH);
+                    img.setFont(new Font("Arial", true, false, 10));
+                    img.drawString("Set task", cardX + (cardW - 40) / 2, btnY + 15);
+                }
+            }
+        }
+        else if (uiMode.equals("task"))
+        {
+            if (selectedVehicle != null)
+            {
+                // Title & Back Button
+                img.setFont(new Font("Arial", true, false, 10));
+                img.setColor(Color.RED);
+                img.drawString("< Back", startX, startY + 5);
+
+                img.setFont(new Font("Arial", true, false, 11));
+                img.setColor(Color.WHITE);
+                img.drawString("Configure Task", startX + 5, startY + 22);
+
+                int cardX = startX + 2;
+                int cardW = contentWidth - 4;
+                int btnH = 20;
+                
+                // Determine vehicle type capability
+                String vehType = selectedVehicle.getVehicleType();
+                boolean isConstruction = vehType.equals("Dozer") || 
+                                         vehType.equals("Asphalt Paver") || 
+                                         vehType.equals("Excavator");
+
+                // --- POINT 1 BUTTON (Pickup or Deploy) ---
+                int btn1Y = startY + 45;
+                if (routeStep == 1) img.setColor(new Color(230, 140, 0)); // Highlight if actively choosing
+                else img.setColor(new Color(60, 60, 60));
+                
+                img.fillRect(cardX, btn1Y, cardW, btnH);
+                img.setColor(Color.WHITE);
+                img.drawRect(cardX, btn1Y, cardW, btnH);
+                img.setFont(new Font("Arial", false, false, 9));
+                
+                String p1Label = isConstruction ? "Set Target Site" : "1. Set Pickup Point";
+                p1Label = (location_1_row >= 0 && location_1_col >= 0)? "(" + location_1_row + "," + location_1_col + ")" : p1Label;
+                img.drawString(p1Label, cardX + 6, btn1Y + 13);
+
+                // --- POINT 2 BUTTON (Dropoff - Transport only) ---
+                int btn2Y = startY + 75;
+                if (!isConstruction)
+                {
+                    if (routeStep == 2) img.setColor(new Color(230, 140, 0));
+                    else img.setColor(new Color(60, 60, 60));
+                    
+                    img.fillRect(cardX, btn2Y, cardW, btnH);
+                    img.setColor(Color.WHITE);
+                    img.drawRect(cardX, btn2Y, cardW, btnH);
+                    String p2Label = (location_2_row != 0 && location_2_col != 0)? "(" + location_2_row + "," + location_2_col + ")" : "2. Set Dropoff Point";
+                    img.drawString(p2Label, cardX + 6, btn2Y + 13);
+                }
+                else
+                {
+                    // Visual placeholder for construction units
+                    img.setFont(new Font("Arial", false, true, 9));
+                    img.setColor(Color.LIGHT_GRAY);
+                    img.drawString("Direct deployment", cardX + 6, btn2Y + 13);
+                }
+
+                // --- ACTION BUTTONS (Cancel & Confirm/Send) ---
+                int actionBtnY = startY + 185;
+                int actionBtnH = 22;
+                int actionBtnW = (cardW - 4) / 2;
+
+                // Cancel Button
+                img.setColor(new Color(180, 40, 40));
+                img.fillRect(cardX, actionBtnY, actionBtnW, actionBtnH);
+                img.setColor(Color.WHITE);
+                img.drawRect(cardX, actionBtnY, actionBtnW, actionBtnH);
+                img.setFont(new Font("Arial", true, false, 10));
+                img.drawString("CANCEL", cardX + (actionBtnW - 40) / 2, actionBtnY + 14);
+
+                // Send/Confirm Button
+                img.setColor(new Color(0, 140, 60));
+                img.fillRect(cardX + actionBtnW + 4, actionBtnY, actionBtnW, actionBtnH);
+                img.setColor(Color.WHITE);
+                img.drawRect(cardX + actionBtnW + 4, actionBtnY, actionBtnW, actionBtnH);
+                img.drawString("SEND", cardX + actionBtnW + 4 + (actionBtnW - 30) / 2, actionBtnY + 14);
             }
         }
     }
 
     private int getVehicleShopItemCount()
     {
-        if (activeSubTab == 0)
-        {
-            return 4;
-        }
-        else if (activeSubTab == 1)
-        {
-            return 2;
-        }
-        else if (activeSubTab == 2)
-        {
-            return 3;
-        }
-
+        if (activeSubTab == 0) return 4;
+        else if (activeSubTab == 1) return 2;
+        else if (activeSubTab == 2) return 3;
         return 0;
     }
 
@@ -696,7 +1155,7 @@ public class ui extends Actor
             if (slot == 0) return "Dump Truck";
             if (slot == 1) return "Flatbed Truck";
             if (slot == 2) return "Tractor";
-            if (slot == 3) return "Cement Truck";
+            if (slot == 3) return "Concrete Mixer";
         }
         else if (activeSubTab == 1)
         {
@@ -706,10 +1165,9 @@ public class ui extends Actor
         else if (activeSubTab == 2)
         {
             if (slot == 0) return "Dozer";
-            if (slot == 1) return "Asphalt paver";
+            if (slot == 1) return "Asphalt Paver";
             if (slot == 2) return "Excavator";
         }
-
         return "Vehicle";
     }
 
@@ -717,23 +1175,22 @@ public class ui extends Actor
     {
         if (activeSubTab == 0)
         {
-            if (slot == 0) return 80;
-            if (slot == 1) return 120;
-            if (slot == 2) return 140;
-            if (slot == 3) return 160;
+            if (slot == 0) return 60;
+            if (slot == 1) return 60;
+            if (slot == 2) return 60;
+            if (slot == 3) return 80;
         }
         else if (activeSubTab == 1)
         {
-            if (slot == 0) return 95;
-            if (slot == 1) return 110;
+            if (slot == 0) return 45;
+            if (slot == 1) return 45;
         }
         else if (activeSubTab == 2)
         {
-            if (slot == 0) return 90;
-            if (slot == 1) return 130;
-            if (slot == 2) return 150;
+            if (slot == 0) return 60;
+            if (slot == 1) return 100;
+            if (slot == 2) return 60;
         }
-
         return 0;
     }
 
@@ -757,7 +1214,6 @@ public class ui extends Actor
             if (slot == 1) return new int[]{4};
             if (slot == 2) return new int[]{7};
         }
-
         return new int[]{};
     }
 
@@ -775,99 +1231,129 @@ public class ui extends Actor
         {
             if (slot == 0)
             {
-                GreenfootImage img = new GreenfootImage("dumptruck.png");
-                return img;
+                return new GreenfootImage("dumptruck.png");
             }
             else if (slot == 1 || slot == 2 || slot == 3)
             {
                 GreenfootImage tilemap = new GreenfootImage("trucks_topdown_spritesheet.png");
                 int variantIndex = (slot == 1) ? 4 : (slot == 2) ? 12 : 15;
-                
-                // Calculate row and column in the tilemap (4 rows, 4 columns)
                 int row = variantIndex / 4;
                 int col = variantIndex % 4;
                 final int SPRITE_WIDTH = 11;
                 final int SPRITE_HEIGHT = 27;
-                int x = col * SPRITE_WIDTH;
-                int y = row * SPRITE_HEIGHT;
-
-                
-                // Create a new image for this vehicle with the correct sprite
                 GreenfootImage vehicleImage = new GreenfootImage(SPRITE_WIDTH, SPRITE_HEIGHT);
-                vehicleImage.drawImage(tilemap, -x, -y);
+                vehicleImage.drawImage(tilemap, -(col * SPRITE_WIDTH), -(row * SPRITE_HEIGHT));
                 return vehicleImage;
             }
         }
         else if (activeSubTab == 1)
         {
-            if (slot == 0 || slot ==1)
+            if (slot == 0 || slot == 1)
             {
                 GreenfootImage tilemap = new GreenfootImage("trailers_topdown_spritesheet.png");
                 int variantIndex = (slot == 0) ? 4 : 12;
-                    
-                // Calculate row and column in the tilemap (4 rows, 4 columns)
                 int row = variantIndex / 4;
                 int col = variantIndex % 4;
                 final int SPRITE_WIDTH = 11;
                 final int SPRITE_HEIGHT = 25;
-                int x = col * SPRITE_WIDTH;
-                int y = row * SPRITE_HEIGHT;
-
-                    
-                // Create a new image for this vehicle with the correct sprite
                 GreenfootImage vehicleImage = new GreenfootImage(SPRITE_WIDTH, SPRITE_HEIGHT);
-                vehicleImage.drawImage(tilemap, -x, -y);
+                vehicleImage.drawImage(tilemap, -(col * SPRITE_WIDTH), -(row * SPRITE_HEIGHT));
                 return vehicleImage;
             }
         }
         else if (activeSubTab == 2)
         {
-            if (slot ==  0)
+            if (slot == 0)
             {
-                GreenfootImage img = new GreenfootImage("dozer.png");
-                return img;
+                return new GreenfootImage("dozer.png");
             }
             if (slot == 1)
             {
                 GreenfootImage tilemap = new GreenfootImage("trucks_topdown_spritesheet.png");
                 int variantIndex = 13;
-                
-                // Calculate row and column in the tilemap (4 rows, 4 columns)
                 int row = variantIndex / 4;
                 int col = variantIndex % 4;
                 final int SPRITE_WIDTH = 11;
                 final int SPRITE_HEIGHT = 27;
-                int x = col * SPRITE_WIDTH;
-                int y = row * SPRITE_HEIGHT;
-
-                
-                // Create a new image for this vehicle with the correct sprite
                 GreenfootImage vehicleImage = new GreenfootImage(SPRITE_WIDTH, SPRITE_HEIGHT);
-                vehicleImage.drawImage(tilemap, -x, -y);
+                vehicleImage.drawImage(tilemap, -(col * SPRITE_WIDTH), -(row * SPRITE_HEIGHT));
                 return vehicleImage;
             }
             if (slot == 2)
             {
                 GreenfootImage tilemap = new GreenfootImage("excavator_topdown_spritesheet.png");
-                int variantIndex = 0;
-                
-                // Calculate row and column in the tilemap (1 rows, 17 columns)
-                int row = variantIndex / 17;
-                int col = variantIndex % 17;
+                int row = 0;
+                int col = 0;
                 final int SPRITE_WIDTH = 11;
                 final int SPRITE_HEIGHT = 37;
-                int x = col * SPRITE_WIDTH;
-                int y = row * SPRITE_HEIGHT;
-
-                
-                // Create a new image for this vehicle with the correct sprite
                 GreenfootImage vehicleImage = new GreenfootImage(SPRITE_WIDTH, SPRITE_HEIGHT);
-                vehicleImage.drawImage(tilemap, -x, -y);
+                vehicleImage.drawImage(tilemap, -(col * SPRITE_WIDTH), -(row * SPRITE_HEIGHT));
                 return vehicleImage;
             }
         }
-
         return null;
     }
 
+    public void popUpMessage(String message, int duration)
+    {
+        popupTimer = duration;
+        this.activePopupMessage = message;
+    }
+
+    public void message(String message, int duration)
+    {
+        messageTimer = duration;
+        this.activeMessage = message;
+    }
+
+    public void vehicleUi(GreenfootImage img, double x, double y, String vehicleId, String cargo, int cargoQuantity, Vehicle instance)
+    {
+        clickedVehicle = true;
+        clickedFactory = false;
+        this.vehicleCargo = cargo;
+        this.vehicleCargoQuantity = cargoQuantity;
+        this.vehicleId = vehicleId;
+        ui.selectedVehicle = instance;
+        vehicleUiX = (int) x;
+        vehicleUiY = (int) y;
+    }
+
+    private void drawVehicleUI(GreenfootImage img)
+    {
+        int panelX = vehicleUiX;
+        int panelY = vehicleUiY;
+        img.setColor(new Color(0, 0, 0, 180)); 
+        img.fillRect(panelX, panelY, 120, 120);   
+        img.setFont(new Font("Arial", false, false, 12));
+        img.setColor(Color.WHITE);
+        img.drawString("Vehicle:", panelX + 10, panelY + 20);
+        img.drawString(vehicleId, panelX + 10, panelY + 35);
+        img.drawString("Cargo: " + vehicleCargo, panelX + 10, panelY + 55);
+        img.drawString("Qty: " + vehicleCargoQuantity, panelX + 10, panelY + 70);
+
+        int btnX = panelX + 10;
+        int btnY = panelY + 80;
+        int btnW = 100;
+        int btnH = 18;
+
+        img.setColor(new Color(0, 120, 220)); 
+        img.fillRect(btnX, btnY, btnW, btnH);
+        img.setColor(Color.WHITE);
+        img.drawRect(btnX, btnY, btnW, btnH);
+        img.setFont(new Font("Arial", true, false, 10));
+        img.drawString("VIEW IN UI", btnX + 22, btnY + 13);
+    }
+
+    private List<Vehicle> getFlatVehicleList()
+    {
+        List<Vehicle> flatList = new ArrayList<>();
+        if (Level.garage != null)
+        {
+            for (ArrayList<Vehicle> list : Level.garage.values())
+            {
+                if (list != null) flatList.addAll(list);
+            }
+        }
+        return flatList;
+    }
 }
