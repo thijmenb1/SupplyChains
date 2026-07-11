@@ -1,0 +1,275 @@
+[gd_scene format=3 uid="uid://csdmgwhlyp0j"]
+
+[ext_resource type="Texture2D" uid="uid://eqymhfkjm3cg" path="res://assets/resources.png" id="1_nt7q6"]
+[ext_resource type="FontFile" uid="uid://b08ub3taoj725" path="res://tinyNumberFont.ttf" id="2_x4jx1"]
+[ext_resource type="Texture2D" uid="uid://oq44vob1gwo3" path="res://assets/tilemap_concept.png" id="3_yev5y"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x4jx1"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yev5y"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(0, 0, 6, 7)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gdt2y"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(6, 0, 6, 7)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wm3ai"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(12, 0, 6, 7)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8dubc"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(18, 0, 6, 7)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p7vwb"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(24, 0, 6, 7)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ktti3"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(30, 0, 6, 7)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cgfq5"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(36, 0, 6, 7)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nt7q6"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(42, 0, 6, 7)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x4jx1"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(48, 0, 6, 7)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yev5y"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7dvkv"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(32, 64, 32, 32)
+
+[node name="Ui" type="CanvasLayer" unique_id=78268043]
+
+[node name="Control" type="Control" parent="." unique_id=281940506]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ResourceBar" type="Panel" parent="Control" unique_id=2124392580]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -262.5
+offset_top = 10.0
+offset_right = 262.5
+offset_bottom = 34.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_x4jx1")
+
+[node name="TextureRect" type="TextureRect" parent="Control/ResourceBar" unique_id=218247265]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 3.0
+offset_right = 50.0
+offset_bottom = 10.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_yev5y")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect" unique_id=1226493662]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "0"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect2" type="TextureRect" parent="Control/ResourceBar" unique_id=1788731864]
+layout_mode = 0
+offset_left = 101.0
+offset_top = 3.0
+offset_right = 107.0
+offset_bottom = 10.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_gdt2y")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect2" unique_id=1294491551]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "0"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect3" type="TextureRect" parent="Control/ResourceBar" unique_id=1348715297]
+layout_mode = 0
+offset_left = 158.0
+offset_top = 3.0
+offset_right = 164.0
+offset_bottom = 10.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_wm3ai")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect3" unique_id=1882509827]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect4" type="TextureRect" parent="Control/ResourceBar" unique_id=1835847794]
+layout_mode = 0
+offset_left = 215.0
+offset_top = 3.0
+offset_right = 221.0
+offset_bottom = 10.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_8dubc")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect4" unique_id=1634176268]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect5" type="TextureRect" parent="Control/ResourceBar" unique_id=1092436269]
+layout_mode = 0
+offset_left = 272.0
+offset_top = 3.0
+offset_right = 278.0
+offset_bottom = 10.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_p7vwb")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect5" unique_id=490579980]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect6" type="TextureRect" parent="Control/ResourceBar" unique_id=1727048340]
+layout_mode = 0
+offset_left = 329.0
+offset_top = 3.0
+offset_right = 335.0
+offset_bottom = 10.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_ktti3")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect6" unique_id=29546694]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect7" type="TextureRect" parent="Control/ResourceBar" unique_id=1906916454]
+layout_mode = 0
+offset_left = 386.0
+offset_top = 3.0
+offset_right = 392.0
+offset_bottom = 10.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_cgfq5")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect7" unique_id=1906032306]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect8" type="TextureRect" parent="Control/ResourceBar" unique_id=556371185]
+layout_mode = 0
+offset_left = 443.0
+offset_top = 3.0
+offset_right = 449.0
+offset_bottom = 10.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_nt7q6")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect8" unique_id=747839523]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect9" type="TextureRect" parent="Control/ResourceBar" unique_id=733544937]
+layout_mode = 0
+offset_left = 500.0
+offset_top = 3.0
+offset_right = 506.0
+offset_bottom = 10.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_x4jx1")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect9" unique_id=105386945]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SelcetedTile" type="Panel" parent="Control" unique_id=1798178898]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -140.0
+offset_top = -140.0
+offset_right = -65.0
+offset_bottom = -65.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_yev5y")
+
+[node name="TextureRect" type="TextureRect" parent="Control/SelcetedTile" unique_id=734811537]
+layout_mode = 0
+offset_left = 5.5
+offset_top = 5.5
+offset_right = 69.5
+offset_bottom = 69.5
+texture = SubResource("AtlasTexture_7dvkv")

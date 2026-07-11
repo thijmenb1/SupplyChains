@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://bl74uw6ifs8nc"]
+
+[ext_resource type="Script" uid="uid://c2216beq6lv3d" path="res://scripts/level.gd" id="1_ppgk2"]
+[ext_resource type="TileSet" uid="uid://x2kxi7jmy2f8" path="res://tileset.tres" id="2_2r41h"]
+[ext_resource type="PackedScene" uid="uid://d0saxse46rjg0" path="res://scenes/vehicle.tscn" id="2_w7c3h"]
+[ext_resource type="PackedScene" uid="uid://bdar3x3soj0q3" path="res://scenes/trailer.tscn" id="3_w8frs"]
+[ext_resource type="PackedScene" uid="uid://csdmgwhlyp0j" path="res://scenes/ui.tscn" id="4_mx8sn"]
+[ext_resource type="Script" uid="uid://je3tllme6ye" path="res://scripts/cameraMovement.gd" id="5_2r41h"]
+[ext_resource type="Script" uid="uid://cpubpk1hya2ms" path="res://scripts/ui.gd" id="7_klq6b"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ppgk2"]
+frequency = 0.005
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2r41h"]
+noise = SubResource("FastNoiseLite_ppgk2")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_2r41h"]
+frequency = 0.004
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_klq6b"]
+noise = SubResource("FastNoiseLite_2r41h")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_klq6b"]
+frequency = 0.005
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_b121j"]
+noise = SubResource("FastNoiseLite_klq6b")
+
+[node name="Level" type="Node2D" unique_id=765950742 node_paths=PackedStringArray("TerrainLayer", "RoadLayer", "DecorationLayer", "PreviewLayer", "camera")]
+script = ExtResource("1_ppgk2")
+noiseHeigthText = SubResource("NoiseTexture2D_2r41h")
+noiseTempText = SubResource("NoiseTexture2D_klq6b")
+noiseMoistText = SubResource("NoiseTexture2D_b121j")
+TerrainLayer = NodePath("TerrainLayer")
+RoadLayer = NodePath("RoadLayer")
+DecorationLayer = NodePath("DecorationLayer")
+PreviewLayer = NodePath("PreviewLayer")
+camera = NodePath("Camera2D")
+
+[node name="TerrainLayer" type="TileMapLayer" parent="." unique_id=1631270430]
+tile_set = ExtResource("2_2r41h")
+
+[node name="RoadLayer" type="TileMapLayer" parent="." unique_id=2098542376]
+tile_set = ExtResource("2_2r41h")
+
+[node name="DecorationLayer" type="TileMapLayer" parent="." unique_id=146856451]
+tile_set = ExtResource("2_2r41h")
+
+[node name="PreviewLayer" type="TileMapLayer" parent="." unique_id=291778715]
+modulate = Color(1, 1, 1, 0.5)
+tile_set = ExtResource("2_2r41h")
+
+[node name="YSortVehicles" type="Node2D" parent="." unique_id=734747083]
+
+[node name="Vehicle" parent="." unique_id=181190044 instance=ExtResource("2_w7c3h")]
+visible = false
+
+[node name="Trailer" parent="Vehicle" unique_id=659643502 instance=ExtResource("3_w8frs")]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1738524323]
+script = ExtResource("5_2r41h")
+
+[node name="Ui" parent="." unique_id=78268043 instance=ExtResource("4_mx8sn")]
+script = ExtResource("7_klq6b")

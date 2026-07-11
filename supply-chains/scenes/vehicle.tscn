@@ -1,0 +1,224 @@
+[gd_scene format=3 uid="uid://d0saxse46rjg0"]
+
+[ext_resource type="Script" uid="uid://cwqah6p6egytv" path="res://scripts/vehicle.gd" id="1_d0fkt"]
+[ext_resource type="Texture2D" uid="uid://dcsaf2llywke1" path="res://assets/trucks_topdown_spritesheet.png" id="1_pu4i8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pu4i8"]
+size = Vector2(11, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d0fkt"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(0, 0, 11, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tvtne"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(11, 81, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rgx34"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(11, 0, 16, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_psfx0"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(33, 81, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6gcpt"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(0, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e2g1l"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(11, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vuxys"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(22, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p2hth"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(33, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mcce1"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(44, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kcati"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(55, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v3p7b"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(66, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_srgl8"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(77, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mhnq0"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(88, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wg7bq"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(99, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eewpg"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(110, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_37whr"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(121, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ltql"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(132, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4nbl0"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(143, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wsn1b"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(154, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_syryi"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(165, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wmfnl"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(176, 108, 11, 37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7oyyx"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(0, 27, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6vppo"]
+atlas = ExtResource("1_pu4i8")
+region = Rect2(0, 81, 11, 27)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rgx34"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d0fkt")
+}],
+"loop": true,
+"name": &"articulated dump truck",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tvtne")
+}],
+"loop": true,
+"name": &"asphaltpaver",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rgx34")
+}],
+"loop": true,
+"name": &"bulldozer",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_psfx0")
+}],
+"loop": true,
+"name": &"cement truck",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6gcpt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e2g1l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vuxys")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p2hth")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mcce1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kcati")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v3p7b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_srgl8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mhnq0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wg7bq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eewpg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_37whr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1ltql")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4nbl0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wsn1b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_syryi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wmfnl")
+}],
+"loop": true,
+"name": &"excavator",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7oyyx")
+}],
+"loop": true,
+"name": &"flatbed truck",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6vppo")
+}],
+"loop": true,
+"name": &"tracktor",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q7183"]
+
+[node name="Vehicle" type="CharacterBody2D" unique_id=181190044]
+script = ExtResource("1_d0fkt")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=834666264]
+shape = SubResource("RectangleShape2D_pu4i8")
+
+[node name="VehicleSprite" type="AnimatedSprite2D" parent="." unique_id=196292407]
+sprite_frames = SubResource("SpriteFrames_rgx34")
+
+[node name="CargoSprite" type="Sprite2D" parent="." unique_id=609180803]
+texture = SubResource("AtlasTexture_q7183")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1560292747]
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=1086792184]

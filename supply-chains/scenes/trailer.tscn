@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://bdar3x3soj0q3"]
+
+[ext_resource type="Script" uid="uid://bi3bkcbt6aspu" path="res://scripts/trailer.gd" id="1_7wnag"]
+[ext_resource type="Texture2D" uid="uid://bkvg1rjxqhurq" path="res://assets/trailers_topdown_spritesheet.png" id="1_o4ax3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7wnag"]
+atlas = ExtResource("1_o4ax3")
+region = Rect2(0, 0, 11, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h23np"]
+atlas = ExtResource("1_o4ax3")
+region = Rect2(0, 75, 11, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uprws"]
+atlas = ExtResource("1_o4ax3")
+region = Rect2(0, 25, 11, 25)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_usyny"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7wnag")
+}],
+"loop": true,
+"name": &"articulated dump truck",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h23np")
+}],
+"loop": true,
+"name": &"bulk_drawbar",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uprws")
+}],
+"loop": true,
+"name": &"flatbed_drawbar",
+"speed": 5.0
+}]
+
+[node name="Trailer" type="Node2D" unique_id=1049675973]
+script = ExtResource("1_7wnag")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1933659283]
+sprite_frames = SubResource("SpriteFrames_usyny")
+animation = &"flatbed_drawbar"
+
+[node name="CargoSprite" type="Sprite2D" parent="." unique_id=1666859422]
