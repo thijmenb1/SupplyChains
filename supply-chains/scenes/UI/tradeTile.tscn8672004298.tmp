@@ -1,0 +1,194 @@
+[gd_scene format=3 uid="uid://c2yufilcsrrlg"]
+
+[ext_resource type="Script" uid="uid://8sm6ju4mqxbh" path="res://scripts/UI/trade_tile.gd" id="1_oxjhg"]
+[ext_resource type="Texture2D" uid="uid://b1i3y62ed4yva" path="res://assets/resources_atlas.tres" id="2_oxjhg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7dvkv"]
+bg_color = Color(1, 1, 1, 0.2)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eysdi"]
+bg_color = Color(0, 0, 0, 0.25)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oxjhg"]
+bg_color = Color(0, 0, 0, 0.25)
+border_color = Color(0, 0, 0, 0.5)
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 5.0
+expand_margin_right = 5.0
+
+[node name="TradeTile" type="Panel" unique_id=1246992017]
+custom_minimum_size = Vector2(139, 95)
+offset_right = 139.0
+offset_bottom = 94.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_7dvkv")
+script = ExtResource("1_oxjhg")
+
+[node name="ResourceSpriteBackground" type="Panel" parent="." unique_id=652909016]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 38.0
+offset_bottom = 38.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_eysdi")
+
+[node name="ResourceSprite" type="TextureRect" parent="ResourceSpriteBackground" unique_id=1287359985]
+layout_mode = 0
+offset_left = 2.5
+offset_top = 2.5
+offset_right = 14.5
+offset_bottom = 14.5
+scale = Vector2(2, 2)
+texture = ExtResource("2_oxjhg")
+stretch_mode = 5
+
+[node name="BuyerName" type="Label" parent="." unique_id=1871368145]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 55.0
+offset_right = 124.0
+offset_bottom = 71.0
+theme_override_font_sizes/font_size = 11
+text = "Christopher Rodriguez"
+
+[node name="quantity" type="Label" parent="." unique_id=713677749]
+layout_mode = 0
+offset_left = 46.0
+offset_top = 25.0
+offset_right = 57.0
+offset_bottom = 38.0
+theme_override_font_sizes/font_size = 9
+theme_override_styles/normal = SubResource("StyleBoxFlat_oxjhg")
+text = "23"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RecourceName" type="Label" parent="." unique_id=1634864058]
+layout_mode = 0
+offset_left = 41.0
+offset_top = 8.0
+offset_right = 82.0
+offset_bottom = 24.0
+theme_override_font_sizes/font_size = 11
+text = "IronBar"
+
+[node name="perUnitPrice" type="Label" parent="." unique_id=1040689015]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 40.0
+offset_right = 47.0
+offset_bottom = 53.0
+theme_override_font_sizes/font_size = 9
+text = "€100,00/u"
+
+[node name="Price" type="Label" parent="." unique_id=240264241]
+layout_mode = 0
+offset_left = 69.0
+offset_top = 40.0
+offset_right = 135.0
+offset_bottom = 53.0
+theme_override_font_sizes/font_size = 9
+text = "Total: €1000,00"
+
+[node name="Not accepted" type="Control" parent="." unique_id=1964764349]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="timeLeft" type="Label" parent="Not accepted" unique_id=667795012]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 76.0
+offset_right = 33.0
+offset_bottom = 92.0
+theme_override_font_sizes/font_size = 11
+text = "23:59"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="Not accepted" unique_id=359960641]
+layout_mode = 0
+offset_left = 62.0
+offset_top = 75.0
+offset_right = 136.0
+offset_bottom = 91.0
+theme_override_font_sizes/font_size = 9
+
+[node name="Label" type="Label" parent="Not accepted/Button" unique_id=573397604]
+layout_mode = 0
+offset_right = 74.0
+offset_bottom = 23.0
+theme_override_font_sizes/font_size = 11
+text = "Accept"
+horizontal_alignment = 1
+
+[node name="landing" type="Control" parent="." unique_id=817426861]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="timeLeft" type="Label" parent="landing" unique_id=174841439]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 76.0
+offset_right = 33.0
+offset_bottom = 92.0
+theme_override_font_sizes/font_size = 11
+text = "23:59"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="landing" unique_id=1218875081]
+layout_mode = 0
+offset_left = 35.0
+offset_top = 77.0
+offset_right = 122.0
+offset_bottom = 90.0
+theme_override_font_sizes/font_size = 9
+text = "to land on runway 1"
+
+[node name="loading" type="Control" parent="." unique_id=2072804409]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label2" type="Label" parent="loading" unique_id=636515286]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 77.0
+offset_right = 30.0
+offset_bottom = 90.0
+theme_override_font_sizes/font_size = 9
+text = "99/99"
+
+[node name="Label3" type="Label" parent="loading" unique_id=188334180]
+layout_mode = 0
+offset_left = 31.0
+offset_top = 77.0
+offset_right = 119.0
+offset_bottom = 90.0
+theme_override_font_sizes/font_size = 9
+text = "loaded at terminal 1"
+
+[connection signal="pressed" from="Not accepted/Button" to="." method="_on_button_pressed"]

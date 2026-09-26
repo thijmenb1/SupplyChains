@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="VehicleData" format=3 uid="uid://co67odtfe1kqg"]
+
+[ext_resource type="Script" uid="uid://f7y38bail327" path="res://scripts/Vehicles/Resources/VehicleGeneral.gd" id="1_64our"]
+[ext_resource type="Script" uid="uid://dmiv8armwh43h" path="res://scripts/Vehicles/Resources/VehicleData.gd" id="1_ss5cj"]
+[ext_resource type="Script" uid="uid://csvx4re11qnyx" path="res://scripts/Vehicles/Resources/VehicleMobility.gd" id="2_x3qj5"]
+[ext_resource type="Script" uid="uid://cu5whbessmcnq" path="res://scripts/Vehicles/Resources/VehicleTransport.gd" id="4_ifjym"]
+
+[sub_resource type="Resource" id="Resource_dp1bn"]
+script = ExtResource("1_64our")
+vehicle_name = "Bulk trailer"
+vehicle_class = "bulk trailers"
+manufacturer = "power"
+atlas_region = Rect2(0, 123, 11, 27)
+vehicle_description = "A trailer that can move bulk materials"
+is_trailer = true
+metadata/_custom_type_script = "uid://f7y38bail327"
+
+[sub_resource type="Resource" id="Resource_ksgxb"]
+script = ExtResource("2_x3qj5")
+weight = 6000.0
+metadata/_custom_type_script = "uid://csvx4re11qnyx"
+
+[sub_resource type="Resource" id="Resource_skl5x"]
+script = ExtResource("4_ifjym")
+cargoType = "Bulk"
+cargo_weight_capacity = 20000
+cargo_volume_capacity = 14.0
+metadata/_custom_type_script = "uid://cu5whbessmcnq"
+
+[resource]
+script = ExtResource("1_ss5cj")
+general = SubResource("Resource_dp1bn")
+mobility = SubResource("Resource_ksgxb")
+transport = SubResource("Resource_skl5x")
+cost = 50
+metadata/_custom_type_script = "uid://dmiv8armwh43h"

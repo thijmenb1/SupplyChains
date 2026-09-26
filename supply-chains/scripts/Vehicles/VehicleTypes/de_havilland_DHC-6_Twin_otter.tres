@@ -1,0 +1,71 @@
+[gd_resource type="Resource" script_class="VehicleData" format=3 uid="uid://g5v0wqbiovj2"]
+
+[ext_resource type="Script" uid="uid://ds82kyunv82m4" path="res://scripts/Vehicles/Resources/VehicleDimensions.gd" id="1_gtxut"]
+[ext_resource type="Script" uid="uid://dmiv8armwh43h" path="res://scripts/Vehicles/Resources/VehicleData.gd" id="1_j62xq"]
+[ext_resource type="Script" uid="uid://bvv4720pqf6dc" path="res://scripts/Vehicles/Resources/VehicleDurability.gd" id="2_qy0vg"]
+[ext_resource type="Script" uid="uid://cchmqkioegkvj" path="res://scripts/Vehicles/Resources/VehicleEngine.gd" id="3_ciybl"]
+[ext_resource type="Script" uid="uid://f7y38bail327" path="res://scripts/Vehicles/Resources/VehicleGeneral.gd" id="4_r6xfr"]
+[ext_resource type="Script" uid="uid://csvx4re11qnyx" path="res://scripts/Vehicles/Resources/VehicleMobility.gd" id="5_r7i50"]
+[ext_resource type="Script" uid="uid://cu5whbessmcnq" path="res://scripts/Vehicles/Resources/VehicleTransport.gd" id="7_na5j3"]
+
+[sub_resource type="Resource" id="Resource_qpq5u"]
+script = ExtResource("1_gtxut")
+width_meter = 19.8
+width_pixel = 100
+length_meter = 15.77
+length_pixel = 80
+height = 5.9
+metadata/_custom_type_script = "uid://ds82kyunv82m4"
+
+[sub_resource type="Resource" id="Resource_ukia0"]
+script = ExtResource("2_qy0vg")
+reliability = 0.95
+health = 2000
+metadata/_custom_type_script = "uid://bvv4720pqf6dc"
+
+[sub_resource type="Resource" id="Resource_tr1dw"]
+script = ExtResource("3_ciybl")
+horse_power = 1240
+torque = 3550
+fuel_type = "Jet"
+fuel_capacity = 1430.0
+fuel_consumption = 350.0
+metadata/_custom_type_script = "uid://cchmqkioegkvj"
+
+[sub_resource type="Resource" id="Resource_1xmfc"]
+script = ExtResource("4_r6xfr")
+vehicle_name = "De Havilland DHC-6 Twin otter"
+vehicle_class = "Light cargo plane"
+manufacturer = "De Havilland Canada"
+atlas_region = Rect2(87, 0, 100, 80)
+vehicle_description = "A rugged twin-turboprop STOL aircraft built to reach airstrips nothing else can. Fixed tricycle gear, a high strut-braced wing, and forgiving handling make it a top pick for bush flying, cargo runs, and remote passenger service."
+metadata/_custom_type_script = "uid://f7y38bail327"
+
+[sub_resource type="Resource" id="Resource_558wc"]
+script = ExtResource("5_r7i50")
+vehicle_speed = 338.0
+drive_type = "Twin Turboprop"
+turning_radius = 10.0
+weight = 3363.0
+tire_count = 3
+contact_area = 0.6
+offroad_capability = 0.9
+metadata/_custom_type_script = "uid://csvx4re11qnyx"
+
+[sub_resource type="Resource" id="Resource_iehh2"]
+script = ExtResource("7_na5j3")
+cargoType = "Air freigth"
+cargo_weight_capacity = 2177
+cargo_volume_capacity = 15.0
+metadata/_custom_type_script = "uid://cu5whbessmcnq"
+
+[resource]
+script = ExtResource("1_j62xq")
+general = SubResource("Resource_1xmfc")
+engine = SubResource("Resource_tr1dw")
+mobility = SubResource("Resource_558wc")
+dimensions = SubResource("Resource_qpq5u")
+durability = SubResource("Resource_ukia0")
+transport = SubResource("Resource_iehh2")
+cost = 250
+metadata/_custom_type_script = "uid://dmiv8armwh43h"

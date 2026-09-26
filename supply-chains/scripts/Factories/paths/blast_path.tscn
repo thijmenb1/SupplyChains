@@ -1,0 +1,67 @@
+[gd_scene format=4 uid="uid://brim4dhj3tlvg"]
+
+[ext_resource type="TileSet" uid="uid://x2kxi7jmy2f8" path="res://assets/Tilemaps/tileset.tres" id="1_pcul1"]
+[ext_resource type="Texture2D" uid="uid://bmnek10if6uwh" path="res://assets/Vehicles/Vehicle_atlas.tres" id="2_jay1y"]
+
+[sub_resource type="Curve2D" id="Curve2D_pcul1"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 157, 80, 0, 0, 0, 0, 127, 80, 0, 0, 0, 0, 112, 64, 0, 0, 0, 0, 112, 34)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_jay1y"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 67, 80, 0, 0, 0, 0, 97, 80, 0, 0, 0, 0, 112, 64, 0, 0, 0, 0, 112, 34)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_blgbl"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 112, 110, 0, 0, 0, 0, 112, 80, 0, 0, 0, 0, 112, 64, 0, 0, 0, 0, 112, 34)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_yaagn"]
+bake_interval = 10.0
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 103, 80, 0, 0, 0, 0, 84, 80, 0, 0, 0, 0, 58, 80, 0, 0, 0, 0, 49, 64, 0, 0, 0, 0, 38, 45, 0, 0, 0, 0, 23, 45)
+}
+point_count = 6
+
+[sub_resource type="Curve2D" id="Curve2D_bx5up"]
+bake_interval = 10.0
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 49, 100, 0, 0, 0, 0, 49, 80, 0, 0, 0, 0, 49, 64, 0, 0, 0, 0, 38, 45, 0, 0, 0, 0, 23, 45)
+}
+point_count = 5
+
+[node name="BlastPath" type="Node2D" unique_id=1179128250]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1346286452]
+tile_map_data = PackedByteArray("AAABAAIAAQADAAUAAAAAAAIAAQACAAUAAAACAAIAAQACAAUAAAADAAIAAQADAAUAAAAEAAIAAQACAAUAAAAFAAIAAQACAAUAAAAAAAAAAQABAAIAAAAAAAEAAQABAAMAAAABAAAAAQACAAIAAAABAAEAAQACAAMAAAACAAAAAQADAAIAAAACAAEAAQADAAMAAAADAAAAAQAEAAIAAAADAAEAAQAEAAMAAAABAAMAAQABAAUAAAABAAQAAQABAAUAAAADAAMAAQABAAUAAAADAAQAAQABAAUAAAA=")
+tile_set = ExtResource("1_pcul1")
+
+[node name="BlastPath_load_right" type="Path2D" parent="." unique_id=1682013624]
+curve = SubResource("Curve2D_pcul1")
+
+[node name="BlastPath_load_left" type="Path2D" parent="." unique_id=866851541]
+curve = SubResource("Curve2D_jay1y")
+
+[node name="BlastPath_load_straight" type="Path2D" parent="." unique_id=1682184879]
+curve = SubResource("Curve2D_blgbl")
+
+[node name="BlastPath_unload_right" type="Path2D" parent="." unique_id=1361164912]
+curve = SubResource("Curve2D_yaagn")
+
+[node name="BlastPath_unload_straight" type="Path2D" parent="." unique_id=1804620327]
+curve = SubResource("Curve2D_bx5up")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="." unique_id=313130516]
+position = Vector2(147, 80)
+rotation = -3.1415925
+progress = 10.112489
+
+[node name="Sprite2D" type="Sprite2D" parent="PathFollow2D" unique_id=314309311]
+position = Vector2(-18.253265, 0)
+rotation = -1.5707964
+texture = ExtResource("2_jay1y")

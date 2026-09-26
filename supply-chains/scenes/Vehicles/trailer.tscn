@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://bdar3x3soj0q3"]
+
+[ext_resource type="Script" uid="uid://bi3bkcbt6aspu" path="res://scripts/Vehicles/trailer.gd" id="1_wwfi2"]
+[ext_resource type="Texture2D" uid="uid://bkvg1rjxqhurq" path="res://assets/Vehicles/trailers_topdown_spritesheet.png" id="2_g5uru"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h23np"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(0, 123, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uprws"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(0, 69, 11, 27)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_usyny"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h23np")
+}],
+"loop": true,
+"name": &"bulkTrailer",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uprws")
+}],
+"loop": true,
+"name": &"flatbedTrailer",
+"speed": 5.0
+}]
+
+[node name="Trailer" type="CharacterBody2D" unique_id=735797755]
+script = ExtResource("1_wwfi2")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1933659283]
+position = Vector2(7.6737022, 0)
+rotation = 1.5707964
+sprite_frames = SubResource("SpriteFrames_usyny")
+animation = &"bulkTrailer"
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=1888943489]
+position = Vector2(7.6737022, -0.10000023)
+rotation = 1.5707964
+scale = Vector2(1, 1.0048077)
+polygon = PackedVector2Array(5.6, 13.5, -5.4, 13.5, -5.4, -7.4, -0.4, -7.4, -0.4, -13.4, 0.6, -13.4, 0.6, -7.4, 5.6, -7.4)
+
+[node name="TowPoint" type="Marker2D" parent="." unique_id=428704193]
+position = Vector2(21.173702, 0)

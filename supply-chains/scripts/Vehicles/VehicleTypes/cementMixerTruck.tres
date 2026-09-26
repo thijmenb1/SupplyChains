@@ -1,0 +1,75 @@
+[gd_resource type="Resource" script_class="VehicleData" format=3 uid="uid://1bhb3vpb20ef"]
+
+[ext_resource type="Script" uid="uid://dmiv8armwh43h" path="res://scripts/Vehicles/Resources/VehicleData.gd" id="1_e3tdk"]
+[ext_resource type="Script" uid="uid://ds82kyunv82m4" path="res://scripts/Vehicles/Resources/VehicleDimensions.gd" id="1_v4laq"]
+[ext_resource type="Script" uid="uid://cchmqkioegkvj" path="res://scripts/Vehicles/Resources/VehicleEngine.gd" id="1_vchuv"]
+[ext_resource type="Script" uid="uid://bvv4720pqf6dc" path="res://scripts/Vehicles/Resources/VehicleDurability.gd" id="2_vuqo7"]
+[ext_resource type="Script" uid="uid://f7y38bail327" path="res://scripts/Vehicles/Resources/VehicleGeneral.gd" id="2_ypkal"]
+[ext_resource type="Script" uid="uid://csvx4re11qnyx" path="res://scripts/Vehicles/Resources/VehicleMobility.gd" id="5_lx26x"]
+[ext_resource type="Script" uid="uid://cu5whbessmcnq" path="res://scripts/Vehicles/Resources/VehicleTransport.gd" id="7_vckkm"]
+
+[sub_resource type="Resource" id="Resource_v7l8r"]
+script = ExtResource("1_v4laq")
+width_meter = 2.2
+width_pixel = 11
+length_meter = 5.4
+length_pixel = 27
+height = 3.5
+wheelbase_meter = 4.8
+wheelbase_pixel = 21
+metadata/_custom_type_script = "uid://ds82kyunv82m4"
+
+[sub_resource type="Resource" id="Resource_7221p"]
+script = ExtResource("2_vuqo7")
+reliability = 0.97
+health = 2000
+metadata/_custom_type_script = "uid://bvv4720pqf6dc"
+
+[sub_resource type="Resource" id="Resource_h5lm3"]
+script = ExtResource("1_vchuv")
+horse_power = 460
+torque = 2300
+fuel_type = "Diesel"
+fuel_capacity = 500.0
+fuel_consumption = 28.0
+metadata/_custom_type_script = "uid://cchmqkioegkvj"
+
+[sub_resource type="Resource" id="Resource_v4laq"]
+script = ExtResource("2_ypkal")
+vehicle_name = "Cement truck"
+vehicle_class = "Cement truck"
+manufacturer = "Power"
+atlas_region = Rect2(88, 80, 11, 27)
+vehicle_description = "A truck specialy disgned to transport liquit concrete"
+metadata/_custom_type_script = "uid://f7y38bail327"
+
+[sub_resource type="Resource" id="Resource_k5782"]
+script = ExtResource("5_lx26x")
+vehicle_speed = 90.0
+drive_type = "6x4 RWD"
+turning_radius = 8.5
+traction = 0.7
+weight = 12000.0
+tire_count = 6
+contact_area = 1.8
+offroad_capability = 0.45
+metadata/_custom_type_script = "uid://csvx4re11qnyx"
+
+[sub_resource type="Resource" id="Resource_44oob"]
+script = ExtResource("7_vckkm")
+cargoType = "Concrete"
+cargo_weight_capacity = 18000
+cargo_volume_capacity = 8.0
+dump_time = -1.0
+metadata/_custom_type_script = "uid://cu5whbessmcnq"
+
+[resource]
+script = ExtResource("1_e3tdk")
+general = SubResource("Resource_v4laq")
+engine = SubResource("Resource_h5lm3")
+mobility = SubResource("Resource_k5782")
+dimensions = SubResource("Resource_v7l8r")
+durability = SubResource("Resource_7221p")
+transport = SubResource("Resource_44oob")
+cost = 100
+metadata/_custom_type_script = "uid://dmiv8armwh43h"

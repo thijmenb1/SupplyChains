@@ -1,0 +1,73 @@
+[gd_resource type="Resource" script_class="VehicleData" format=3 uid="uid://cnot2hn2hvxi7"]
+
+[ext_resource type="Script" uid="uid://ds82kyunv82m4" path="res://scripts/Vehicles/Resources/VehicleDimensions.gd" id="1_bxfmo"]
+[ext_resource type="Script" uid="uid://dmiv8armwh43h" path="res://scripts/Vehicles/Resources/VehicleData.gd" id="1_ptyrj"]
+[ext_resource type="Script" uid="uid://bvv4720pqf6dc" path="res://scripts/Vehicles/Resources/VehicleDurability.gd" id="2_551ac"]
+[ext_resource type="Script" uid="uid://cchmqkioegkvj" path="res://scripts/Vehicles/Resources/VehicleEngine.gd" id="3_b3nq4"]
+[ext_resource type="Script" uid="uid://f7y38bail327" path="res://scripts/Vehicles/Resources/VehicleGeneral.gd" id="4_kt4p8"]
+[ext_resource type="Script" uid="uid://csvx4re11qnyx" path="res://scripts/Vehicles/Resources/VehicleMobility.gd" id="5_3i15c"]
+[ext_resource type="Script" uid="uid://cu5whbessmcnq" path="res://scripts/Vehicles/Resources/VehicleTransport.gd" id="7_wl7iw"]
+
+[sub_resource type="Resource" id="Resource_48fiv"]
+script = ExtResource("1_bxfmo")
+width_meter = 15.87
+width_pixel = 79
+length_meter = 10.9
+length_pixel = 56
+height = 3.2
+wheelbase_meter = 3.0
+wheelbase_pixel = 15
+metadata/_custom_type_script = "uid://ds82kyunv82m4"
+
+[sub_resource type="Resource" id="Resource_0c1w4"]
+script = ExtResource("2_551ac")
+reliability = 0.95
+health = 1100
+metadata/_custom_type_script = "uid://bvv4720pqf6dc"
+
+[sub_resource type="Resource" id="Resource_hjnf7"]
+script = ExtResource("3_b3nq4")
+horse_power = 550
+torque = 1783
+fuel_type = "jet"
+fuel_capacity = 644.0
+fuel_consumption = 148.0
+metadata/_custom_type_script = "uid://cchmqkioegkvj"
+
+[sub_resource type="Resource" id="Resource_fyfqn"]
+script = ExtResource("4_kt4p8")
+vehicle_name = "Pilatus PC-6 porter"
+vehicle_class = "Light cargo plane"
+manufacturer = "Pilatus"
+atlas_region = Rect2(187, 0, 79, 56)
+vehicle_description = "A single-engine Swiss STOL legend built for the mountains. Boxy and unglamorous but famously capable, the Porter can haul cargo, passengers, or paratroopers out of strips most aircraft wouldn't dare attempt."
+metadata/_custom_type_script = "uid://f7y38bail327"
+
+[sub_resource type="Resource" id="Resource_dr2ou"]
+script = ExtResource("5_3i15c")
+vehicle_speed = 232.0
+drive_type = "Single Turboprop"
+turning_radius = 7.0
+weight = 1395.0
+tire_count = 3
+contact_area = 0.4
+offroad_capability = 0.95
+metadata/_custom_type_script = "uid://csvx4re11qnyx"
+
+[sub_resource type="Resource" id="Resource_lmdfj"]
+script = ExtResource("7_wl7iw")
+cargoType = "Air freigth"
+cargo_weight_capacity = 1405
+cargo_volume_capacity = 8.0
+metadata/_custom_type_script = "uid://cu5whbessmcnq"
+
+[resource]
+script = ExtResource("1_ptyrj")
+general = SubResource("Resource_fyfqn")
+engine = SubResource("Resource_hjnf7")
+mobility = SubResource("Resource_dr2ou")
+dimensions = SubResource("Resource_48fiv")
+durability = SubResource("Resource_0c1w4")
+transport = SubResource("Resource_lmdfj")
+cost = 175
+metadata/_custom_type_script = "uid://dmiv8armwh43h"

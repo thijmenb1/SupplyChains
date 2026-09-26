@@ -1,0 +1,82 @@
+[gd_scene format=3 uid="uid://bl74uw6ifs8nc"]
+
+[ext_resource type="Script" uid="uid://c2216beq6lv3d" path="res://scripts/level.gd" id="1_ppgk2"]
+[ext_resource type="TileSet" uid="uid://x2kxi7jmy2f8" path="res://tileset.tres" id="2_2r41h"]
+[ext_resource type="Script" uid="uid://cjin8kr4jkocj" path="res://scripts/day_night_cycle.gd" id="2_klq6b"]
+[ext_resource type="PackedScene" uid="uid://cpjnm3x3m8v3p" path="res://scenes/tree.tscn" id="4_b121j"]
+[ext_resource type="PackedScene" uid="uid://csdmgwhlyp0j" path="res://scenes/ui.tscn" id="4_mx8sn"]
+[ext_resource type="Script" uid="uid://je3tllme6ye" path="res://scripts/cameraMovement.gd" id="5_2r41h"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ppgk2"]
+frequency = 0.005
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2r41h"]
+noise = SubResource("FastNoiseLite_ppgk2")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_b121j"]
+frequency = 0.008
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_klq6b"]
+noise = SubResource("FastNoiseLite_b121j")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_klq6b"]
+frequency = 0.008
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_b121j"]
+noise = SubResource("FastNoiseLite_klq6b")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_8c41q"]
+noise_type = 2
+frequency = 0.15
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_olg7q"]
+noise = SubResource("FastNoiseLite_8c41q")
+
+[sub_resource type="Gradient" id="Gradient_klq6b"]
+offsets = PackedFloat32Array(0, 0.09663866, 0.18067227, 0.22268908, 0.26890758, 0.34453782, 0.83613443, 0.89495796, 0.9327731, 0.9831933, 1)
+colors = PackedColorArray(0.24705882, 0.20784314, 0.32156864, 1, 0.12156863, 0.1254902, 0.23137255, 1, 0.35652, 0.25560004, 0.36, 1, 0.56, 0.3808, 0.44352, 1, 0.74, 0.62160003, 0.63935995, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.7411765, 0.62352943, 0.6392157, 1, 0.56078434, 0.38039216, 0.44313726, 1, 0.35686275, 0.25490198, 0.36078432, 1, 0.24705882, 0.20784314, 0.32156864, 1)
+
+[node name="Level" type="Node2D" unique_id=765950742 node_paths=PackedStringArray("TerrainLayer", "OreLayer", "RoadLayer", "PreviewLayer", "camera", "TreeLayer", "baseUpgradeLayer")]
+script = ExtResource("1_ppgk2")
+noiseHeigthText = SubResource("NoiseTexture2D_2r41h")
+noiseTempText = SubResource("NoiseTexture2D_klq6b")
+noiseMoistText = SubResource("NoiseTexture2D_b121j")
+noiseOreText = SubResource("NoiseTexture2D_olg7q")
+TerrainLayer = NodePath("TerrainLayer")
+OreLayer = NodePath("OreLayer")
+RoadLayer = NodePath("RoadLayer")
+PreviewLayer = NodePath("PreviewLayer")
+camera = NodePath("Camera2D")
+TreeScene = ExtResource("4_b121j")
+TreeLayer = NodePath("TreeLayer")
+baseUpgradeLayer = NodePath("baseUpgrades")
+
+[node name="DayNightLayer" type="CanvasModulate" parent="." unique_id=2125765783]
+script = ExtResource("2_klq6b")
+color_gradient = SubResource("Gradient_klq6b")
+
+[node name="TerrainLayer" type="TileMapLayer" parent="." unique_id=1631270430]
+tile_set = ExtResource("2_2r41h")
+
+[node name="OreLayer" type="TileMapLayer" parent="." unique_id=678250414]
+tile_set = ExtResource("2_2r41h")
+
+[node name="RoadLayer" type="TileMapLayer" parent="." unique_id=2098542376]
+tile_set = ExtResource("2_2r41h")
+
+[node name="baseUpgrades" type="Node2D" parent="." unique_id=2081116633]
+
+[node name="TreeLayer" type="Node2D" parent="." unique_id=176488556]
+
+[node name="Tree" parent="TreeLayer" unique_id=240339025 instance=ExtResource("4_b121j")]
+
+[node name="PreviewLayer" type="TileMapLayer" parent="." unique_id=291778715]
+modulate = Color(1, 1, 1, 0.5)
+tile_set = ExtResource("2_2r41h")
+
+[node name="VehicleLayer" type="Node2D" parent="." unique_id=1640582225]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1738524323]
+script = ExtResource("5_2r41h")
+
+[node name="Ui" parent="." unique_id=78268043 instance=ExtResource("4_mx8sn")]

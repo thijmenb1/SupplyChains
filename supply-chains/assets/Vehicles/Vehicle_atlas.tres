@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" format=3 uid="uid://bmnek10if6uwh"]
+
+[ext_resource type="Texture2D" uid="uid://dcsaf2llywke1" path="res://assets/Vehicles/trucks_topdown_spritesheet.png" id="1_sq80p"]
+
+[resource]
+atlas = ExtResource("1_sq80p")
+region = Rect2(0, 80, 11, 27)

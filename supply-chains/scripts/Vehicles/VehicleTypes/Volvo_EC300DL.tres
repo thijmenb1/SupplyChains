@@ -1,0 +1,71 @@
+[gd_resource type="Resource" script_class="VehicleData" format=3 uid="uid://dfjxcdm6wv7qw"]
+
+[ext_resource type="Script" uid="uid://dmiv8armwh43h" path="res://scripts/Vehicles/Resources/VehicleData.gd" id="1_tslxw"]
+[ext_resource type="Script" uid="uid://f7y38bail327" path="res://scripts/Vehicles/Resources/VehicleGeneral.gd" id="1_tvor8"]
+[ext_resource type="Script" uid="uid://ds82kyunv82m4" path="res://scripts/Vehicles/Resources/VehicleDimensions.gd" id="1_x0xqw"]
+[ext_resource type="Script" uid="uid://bvv4720pqf6dc" path="res://scripts/Vehicles/Resources/VehicleDurability.gd" id="2_tqitm"]
+[ext_resource type="Script" uid="uid://cchmqkioegkvj" path="res://scripts/Vehicles/Resources/VehicleEngine.gd" id="3_ayvu4"]
+[ext_resource type="Script" uid="uid://c61buw8x66e2" path="res://scripts/Vehicles/Resources/VehicleEquipment.gd" id="4_2wcj3"]
+[ext_resource type="Script" uid="uid://csvx4re11qnyx" path="res://scripts/Vehicles/Resources/VehicleMobility.gd" id="6_agpxw"]
+
+[sub_resource type="Resource" id="Resource_vnuk1"]
+script = ExtResource("1_x0xqw")
+width_meter = 3.19
+width_pixel = 11
+length_meter = 10.6
+length_pixel = 20
+height = 3.2
+wheelbase_meter = 3.85
+wheelbase_pixel = -1
+metadata/_custom_type_script = "uid://ds82kyunv82m4"
+
+[sub_resource type="Resource" id="Resource_j7u5t"]
+script = ExtResource("2_tqitm")
+reliability = 0.97
+health = 2800
+metadata/_custom_type_script = "uid://bvv4720pqf6dc"
+
+[sub_resource type="Resource" id="Resource_hj03q"]
+script = ExtResource("3_ayvu4")
+horse_power = 231
+torque = 1080
+fuel_type = "Diesel"
+fuel_capacity = 470.0
+fuel_consumption = 28.0
+metadata/_custom_type_script = "uid://cchmqkioegkvj"
+
+[sub_resource type="Resource" id="Resource_pgo8h"]
+script = ExtResource("4_2wcj3")
+capacity = 2.0
+metadata/_custom_type_script = "uid://c61buw8x66e2"
+
+[sub_resource type="Resource" id="Resource_3r1dw"]
+script = ExtResource("1_tvor8")
+vehicle_name = "Volvo EC300DL"
+vehicle_class = "Heavy crawler Excavator"
+manufacturer = "Volvo"
+atlas_region = Rect2(0, 117, 11, 28)
+vehicle_description = "A heavy crawler excavator built for heavy-duty digging, quarry work, and earthmoving operations."
+metadata/_custom_type_script = "uid://f7y38bail327"
+
+[sub_resource type="Resource" id="Resource_v8f84"]
+script = ExtResource("6_agpxw")
+vehicle_speed = 5.5
+drive_type = "Tracked"
+traction = 0.98
+weight = 30000.0
+tire_count = 2
+contact_area = 4.2
+offroad_capability = 0.98
+metadata/_custom_type_script = "uid://csvx4re11qnyx"
+
+[resource]
+script = ExtResource("1_tslxw")
+general = SubResource("Resource_3r1dw")
+engine = SubResource("Resource_hj03q")
+mobility = SubResource("Resource_v8f84")
+dimensions = SubResource("Resource_vnuk1")
+durability = SubResource("Resource_j7u5t")
+equipment = SubResource("Resource_pgo8h")
+cost = 120
+metadata/_custom_type_script = "uid://dmiv8armwh43h"

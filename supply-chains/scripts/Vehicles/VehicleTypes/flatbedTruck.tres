@@ -1,0 +1,83 @@
+[gd_resource type="Resource" script_class="VehicleData" format=3 uid="uid://dpwfqy85esx80"]
+
+[ext_resource type="Script" uid="uid://pryfvbqwggha" path="res://scripts/Vehicles/Resources/VehicleAttachmentPoints.gd" id="1_4ppwx"]
+[ext_resource type="Script" uid="uid://f7y38bail327" path="res://scripts/Vehicles/Resources/VehicleGeneral.gd" id="1_cdi16"]
+[ext_resource type="Script" uid="uid://dmiv8armwh43h" path="res://scripts/Vehicles/Resources/VehicleData.gd" id="1_ra8ua"]
+[ext_resource type="Script" uid="uid://ds82kyunv82m4" path="res://scripts/Vehicles/Resources/VehicleDimensions.gd" id="2_pb1nk"]
+[ext_resource type="Script" uid="uid://bvv4720pqf6dc" path="res://scripts/Vehicles/Resources/VehicleDurability.gd" id="3_shnkj"]
+[ext_resource type="Script" uid="uid://cchmqkioegkvj" path="res://scripts/Vehicles/Resources/VehicleEngine.gd" id="4_n6103"]
+[ext_resource type="Script" uid="uid://csvx4re11qnyx" path="res://scripts/Vehicles/Resources/VehicleMobility.gd" id="6_affrb"]
+[ext_resource type="Script" uid="uid://cu5whbessmcnq" path="res://scripts/Vehicles/Resources/VehicleTransport.gd" id="8_3twqm"]
+
+[sub_resource type="Resource" id="Resource_hbv0i"]
+script = ExtResource("1_4ppwx")
+max_tow_weight = 24000
+connection_count = 1
+metadata/_custom_type_script = "uid://pryfvbqwggha"
+
+[sub_resource type="Resource" id="Resource_2ih85"]
+script = ExtResource("2_pb1nk")
+width_meter = 2.2
+width_pixel = 11
+length_meter = 5.4
+length_pixel = 27
+height = 3.5
+wheelbase_meter = 4.8
+wheelbase_pixel = 21
+metadata/_custom_type_script = "uid://ds82kyunv82m4"
+
+[sub_resource type="Resource" id="Resource_0o7n6"]
+script = ExtResource("3_shnkj")
+reliability = 0.97
+health = 2000
+metadata/_custom_type_script = "uid://bvv4720pqf6dc"
+
+[sub_resource type="Resource" id="Resource_oaa4s"]
+script = ExtResource("4_n6103")
+horse_power = 460
+torque = 2300
+fuel_type = "Diesel"
+fuel_capacity = 500.0
+fuel_consumption = 28.0
+metadata/_custom_type_script = "uid://cchmqkioegkvj"
+
+[sub_resource type="Resource" id="Resource_dflnl"]
+script = ExtResource("1_cdi16")
+vehicle_name = "Flatbed truck"
+vehicle_class = "Flatbed truck"
+manufacturer = "Power"
+atlas_region = Rect2(0, 80, 11, 27)
+vehicle_description = "A versatile truck for transporting construction materials and palletized goods."
+metadata/_custom_type_script = "uid://f7y38bail327"
+
+[sub_resource type="Resource" id="Resource_uet68"]
+script = ExtResource("6_affrb")
+vehicle_speed = 90.0
+drive_type = "6x4 RWD"
+turning_radius = 8.5
+traction = 0.7
+weight = 12000.0
+tire_count = 6
+contact_area = 1.8
+offroad_capability = 0.45
+metadata/_custom_type_script = "uid://csvx4re11qnyx"
+
+[sub_resource type="Resource" id="Resource_68jxh"]
+script = ExtResource("8_3twqm")
+cargoType = "Flatbed"
+cargo_weight_capacity = 18000
+cargo_volume_capacity = 2.0
+dump_time = -1.0
+metadata/_custom_type_script = "uid://cu5whbessmcnq"
+
+[resource]
+script = ExtResource("1_ra8ua")
+general = SubResource("Resource_dflnl")
+engine = SubResource("Resource_oaa4s")
+mobility = SubResource("Resource_uet68")
+attachments = SubResource("Resource_hbv0i")
+dimensions = SubResource("Resource_2ih85")
+durability = SubResource("Resource_0o7n6")
+transport = SubResource("Resource_68jxh")
+cost = 100
+metadata/_custom_type_script = "uid://dmiv8armwh43h"

@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://bvl6i6kcxr3c1"]
+
+[ext_resource type="Script" uid="uid://cxioduqog7xuu" path="res://scripts/UI/recipe_row.gd" id="1_ix3e0"]
+
+[node name="Recipe" type="HBoxContainer" unique_id=1007926021]
+script = ExtResource("1_ix3e0")
+
+[node name="CheckBox" type="CheckBox" parent="." unique_id=1547118336]
+layout_mode = 2
+
+[node name="Arrow" type="Label" parent="." unique_id=25883657]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "→"

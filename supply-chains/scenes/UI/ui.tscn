@@ -1,0 +1,2556 @@
+[gd_scene format=3 uid="uid://csdmgwhlyp0j"]
+
+[ext_resource type="Script" uid="uid://cpubpk1hya2ms" path="res://scripts/UI/ui.gd" id="1_gdt2y"]
+[ext_resource type="Texture2D" uid="uid://eqymhfkjm3cg" path="res://assets/resources.png" id="1_nt7q6"]
+[ext_resource type="FontFile" uid="uid://b08ub3taoj725" path="res://tinyNumberFont.ttf" id="2_x4jx1"]
+[ext_resource type="Texture2D" uid="uid://oq44vob1gwo3" path="res://assets/Tilemaps/tilemap_concept.png" id="3_yev5y"]
+[ext_resource type="Texture2D" uid="uid://b7o102dx4d53d" path="res://assets/UI/Icons/garage.png" id="5_wm3ai"]
+[ext_resource type="Texture2D" uid="uid://dcsaf2llywke1" path="res://assets/Vehicles/trucks_topdown_spritesheet.png" id="7_p7vwb"]
+[ext_resource type="Script" uid="uid://bbjiq213buu2n" path="res://scripts/UI/garage.gd" id="7_vdcm2"]
+[ext_resource type="Script" uid="uid://b1pmuvtmuaa13" path="res://scripts/UI/vehicle_UI.gd" id="8_6rmj2"]
+[ext_resource type="Texture2D" uid="uid://bxyuhew3txkxb" path="res://assets/UI/Icons/right-left-solid.png" id="8_6tc23"]
+[ext_resource type="Script" uid="uid://cexxtvmy5kytv" path="res://scripts/UI/shop.gd" id="9_7dvkv"]
+[ext_resource type="PackedScene" uid="uid://cvldihw4f7dtu" path="res://scenes/UI/vehicleTile.tscn" id="10_6rmj2"]
+[ext_resource type="Script" uid="uid://ccob70b6hs6r3" path="res://scripts/UI/trade_ui.gd" id="10_q0fjp"]
+[ext_resource type="Texture2D" uid="uid://bowwnjhsd47sa" path="res://assets/UI/Icons/health-solid.png" id="11_8k7j3"]
+[ext_resource type="Texture2D" uid="uid://d0jgnmcpv6wh0" path="res://assets/UI/Icons/route-solid.png" id="13_jkdwc"]
+[ext_resource type="Texture2D" uid="uid://bofeustkuheub" path="res://assets/UI/Icons/engineIcon.png" id="13_vsj0x"]
+[ext_resource type="Texture2D" uid="uid://c4xmv48yoiqgt" path="res://assets/UI/Icons/gas-pump-solid.png" id="14_qsv74"]
+[ext_resource type="Texture2D" uid="uid://bg1lvthvcwxgi" path="res://assets/UI/Icons/trailer-solid.png" id="14_rlppe"]
+[ext_resource type="Texture2D" uid="uid://bfm2b6dpiff7p" path="res://assets/UI/Icons/gauge-high-solid.png" id="15_h1mc3"]
+[ext_resource type="Script" uid="uid://dqg5idmyvy0d1" path="res://scripts/UI/trailer_ui.gd" id="15_ycmcx"]
+[ext_resource type="Texture2D" uid="uid://72xak1mkmp0a" path="res://assets/UI/Icons/linkIcon.png" id="16_f7tlh"]
+[ext_resource type="Texture2D" uid="uid://csw22360lowj1" path="res://assets/UI/Icons/weight-hanging-solid.png" id="17_8k7j3"]
+[ext_resource type="Script" uid="uid://dt7at6hxdxlqj" path="res://scripts/UI/route_ui_popup.gd" id="17_catpy"]
+[ext_resource type="Script" uid="uid://cv7ti2f3ivefu" path="res://scripts/UI/route_ui.gd" id="17_kupmu"]
+[ext_resource type="Script" uid="uid://fhh1qks8qn5m" path="res://scripts/UI/mouse_ui.gd" id="18_8k7j3"]
+[ext_resource type="Script" uid="uid://cnhy1nj48xuu3" path="res://scripts/UI/factory_UI.gd" id="19_uisvg"]
+[ext_resource type="Texture2D" uid="uid://dqvq1b3qdn5cc" path="res://assets/UI/Icons/boxes-stacked-solid.png" id="20_uisvg"]
+[ext_resource type="Texture2D" uid="uid://drnrjox80a2f4" path="res://assets/UI/Icons/rectangle-list-regular.png" id="21_331jc"]
+[ext_resource type="PackedScene" uid="uid://bvl6i6kcxr3c1" path="res://scenes/UI/recipeRow.tscn" id="22_eeaqk"]
+[ext_resource type="Script" uid="uid://p1esit41o8w5" path="res://scripts/UI/accepted_orders.gd" id="25_tqkrj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x4jx1"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yev5y"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(0, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gdt2y"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(6, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wm3ai"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(12, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8dubc"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(18, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p7vwb"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(24, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ktti3"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(30, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cgfq5"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(36, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nt7q6"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(42, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x4jx1"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(48, 0, 6, 6)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gdt2y"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vdcm2"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(32, 160, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6rmj2"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(32, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vsj0x"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(0, 608, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qsv74"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(32, 287, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h1mc3"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(0, 384, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cof4p"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yev5y"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7dvkv"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(32, 160, 32, 32)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tqkrj"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yyr6m"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tqkrj"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uisvg"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rlppe"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(352, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ycmcx"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(448, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kupmu"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(544, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_catpy"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_41akx"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(160, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f7tlh"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(0, 608, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8k7j3"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(416, 352, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jkdwc"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(256, 353, 32, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_331jc"]
+atlas = ExtResource("3_yev5y")
+region = Rect2(256, 384, 32, 32)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8dubc"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p7vwb"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ktti3"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7dvkv"]
+bg_color = Color(1, 1, 1, 0.2)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vdcm2"]
+bg_color = Color(1, 1, 1, 0.1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8001019, 0.8001019, 0.8001019, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6rmj2"]
+bg_color = Color(1, 1, 1, 0.1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8001019, 0.8001019, 0.8001019, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cgfq5"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sesyt"]
+bg_color = Color(0.26293245, 0.26293248, 0.26293233, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cof4p"]
+bg_color = Color(1, 1, 1, 0.1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8001019, 0.8001019, 0.8001019, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i5tog"]
+bg_color = Color(1, 1, 1, 0.1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8001019, 0.8001019, 0.8001019, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0tsab"]
+bg_color = Color(1, 1, 1, 0.1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8001019, 0.8001019, 0.8001019, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wu1et"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wquew"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eeaqk"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(42, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y52ao"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(36, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_co6ef"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(48, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_abj57"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(24, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qswe1"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(42, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bqrud"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(30, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3xcit"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(36, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2xad8"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(42, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0jw7r"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(18, 0, 6, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ecrqf"]
+atlas = ExtResource("1_nt7q6")
+region = Rect2(54, 0, 6, 6)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3vrs6"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pawqx"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qsv74"]
+bg_color = Color(0, 0, 0, 0.75000006)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h1mc3"]
+bg_color = Color(1, 1, 1, 0.2)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rleeb"]
+bg_color = Color(1, 1, 1, 0.1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.8001019, 0.8001019, 0.8001019, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gng4c"]
+atlas = ExtResource("7_p7vwb")
+region = Rect2(0, 117, 11, 28)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8k7j3"]
+bg_color = Color(0, 0.45, 0.022499979, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jkdwc"]
+bg_color = Color(0, 0.45, 0.022499979, 0.49019608)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rlppe"]
+bg_color = Color(0.7019608, 0.43137255, 0, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ycmcx"]
+bg_color = Color(0.7, 0.43166667, 0, 0.49019608)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vsj0x"]
+bg_color = Color(1, 1, 1, 0.1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kupmu"]
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_catpy"]
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_41akx"]
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6tc23"]
+bg_color = Color(0, 0, 0, 0.5019608)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4p8sv"]
+bg_color = Color(0, 0, 0, 0.11764706)
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q0fjp"]
+content_margin_left = 5.0
+content_margin_right = 5.0
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yyr6m"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gglip"]
+bg_color = Color(0, 0, 0, 0.75000006)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="Ui" type="CanvasLayer" unique_id=78268043]
+script = ExtResource("1_gdt2y")
+
+[node name="Control" type="Control" parent="." unique_id=281940506]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="ResourceBar" type="Panel" parent="Control" unique_id=2124392580]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -262.5
+offset_top = 10.0
+offset_right = 262.5
+offset_bottom = 34.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_x4jx1")
+
+[node name="TextureRect" type="TextureRect" parent="Control/ResourceBar" unique_id=218247265]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 3.0
+offset_right = 50.0
+offset_bottom = 9.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_yev5y")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect" unique_id=1226493662]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "0"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect2" type="TextureRect" parent="Control/ResourceBar" unique_id=1788731864]
+layout_mode = 0
+offset_left = 101.0
+offset_top = 3.0
+offset_right = 107.0
+offset_bottom = 9.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_gdt2y")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect2" unique_id=1294491551]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "0"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect3" type="TextureRect" parent="Control/ResourceBar" unique_id=1348715297]
+layout_mode = 0
+offset_left = 158.0
+offset_top = 3.0
+offset_right = 164.0
+offset_bottom = 9.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_wm3ai")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect3" unique_id=1882509827]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect4" type="TextureRect" parent="Control/ResourceBar" unique_id=1835847794]
+layout_mode = 0
+offset_left = 215.0
+offset_top = 3.0
+offset_right = 221.0
+offset_bottom = 9.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_8dubc")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect4" unique_id=1634176268]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect5" type="TextureRect" parent="Control/ResourceBar" unique_id=1092436269]
+layout_mode = 0
+offset_left = 272.0
+offset_top = 3.0
+offset_right = 278.0
+offset_bottom = 9.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_p7vwb")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect5" unique_id=490579980]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect6" type="TextureRect" parent="Control/ResourceBar" unique_id=1727048340]
+layout_mode = 0
+offset_left = 329.0
+offset_top = 3.0
+offset_right = 335.0
+offset_bottom = 9.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_ktti3")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect6" unique_id=29546694]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect7" type="TextureRect" parent="Control/ResourceBar" unique_id=1906916454]
+layout_mode = 0
+offset_left = 386.0
+offset_top = 3.0
+offset_right = 392.0
+offset_bottom = 9.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_cgfq5")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect7" unique_id=1906032306]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect8" type="TextureRect" parent="Control/ResourceBar" unique_id=556371185]
+layout_mode = 0
+offset_left = 443.0
+offset_top = 3.0
+offset_right = 449.0
+offset_bottom = 9.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_nt7q6")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect8" unique_id=747839523]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect9" type="TextureRect" parent="Control/ResourceBar" unique_id=733544937]
+layout_mode = 0
+offset_left = 500.0
+offset_top = 3.0
+offset_right = 506.0
+offset_bottom = 9.0
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_x4jx1")
+
+[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect9" unique_id=105386945]
+layout_mode = 0
+offset_left = -12.0
+offset_top = -5.0
+offset_bottom = 6.0
+theme_override_fonts/font = ExtResource("2_x4jx1")
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="selectedTileUI" type="Control" parent="Control" unique_id=505668302]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -440.0
+offset_top = -115.0
+offset_right = -40.0
+offset_bottom = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="SelctedTileExtended" type="Panel" parent="Control/selectedTileUI" unique_id=1892539518]
+visible = false
+layout_mode = 0
+offset_right = 400.0
+offset_bottom = 75.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_gdt2y")
+
+[node name="TextureRect" type="TextureRect" parent="Control/selectedTileUI/SelctedTileExtended" unique_id=1142318684]
+layout_mode = 0
+offset_left = 5.5
+offset_top = 4.0
+offset_right = 37.5
+offset_bottom = 36.0
+texture = SubResource("AtlasTexture_vdcm2")
+
+[node name="Label" type="Label" parent="Control/selectedTileUI/SelctedTileExtended/TextureRect" unique_id=1954994146]
+layout_mode = 0
+offset_left = 36.0
+offset_right = 66.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 10
+text = "gravel
+1"
+
+[node name="TextureRect2" type="TextureRect" parent="Control/selectedTileUI/SelctedTileExtended" unique_id=1667870474]
+layout_mode = 0
+offset_left = 5.5
+offset_top = 39.0
+offset_right = 37.5
+offset_bottom = 71.0
+texture = SubResource("AtlasTexture_6rmj2")
+
+[node name="Label" type="Label" parent="Control/selectedTileUI/SelctedTileExtended/TextureRect2" unique_id=2067384035]
+layout_mode = 0
+offset_left = 36.0
+offset_right = 66.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 10
+text = "cement
+2"
+
+[node name="TextureRect3" type="TextureRect" parent="Control/selectedTileUI/SelctedTileExtended" unique_id=775236732]
+layout_mode = 0
+offset_left = 89.5
+offset_top = 39.0
+offset_right = 121.5
+offset_bottom = 71.0
+texture = SubResource("AtlasTexture_vsj0x")
+
+[node name="Label" type="Label" parent="Control/selectedTileUI/SelctedTileExtended/TextureRect3" unique_id=897380838]
+layout_mode = 0
+offset_left = 36.0
+offset_right = 66.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 10
+text = "base
+4"
+
+[node name="TextureRect4" type="TextureRect" parent="Control/selectedTileUI/SelctedTileExtended" unique_id=1787133379]
+layout_mode = 0
+offset_left = 89.5
+offset_top = 4.0
+offset_right = 121.5
+offset_bottom = 36.0
+texture = SubResource("AtlasTexture_qsv74")
+
+[node name="Label" type="Label" parent="Control/selectedTileUI/SelctedTileExtended/TextureRect4" unique_id=738572440]
+layout_mode = 0
+offset_left = 36.0
+offset_right = 66.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 10
+text = "asphalt
+3"
+
+[node name="TextureRect5" type="TextureRect" parent="Control/selectedTileUI/SelctedTileExtended" unique_id=406113246]
+layout_mode = 0
+offset_left = 173.5
+offset_top = 4.0
+offset_right = 205.5
+offset_bottom = 36.0
+texture = SubResource("AtlasTexture_h1mc3")
+
+[node name="Label" type="Label" parent="Control/selectedTileUI/SelctedTileExtended/TextureRect5" unique_id=1146561852]
+layout_mode = 0
+offset_left = 36.0
+offset_right = 66.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 10
+text = "airstrip
+5"
+
+[node name="TextureRect6" type="TextureRect" parent="Control/selectedTileUI/SelctedTileExtended" unique_id=247278917]
+layout_mode = 0
+offset_left = 173.5
+offset_top = 39.0
+offset_right = 205.5
+offset_bottom = 71.0
+texture = SubResource("AtlasTexture_cof4p")
+
+[node name="Label" type="Label" parent="Control/selectedTileUI/SelctedTileExtended/TextureRect6" unique_id=1020450741]
+layout_mode = 0
+offset_left = 36.0
+offset_right = 66.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 10
+text = "factory
+6"
+
+[node name="SelcetedTile" type="Panel" parent="Control/selectedTileUI" unique_id=1798178898]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -75.0
+offset_top = -75.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_yev5y")
+
+[node name="TextureRect" type="TextureRect" parent="Control/selectedTileUI" unique_id=734811537]
+layout_mode = 0
+offset_left = 330.5
+offset_top = 5.5
+offset_right = 394.5
+offset_bottom = 69.5
+texture = SubResource("AtlasTexture_7dvkv")
+
+[node name="extendedTileUI" type="Control" parent="Control" unique_id=314821687]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -43.0
+offset_top = -75.0
+offset_bottom = 75.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="Factory" type="Panel" parent="Control/extendedTileUI" unique_id=948814041]
+visible = false
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -43.0
+offset_top = -150.0
+offset_bottom = 150.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_tqkrj")
+
+[node name="TextureRect" type="ColorRect" parent="Control/extendedTileUI/Factory" unique_id=1502116653]
+layout_mode = 0
+offset_left = 5.5
+offset_top = 5.5
+offset_right = 37.5
+offset_bottom = 37.5
+color = Color(11.807116, 11.807116, 11.807116, 0.5)
+
+[node name="FactoryTiles" type="VBoxContainer" parent="Control/extendedTileUI/Factory" unique_id=417034334]
+layout_mode = 0
+offset_left = 5.5
+offset_top = 5.5
+offset_right = 37.5
+offset_bottom = 294.5
+theme_override_constants/separation = 4
+
+[node name="TextureRect" type="TextureRect" parent="Control/extendedTileUI/Factory/FactoryTiles" unique_id=744310864]
+layout_mode = 2
+texture = SubResource("AtlasTexture_yyr6m")
+
+[node name="TextureRect2" type="TextureRect" parent="Control/extendedTileUI/Factory/FactoryTiles" unique_id=992931538]
+layout_mode = 2
+texture = SubResource("AtlasTexture_tqkrj")
+
+[node name="TextureRect3" type="TextureRect" parent="Control/extendedTileUI/Factory/FactoryTiles" unique_id=1036957081]
+layout_mode = 2
+texture = SubResource("AtlasTexture_uisvg")
+
+[node name="TextureRect4" type="TextureRect" parent="Control/extendedTileUI/Factory/FactoryTiles" unique_id=1696909442]
+layout_mode = 2
+texture = SubResource("AtlasTexture_rlppe")
+
+[node name="TextureRect5" type="TextureRect" parent="Control/extendedTileUI/Factory/FactoryTiles" unique_id=561639226]
+layout_mode = 2
+texture = SubResource("AtlasTexture_ycmcx")
+
+[node name="TextureRect6" type="TextureRect" parent="Control/extendedTileUI/Factory/FactoryTiles" unique_id=1055282229]
+layout_mode = 2
+texture = SubResource("AtlasTexture_kupmu")
+
+[node name="TextureRect7" type="TextureRect" parent="Control/extendedTileUI/Factory/FactoryTiles" unique_id=243351369]
+layout_mode = 2
+texture = SubResource("AtlasTexture_catpy")
+
+[node name="TextureRect8" type="TextureRect" parent="Control/extendedTileUI/Factory/FactoryTiles" unique_id=634822843]
+layout_mode = 2
+texture = SubResource("AtlasTexture_41akx")
+
+[node name="Base" type="Panel" parent="Control/extendedTileUI" unique_id=347686432]
+visible = false
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -43.0
+offset_top = -75.0
+offset_bottom = 75.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_tqkrj")
+
+[node name="TextureRect" type="ColorRect" parent="Control/extendedTileUI/Base" unique_id=560591528]
+layout_mode = 0
+offset_left = 5.5
+offset_top = 5.5
+offset_right = 37.5
+offset_bottom = 37.5
+color = Color(11.807116, 11.807116, 11.807116, 0.5)
+
+[node name="BaseTiles" type="VBoxContainer" parent="Control/extendedTileUI/Base" unique_id=39677601]
+layout_mode = 0
+offset_left = 5.5
+offset_top = 5.5
+offset_right = 37.5
+offset_bottom = 144.5
+theme_override_constants/separation = 4
+
+[node name="TextureRect" type="TextureRect" parent="Control/extendedTileUI/Base/BaseTiles" unique_id=1589124658]
+layout_mode = 2
+texture = SubResource("AtlasTexture_f7tlh")
+
+[node name="TextureRect2" type="TextureRect" parent="Control/extendedTileUI/Base/BaseTiles" unique_id=2088499136]
+layout_mode = 2
+texture = SubResource("AtlasTexture_8k7j3")
+
+[node name="TextureRect3" type="TextureRect" parent="Control/extendedTileUI/Base/BaseTiles" unique_id=954183144]
+layout_mode = 2
+texture = SubResource("AtlasTexture_jkdwc")
+
+[node name="TextureRect4" type="TextureRect" parent="Control/extendedTileUI/Base/BaseTiles" unique_id=266064602]
+layout_mode = 2
+texture = SubResource("AtlasTexture_331jc")
+
+[node name="bottomLeftButtons" type="Control" parent="Control" unique_id=867321746]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -160.0
+offset_right = 90.0
+offset_bottom = -40.0
+grow_vertical = 0
+mouse_filter = 1
+
+[node name="RouteButton" type="Panel" parent="Control/bottomLeftButtons" unique_id=829146003]
+layout_mode = 0
+offset_right = 50.0
+offset_bottom = 50.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_8dubc")
+
+[node name="TextureRect" type="TextureRect" parent="Control/bottomLeftButtons/RouteButton" unique_id=1223970004]
+layout_mode = 0
+offset_left = 2.5
+offset_top = 2.5
+offset_right = 47.5
+offset_bottom = 47.5
+texture = ExtResource("13_jkdwc")
+expand_mode = 1
+
+[node name="GarageMenuButton" type="Panel" parent="Control/bottomLeftButtons" unique_id=1879298909]
+layout_mode = 0
+offset_top = 70.0
+offset_right = 50.0
+offset_bottom = 120.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_p7vwb")
+
+[node name="TextureRect" type="TextureRect" parent="Control/bottomLeftButtons/GarageMenuButton" unique_id=2039947051]
+layout_mode = 0
+offset_left = 2.5
+offset_top = 2.5
+offset_right = 47.5
+offset_bottom = 47.5
+texture = ExtResource("5_wm3ai")
+expand_mode = 1
+
+[node name="TradeButton" type="Panel" parent="Control/bottomLeftButtons" unique_id=200656160]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 70.0
+offset_right = 120.0
+offset_bottom = 120.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_p7vwb")
+
+[node name="TextureRect" type="TextureRect" parent="Control/bottomLeftButtons/TradeButton" unique_id=308536928]
+layout_mode = 0
+offset_left = 2.5
+offset_top = 2.5
+offset_right = 47.5
+offset_bottom = 47.5
+texture = ExtResource("8_6tc23")
+expand_mode = 1
+
+[node name="OverlayUI" type="Panel" parent="Control" unique_id=1286933990]
+visible = false
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 40.0
+offset_top = -100.0
+offset_right = 140.0
+offset_bottom = 100.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ktti3")
+
+[node name="Label" type="Label" parent="Control/OverlayUI" unique_id=1783615589]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 4.0
+offset_right = 84.0
+offset_bottom = 27.0
+text = "Overlays"
+
+[node name="CheckBox" type="CheckBox" parent="Control/OverlayUI" unique_id=1364942983]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 35.0
+offset_right = 98.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 12
+text = "height"
+
+[node name="CheckBox2" type="CheckBox" parent="Control/OverlayUI" unique_id=560622142]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 60.0
+offset_right = 98.0
+offset_bottom = 85.0
+theme_override_font_sizes/font_size = 12
+text = "temprature"
+
+[node name="CheckBox3" type="CheckBox" parent="Control/OverlayUI" unique_id=1649950114]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 85.0
+offset_right = 98.0
+offset_bottom = 110.0
+theme_override_font_sizes/font_size = 12
+text = "humidity"
+
+[node name="CheckBox4" type="CheckBox" parent="Control/OverlayUI" unique_id=238135935]
+visible = false
+layout_mode = 0
+offset_left = 4.0
+offset_top = 110.0
+offset_right = 98.0
+offset_bottom = 135.0
+theme_override_font_sizes/font_size = 12
+text = "ground
+polution"
+
+[node name="CheckBox5" type="CheckBox" parent="Control/OverlayUI" unique_id=1321089959]
+visible = false
+layout_mode = 0
+offset_left = 4.0
+offset_top = 150.0
+offset_right = 98.0
+offset_bottom = 175.0
+theme_override_font_sizes/font_size = 12
+text = "air polution"
+
+[node name="GargeUi" type="Panel" parent="Control" unique_id=1470669046]
+visible = false
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 40.0
+offset_top = -150.0
+offset_right = 190.0
+offset_bottom = 150.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ktti3")
+script = ExtResource("7_vdcm2")
+
+[node name="Label" type="Label" parent="Control/GargeUi" unique_id=1050427291]
+layout_mode = 0
+offset_left = 5.5
+offset_top = 5.5
+offset_right = 45.5
+offset_bottom = 28.5
+theme_override_font_sizes/font_size = 24
+text = "Garge"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/GargeUi" unique_id=1043615246]
+layout_mode = 0
+offset_left = 5.5
+offset_top = 45.0
+offset_right = 144.5
+offset_bottom = 245.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/GargeUi/ScrollContainer" unique_id=1416200226]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ShopButton" type="Button" parent="Control/GargeUi" unique_id=77958075]
+custom_minimum_size = Vector2(139, 30)
+layout_mode = 0
+offset_left = 5.5
+offset_top = 260.0
+offset_right = 144.5
+offset_bottom = 290.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_7dvkv")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vdcm2")
+theme_override_styles/hover = SubResource("StyleBoxFlat_6rmj2")
+text = "Shop"
+
+[node name="TradeUi" type="Panel" parent="Control" unique_id=1563933344]
+visible = false
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 40.0
+offset_top = -150.0
+offset_right = 190.0
+offset_bottom = 150.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ktti3")
+script = ExtResource("10_q0fjp")
+
+[node name="Label" type="Label" parent="Control/TradeUi" unique_id=1276525650]
+layout_mode = 0
+offset_left = 5.5
+offset_top = 5.5
+offset_right = 45.5
+offset_bottom = 28.5
+theme_override_font_sizes/font_size = 24
+text = "Trade"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/TradeUi" unique_id=1771315654]
+layout_mode = 0
+offset_left = 5.5
+offset_top = 45.0
+offset_right = 144.5
+offset_bottom = 294.5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/TradeUi/ScrollContainer" unique_id=25817873]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="VehicleUI" type="Panel" parent="Control" unique_id=1072895525]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -140.0
+offset_right = 300.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_cgfq5")
+script = ExtResource("8_6rmj2")
+
+[node name="Label" type="Label" parent="Control/VehicleUI" unique_id=62992800]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 7.5
+offset_right = 45.0
+offset_bottom = 35.5
+theme_override_font_sizes/font_size = 20
+text = "Vehicle name"
+
+[node name="ProgressBar" type="ProgressBar" parent="Control/VehicleUI" unique_id=315280234]
+layout_mode = 0
+offset_left = 427.0
+offset_top = 15.0
+offset_right = 555.0
+offset_bottom = 45.0
+theme_override_styles/background = SubResource("StyleBoxFlat_sesyt")
+max_value = 0.0
+show_percentage = false
+
+[node name="ProgressText" type="Label" parent="Control/VehicleUI/ProgressBar" unique_id=1441067148]
+layout_mode = 0
+offset_left = 4.0
+offset_right = 124.0
+offset_bottom = 30.0
+theme_override_constants/line_spacing = -5
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Panel" type="Panel" parent="Control/VehicleUI/ProgressBar" unique_id=772660040]
+visible = false
+layout_mode = 0
+offset_left = -40.0
+offset_right = -10.0
+offset_bottom = 30.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_cof4p")
+
+[node name="TextureRect" type="TextureRect" parent="Control/VehicleUI/ProgressBar/Panel" unique_id=820319267]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 26.0
+offset_bottom = 26.0
+texture = ExtResource("17_8k7j3")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="ProgressBar2" type="ProgressBar" parent="Control/VehicleUI" unique_id=207942999]
+layout_mode = 0
+offset_left = 427.0
+offset_top = 55.0
+offset_right = 555.0
+offset_bottom = 85.0
+theme_override_styles/background = SubResource("StyleBoxFlat_sesyt")
+max_value = 0.0
+show_percentage = false
+
+[node name="ProgressText" type="Label" parent="Control/VehicleUI/ProgressBar2" unique_id=1524394433]
+layout_mode = 0
+offset_left = 4.0
+offset_right = 124.0
+offset_bottom = 30.0
+theme_override_constants/line_spacing = -5
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Panel" type="Panel" parent="Control/VehicleUI/ProgressBar2" unique_id=155316935]
+visible = false
+layout_mode = 0
+offset_left = -40.0
+offset_right = -10.0
+offset_bottom = 30.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_cof4p")
+
+[node name="TextureRect" type="TextureRect" parent="Control/VehicleUI/ProgressBar2/Panel" unique_id=1675939121]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 26.0
+offset_bottom = 26.0
+texture = ExtResource("17_8k7j3")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="FuelIcon" type="TextureRect" parent="Control/VehicleUI" unique_id=1034004022]
+layout_mode = 0
+offset_left = 7.5
+offset_top = 40.0
+offset_right = 32.5
+offset_bottom = 65.0
+texture = ExtResource("14_qsv74")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Control/VehicleUI/FuelIcon" unique_id=1599780242]
+layout_mode = 0
+offset_left = 30.0
+offset_right = 70.0
+offset_bottom = 25.0
+
+[node name="WeightIcon" type="TextureRect" parent="Control/VehicleUI" unique_id=760121934]
+layout_mode = 0
+offset_left = 6.5
+offset_top = 65.0
+offset_right = 31.5
+offset_bottom = 90.0
+texture = ExtResource("17_8k7j3")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Control/VehicleUI/WeightIcon" unique_id=1729591843]
+layout_mode = 0
+offset_left = 30.0
+offset_right = 70.0
+offset_bottom = 25.0
+
+[node name="HealthIcon" type="TextureRect" parent="Control/VehicleUI" unique_id=930026386]
+layout_mode = 0
+offset_left = 156.5
+offset_top = 40.0
+offset_right = 181.5
+offset_bottom = 65.0
+texture = ExtResource("11_8k7j3")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Control/VehicleUI/HealthIcon" unique_id=1396363416]
+layout_mode = 0
+offset_left = 30.0
+offset_right = 70.0
+offset_bottom = 25.0
+
+[node name="EngineLoadIcon" type="TextureRect" parent="Control/VehicleUI" unique_id=1735484011]
+layout_mode = 0
+offset_left = 156.5
+offset_top = 65.0
+offset_right = 181.5
+offset_bottom = 90.0
+texture = ExtResource("13_vsj0x")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Control/VehicleUI/EngineLoadIcon" unique_id=1218477929]
+layout_mode = 0
+offset_left = 30.0
+offset_right = 70.0
+offset_bottom = 25.0
+
+[node name="Route" type="Panel" parent="Control/VehicleUI" unique_id=1085445995]
+layout_mode = 0
+offset_left = 562.5
+offset_top = 15.0
+offset_right = 592.5
+offset_bottom = 45.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_i5tog")
+
+[node name="TextureRect" type="TextureRect" parent="Control/VehicleUI/Route" unique_id=2010729878]
+layout_mode = 0
+offset_left = 2.5
+offset_top = 2.5
+offset_right = 27.5
+offset_bottom = 27.5
+texture = ExtResource("13_jkdwc")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="CopleTrailer" type="Panel" parent="Control/VehicleUI" unique_id=1428245710]
+layout_mode = 0
+offset_left = 562.5
+offset_top = 55.0
+offset_right = 592.5
+offset_bottom = 85.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_0tsab")
+
+[node name="TextureRect" type="TextureRect" parent="Control/VehicleUI/CopleTrailer" unique_id=217031893]
+layout_mode = 0
+offset_left = 2.5
+offset_top = 2.5
+offset_right = 27.5
+offset_bottom = 27.5
+texture = ExtResource("14_rlppe")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="TrailerUI" type="Panel" parent="Control/VehicleUI" unique_id=570519546]
+visible = false
+layout_mode = 1
+offset_left = 250.0
+offset_top = -370.0
+offset_right = 400.0
+offset_bottom = -70.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_wu1et")
+script = ExtResource("15_ycmcx")
+
+[node name="Label" type="Label" parent="Control/VehicleUI/TrailerUI" unique_id=1394630618]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 50.0
+offset_bottom = 33.0
+text = "Trailers"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/VehicleUI/TrailerUI" unique_id=1246648147]
+layout_mode = 0
+offset_left = 5.5
+offset_top = 60.0
+offset_right = 144.5
+offset_bottom = 290.0
+vertical_scroll_mode = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/VehicleUI/TrailerUI/ScrollContainer" unique_id=148267550]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="vehicleTile" parent="Control/VehicleUI/TrailerUI/ScrollContainer/VBoxContainer" unique_id=1246992017 instance=ExtResource("10_6rmj2")]
+layout_mode = 2
+VehicleType = "bulkTrailer"
+
+[node name="vehicleTile2" parent="Control/VehicleUI/TrailerUI/ScrollContainer/VBoxContainer" unique_id=6970602 instance=ExtResource("10_6rmj2")]
+layout_mode = 2
+VehicleType = "bulkTrailer"
+
+[node name="vehicleTile3" parent="Control/VehicleUI/TrailerUI/ScrollContainer/VBoxContainer" unique_id=1357992860 instance=ExtResource("10_6rmj2")]
+layout_mode = 2
+VehicleType = "bulkTrailer"
+
+[node name="RouteUI" type="Panel" parent="Control/VehicleUI" unique_id=987836900]
+visible = false
+layout_mode = 0
+offset_left = 250.0
+offset_top = -200.0
+offset_right = 400.0
+offset_bottom = -69.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_wquew")
+script = ExtResource("17_catpy")
+
+[node name="Label" type="Label" parent="Control/VehicleUI/RouteUI" unique_id=777051595]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 50.0
+offset_bottom = 33.0
+text = "Route"
+
+[node name="OptionButton" type="OptionButton" parent="Control/VehicleUI/RouteUI" unique_id=362499741]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 45.0
+offset_right = 142.0
+offset_bottom = 76.0
+
+[node name="Panel" type="Panel" parent="Control/VehicleUI/RouteUI" unique_id=132167316]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 90.0
+offset_right = 142.0
+offset_bottom = 121.0
+
+[node name="Label" type="Label" parent="Control/VehicleUI/RouteUI/Panel" unique_id=791179053]
+layout_mode = 0
+offset_left = 10.0
+offset_right = 122.0
+offset_bottom = 31.0
+text = "confirm"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FactoryUI" type="Panel" parent="Control" unique_id=549559547]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -140.0
+offset_right = 300.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_cgfq5")
+script = ExtResource("19_uisvg")
+
+[node name="Label" type="Label" parent="Control/FactoryUI" unique_id=1317768313]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 7.5
+offset_right = 45.0
+offset_bottom = 35.5
+theme_override_font_sizes/font_size = 20
+text = "Factory name"
+
+[node name="ProgressBar" type="ProgressBar" parent="Control/FactoryUI" unique_id=1688215080]
+layout_mode = 0
+offset_left = 427.0
+offset_top = 15.0
+offset_right = 555.0
+offset_bottom = 45.0
+theme_override_styles/background = SubResource("StyleBoxFlat_sesyt")
+max_value = 0.0
+show_percentage = false
+
+[node name="ProgressText" type="Label" parent="Control/FactoryUI/ProgressBar" unique_id=1993329117]
+layout_mode = 0
+offset_left = 4.0
+offset_right = 124.0
+offset_bottom = 30.0
+theme_override_constants/line_spacing = -5
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ProgressBar2" type="ProgressBar" parent="Control/FactoryUI" unique_id=1048095301]
+layout_mode = 0
+offset_left = 427.0
+offset_top = 55.0
+offset_right = 555.0
+offset_bottom = 85.0
+theme_override_styles/background = SubResource("StyleBoxFlat_sesyt")
+max_value = 0.0
+show_percentage = false
+
+[node name="ProgressText" type="Label" parent="Control/FactoryUI/ProgressBar2" unique_id=1414479042]
+layout_mode = 0
+offset_left = 4.0
+offset_right = 124.0
+offset_bottom = 30.0
+theme_override_constants/line_spacing = -5
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FullInventory" type="Panel" parent="Control/FactoryUI" unique_id=949116460]
+layout_mode = 0
+offset_left = 562.5
+offset_top = 15.0
+offset_right = 592.5
+offset_bottom = 45.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_i5tog")
+
+[node name="TextureRect" type="TextureRect" parent="Control/FactoryUI/FullInventory" unique_id=1750048979]
+layout_mode = 0
+offset_left = 2.5
+offset_top = 2.5
+offset_right = 27.5
+offset_bottom = 27.5
+texture = ExtResource("20_uisvg")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="ChangeRecipe" type="Panel" parent="Control/FactoryUI" unique_id=1502655198]
+layout_mode = 0
+offset_left = 562.5
+offset_top = 55.0
+offset_right = 592.5
+offset_bottom = 85.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_0tsab")
+
+[node name="TextureRect" type="TextureRect" parent="Control/FactoryUI/ChangeRecipe" unique_id=1456370510]
+layout_mode = 0
+offset_left = 2.5
+offset_top = 2.5
+offset_right = 27.5
+offset_bottom = 27.5
+texture = ExtResource("21_331jc")
+expand_mode = 4
+stretch_mode = 5
+
+[node name="RawResources" type="Label" parent="Control/FactoryUI" unique_id=805288158]
+layout_mode = 0
+offset_left = 308.0
+offset_top = 15.0
+offset_right = 421.0
+offset_bottom = 45.0
+text = "Raw resources"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ProcesedResources" type="Label" parent="Control/FactoryUI" unique_id=1844441937]
+layout_mode = 0
+offset_left = 266.0
+offset_top = 55.0
+offset_right = 417.0
+offset_bottom = 85.0
+text = "Procesed resources"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StoredResourceUI" type="Panel" parent="Control/FactoryUI" unique_id=657333944]
+visible = false
+layout_mode = 0
+offset_left = 250.0
+offset_top = -200.0
+offset_right = 400.0
+offset_bottom = -69.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_wquew")
+
+[node name="Label" type="Label" parent="Control/FactoryUI/StoredResourceUI" unique_id=707202382]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 50.0
+offset_bottom = 33.0
+text = "Stored resources"
+
+[node name="TextureRect" type="TextureRect" parent="Control/FactoryUI/StoredResourceUI" unique_id=687000158]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 40.0
+offset_right = 28.0
+offset_bottom = 58.0
+texture = SubResource("AtlasTexture_eeaqk")
+
+[node name="Label" type="Label" parent="Control/FactoryUI/StoredResourceUI/TextureRect" unique_id=1517943005]
+layout_mode = 0
+offset_left = 20.0
+offset_top = -3.0
+offset_right = 60.0
+offset_bottom = 20.0
+text = "1000"
+
+[node name="TextureRect2" type="TextureRect" parent="Control/FactoryUI/StoredResourceUI" unique_id=522700721]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 65.0
+offset_right = 28.0
+offset_bottom = 83.0
+texture = SubResource("AtlasTexture_y52ao")
+
+[node name="Label" type="Label" parent="Control/FactoryUI/StoredResourceUI/TextureRect2" unique_id=1642635230]
+layout_mode = 0
+offset_left = 20.0
+offset_top = -3.0
+offset_right = 60.0
+offset_bottom = 20.0
+text = "1000"
+
+[node name="TextureRect3" type="TextureRect" parent="Control/FactoryUI/StoredResourceUI" unique_id=547683637]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 90.0
+offset_right = 28.0
+offset_bottom = 108.0
+texture = SubResource("AtlasTexture_co6ef")
+
+[node name="Label" type="Label" parent="Control/FactoryUI/StoredResourceUI/TextureRect3" unique_id=1838964534]
+layout_mode = 0
+offset_left = 20.0
+offset_top = -3.0
+offset_right = 60.0
+offset_bottom = 20.0
+text = "1000"
+
+[node name="TextureRect4" type="TextureRect" parent="Control/FactoryUI/StoredResourceUI" unique_id=1108439337]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 40.0
+offset_right = 98.0
+offset_bottom = 58.0
+texture = SubResource("AtlasTexture_abj57")
+
+[node name="Label" type="Label" parent="Control/FactoryUI/StoredResourceUI/TextureRect4" unique_id=1922903089]
+layout_mode = 0
+offset_left = 20.0
+offset_top = -3.0
+offset_right = 60.0
+offset_bottom = 20.0
+text = "1000"
+
+[node name="TextureRect5" type="TextureRect" parent="Control/FactoryUI/StoredResourceUI" unique_id=1472225263]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 65.0
+offset_right = 98.0
+offset_bottom = 83.0
+texture = SubResource("AtlasTexture_qswe1")
+
+[node name="Label" type="Label" parent="Control/FactoryUI/StoredResourceUI/TextureRect5" unique_id=1076291474]
+layout_mode = 0
+offset_left = 20.0
+offset_top = -3.0
+offset_right = 60.0
+offset_bottom = 20.0
+text = "1000"
+
+[node name="TextureRect6" type="TextureRect" parent="Control/FactoryUI/StoredResourceUI" unique_id=355415075]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 90.0
+offset_right = 98.0
+offset_bottom = 108.0
+texture = SubResource("AtlasTexture_bqrud")
+
+[node name="Label" type="Label" parent="Control/FactoryUI/StoredResourceUI/TextureRect6" unique_id=30113710]
+layout_mode = 0
+offset_left = 20.0
+offset_top = -3.0
+offset_right = 60.0
+offset_bottom = 20.0
+text = "1000"
+
+[node name="RecipeUI" type="Panel" parent="Control/FactoryUI" unique_id=1901226384]
+layout_mode = 0
+offset_left = 240.0
+offset_top = -200.0
+offset_right = 410.0
+offset_bottom = -46.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_wquew")
+
+[node name="Label" type="Label" parent="Control/FactoryUI/RecipeUI" unique_id=34180076]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 50.0
+offset_bottom = 33.0
+text = "Stored resources"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/FactoryUI/RecipeUI" unique_id=28341267]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 37.0
+offset_right = 160.0
+offset_bottom = 149.0
+
+[node name="Recipe" parent="Control/FactoryUI/RecipeUI/VBoxContainer" unique_id=1007926021 instance=ExtResource("22_eeaqk")]
+layout_mode = 2
+
+[node name="Recipe3" type="HBoxContainer" parent="Control/FactoryUI/RecipeUI/VBoxContainer" unique_id=689750643]
+layout_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe3" unique_id=762258543]
+layout_mode = 2
+
+[node name="inputResource" type="Label" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe3" unique_id=1127144879]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "    1 +"
+
+[node name="TextureRect" type="TextureRect" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe3/inputResource" unique_id=1466705583]
+layout_mode = 0
+offset_top = 3.0
+offset_right = 12.0
+offset_bottom = 15.0
+texture = SubResource("AtlasTexture_3xcit")
+
+[node name="inputResource3" type="Label" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe3" unique_id=1960362147]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "    1 +"
+
+[node name="TextureRect" type="TextureRect" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe3/inputResource3" unique_id=987847935]
+layout_mode = 0
+offset_top = 3.0
+offset_right = 12.0
+offset_bottom = 15.0
+texture = SubResource("AtlasTexture_2xad8")
+
+[node name="inputResource2" type="Label" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe3" unique_id=1711805339]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "    1"
+
+[node name="TextureRect" type="TextureRect" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe3/inputResource2" unique_id=1206287140]
+layout_mode = 0
+offset_top = 3.0
+offset_right = 12.0
+offset_bottom = 15.0
+texture = SubResource("AtlasTexture_0jw7r")
+
+[node name="Arrow" type="Label" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe3" unique_id=388205832]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "→"
+
+[node name="outputResource" type="Label" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe3" unique_id=1289013176]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "    1"
+
+[node name="TextureRect" type="TextureRect" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe3/outputResource" unique_id=187240014]
+layout_mode = 0
+offset_top = 3.0
+offset_right = 12.0
+offset_bottom = 15.0
+texture = SubResource("AtlasTexture_ecrqf")
+
+[node name="Recipe4" type="HBoxContainer" parent="Control/FactoryUI/RecipeUI/VBoxContainer" unique_id=830361010]
+layout_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe4" unique_id=564332971]
+layout_mode = 2
+
+[node name="inputResource" type="Label" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe4" unique_id=552356600]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "    1 +"
+
+[node name="TextureRect" type="TextureRect" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe4/inputResource" unique_id=1482961302]
+layout_mode = 0
+offset_top = 3.0
+offset_right = 12.0
+offset_bottom = 15.0
+texture = SubResource("AtlasTexture_3xcit")
+
+[node name="inputResource3" type="Label" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe4" unique_id=1301869005]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "    1 +"
+
+[node name="TextureRect" type="TextureRect" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe4/inputResource3" unique_id=605377449]
+layout_mode = 0
+offset_top = 3.0
+offset_right = 12.0
+offset_bottom = 15.0
+texture = SubResource("AtlasTexture_2xad8")
+
+[node name="inputResource2" type="Label" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe4" unique_id=1719085745]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "    1"
+
+[node name="TextureRect" type="TextureRect" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe4/inputResource2" unique_id=334524107]
+layout_mode = 0
+offset_top = 3.0
+offset_right = 12.0
+offset_bottom = 15.0
+texture = SubResource("AtlasTexture_0jw7r")
+
+[node name="Arrow" type="Label" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe4" unique_id=1672773452]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "→"
+
+[node name="outputResource" type="Label" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe4" unique_id=203589208]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "    1"
+
+[node name="TextureRect" type="TextureRect" parent="Control/FactoryUI/RecipeUI/VBoxContainer/Recipe4/outputResource" unique_id=2017287304]
+layout_mode = 0
+offset_top = 3.0
+offset_right = 12.0
+offset_bottom = 15.0
+texture = SubResource("AtlasTexture_ecrqf")
+
+[node name="RouteUI" type="Control" parent="Control" unique_id=2004415015]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("17_kupmu")
+
+[node name="RouteUI_View" type="Panel" parent="Control/RouteUI" unique_id=1654197516]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 40.0
+offset_top = -150.0
+offset_right = 190.0
+offset_bottom = 150.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3vrs6")
+
+[node name="Label" type="Label" parent="Control/RouteUI/RouteUI_View" unique_id=1658089264]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 56.0
+offset_bottom = 33.0
+text = "Route"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/RouteUI/RouteUI_View" unique_id=136030262]
+layout_mode = 0
+offset_left = 5.5
+offset_top = 45.0
+offset_right = 144.5
+offset_bottom = 245.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/RouteUI/RouteUI_View/ScrollContainer" unique_id=1816004174]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RouteButton" type="Button" parent="Control/RouteUI/RouteUI_View" unique_id=217999820]
+custom_minimum_size = Vector2(139, 30)
+layout_mode = 0
+offset_left = 5.5
+offset_top = 260.0
+offset_right = 144.5
+offset_bottom = 290.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_7dvkv")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vdcm2")
+theme_override_styles/hover = SubResource("StyleBoxFlat_6rmj2")
+text = "New Route"
+
+[node name="RouteUI_Create" type="Panel" parent="Control/RouteUI" unique_id=382060798]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -80.0
+offset_right = 120.0
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pawqx")
+
+[node name="Label" type="Label" parent="Control/RouteUI/RouteUI_Create" unique_id=2016785911]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 56.0
+offset_bottom = 33.0
+text = "Route"
+
+[node name="source" type="OptionButton" parent="Control/RouteUI/RouteUI_Create" unique_id=256752184]
+layout_mode = 0
+offset_left = 95.0
+offset_top = 40.0
+offset_right = 210.0
+offset_bottom = 65.0
+theme_override_font_sizes/font_size = 12
+item_count = 1
+popup/item_0/text = "blastfurnace 1"
+popup/item_0/id = 0
+
+[node name="Label" type="Label" parent="Control/RouteUI/RouteUI_Create/source" unique_id=68236892]
+layout_mode = 0
+offset_left = -85.0
+offset_top = 3.0
+offset_right = -42.0
+offset_bottom = 20.0
+theme_override_font_sizes/font_size = 12
+text = "Source:"
+
+[node name="Destination" type="OptionButton" parent="Control/RouteUI/RouteUI_Create" unique_id=1517422928]
+layout_mode = 0
+offset_left = 95.0
+offset_top = 70.0
+offset_right = 210.0
+offset_bottom = 95.0
+theme_override_font_sizes/font_size = 12
+item_count = 1
+popup/item_0/text = "blastfurnace 1"
+popup/item_0/id = 0
+
+[node name="Label" type="Label" parent="Control/RouteUI/RouteUI_Create/Destination" unique_id=218597412]
+layout_mode = 0
+offset_left = -85.0
+offset_top = 3.0
+offset_right = -14.0
+offset_bottom = 20.0
+theme_override_font_sizes/font_size = 12
+text = "Destination:"
+
+[node name="Resource" type="OptionButton" parent="Control/RouteUI/RouteUI_Create" unique_id=1148196706]
+layout_mode = 0
+offset_left = 95.0
+offset_top = 100.0
+offset_right = 210.0
+offset_bottom = 125.0
+theme_override_font_sizes/font_size = 12
+item_count = 1
+popup/item_0/text = "d"
+popup/item_0/id = 0
+
+[node name="Label" type="Label" parent="Control/RouteUI/RouteUI_Create/Resource" unique_id=1562502855]
+layout_mode = 0
+offset_left = -85.0
+offset_top = 3.0
+offset_right = -17.0
+offset_bottom = 20.0
+theme_override_font_sizes/font_size = 12
+text = "Resource:"
+
+[node name="CreateRoute" type="Panel" parent="Control/RouteUI/RouteUI_Create" unique_id=1127607452]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 135.0
+offset_right = 90.0
+offset_bottom = 155.0
+
+[node name="Label" type="Label" parent="Control/RouteUI/RouteUI_Create/CreateRoute" unique_id=1781946704]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 1.0
+offset_right = 77.0
+offset_bottom = 18.0
+theme_override_font_sizes/font_size = 12
+text = "Create route"
+
+[node name="Cancel" type="Panel" parent="Control/RouteUI/RouteUI_Create" unique_id=2142718971]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 135.0
+offset_right = 120.0
+offset_bottom = 155.0
+
+[node name="Label" type="Label" parent="Control/RouteUI/RouteUI_Create/Cancel" unique_id=534044277]
+layout_mode = 0
+offset_top = -3.0
+offset_right = 21.0
+offset_bottom = 20.0
+text = "x"
+horizontal_alignment = 1
+
+[node name="Shop" type="Panel" parent="Control" unique_id=1320654950]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -250.0
+offset_right = 400.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qsv74")
+
+[node name="Label" type="Label" parent="Control/Shop" unique_id=1272306164]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 20.0
+offset_right = 109.0
+offset_bottom = 65.0
+theme_override_font_sizes/font_size = 32
+text = "Shop"
+
+[node name="generalShop" type="ScrollContainer" parent="Control/Shop" unique_id=1253587547]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 100.0
+offset_right = 768.0
+offset_bottom = 480.0
+mouse_filter = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/Shop/generalShop" unique_id=1174745848]
+custom_minimum_size = Vector2(736, 380)
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/separation = 20
+
+[node name="Tractors" type="VBoxContainer" parent="Control/Shop/generalShop/HBoxContainer" unique_id=1931999024]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/separation = 12
+
+[node name="Catogory" type="Panel" parent="Control/Shop/generalShop/HBoxContainer/Tractors" unique_id=507117055]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1mc3")
+
+[node name="Label" type="Label" parent="Control/Shop/generalShop/HBoxContainer/Tractors/Catogory" unique_id=1850669636]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 137.0
+offset_bottom = 28.0
+text = "Tractors"
+horizontal_alignment = 1
+
+[node name="spacer" type="Container" parent="Control/Shop/generalShop/HBoxContainer/Tractors" unique_id=387514544]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="vehicleTile" parent="Control/Shop/generalShop/HBoxContainer/Tractors" unique_id=1643230352 instance=ExtResource("10_6rmj2")]
+layout_mode = 2
+VehicleType = "valtra_s416"
+
+[node name="vehicleTile2" parent="Control/Shop/generalShop/HBoxContainer/Tractors" unique_id=1739732321 instance=ExtResource("10_6rmj2")]
+layout_mode = 2
+VehicleType = "ford_7810"
+
+[node name="Dump trucks" type="VBoxContainer" parent="Control/Shop/generalShop/HBoxContainer" unique_id=982473575]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/separation = 12
+
+[node name="Catogory" type="Panel" parent="Control/Shop/generalShop/HBoxContainer/Dump trucks" unique_id=818239312]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1mc3")
+
+[node name="Label" type="Label" parent="Control/Shop/generalShop/HBoxContainer/Dump trucks/Catogory" unique_id=1264696582]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 137.0
+offset_bottom = 28.0
+text = "Dump trucks"
+horizontal_alignment = 1
+
+[node name="spacer" type="Container" parent="Control/Shop/generalShop/HBoxContainer/Dump trucks" unique_id=560976378]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="vehicleTile" parent="Control/Shop/generalShop/HBoxContainer/Dump trucks" unique_id=679428538 instance=ExtResource("10_6rmj2")]
+layout_mode = 2
+VehicleType = "liebherr_ta230_lintronic"
+
+[node name="Flatbed trucks" type="VBoxContainer" parent="Control/Shop/generalShop/HBoxContainer" unique_id=1775012665]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/separation = 12
+
+[node name="Catogory" type="Panel" parent="Control/Shop/generalShop/HBoxContainer/Flatbed trucks" unique_id=1262208316]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1mc3")
+
+[node name="Label" type="Label" parent="Control/Shop/generalShop/HBoxContainer/Flatbed trucks/Catogory" unique_id=189002812]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 137.0
+offset_bottom = 28.0
+text = "Flatbed trucks"
+horizontal_alignment = 1
+
+[node name="spacer" type="Container" parent="Control/Shop/generalShop/HBoxContainer/Flatbed trucks" unique_id=678102133]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="vehicleTile" parent="Control/Shop/generalShop/HBoxContainer/Flatbed trucks" unique_id=1082886991 instance=ExtResource("10_6rmj2")]
+layout_mode = 2
+VehicleType = "flatbedTruck"
+
+[node name="Cement mixer trucks" type="VBoxContainer" parent="Control/Shop/generalShop/HBoxContainer" unique_id=1401933918]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/separation = 12
+
+[node name="Catogory" type="Panel" parent="Control/Shop/generalShop/HBoxContainer/Cement mixer trucks" unique_id=1964163493]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1mc3")
+
+[node name="Label" type="Label" parent="Control/Shop/generalShop/HBoxContainer/Cement mixer trucks/Catogory" unique_id=1647159891]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 137.0
+offset_bottom = 28.0
+text = "Cement mixers"
+horizontal_alignment = 1
+
+[node name="spacer" type="Container" parent="Control/Shop/generalShop/HBoxContainer/Cement mixer trucks" unique_id=191188947]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="vehicleTile" parent="Control/Shop/generalShop/HBoxContainer/Cement mixer trucks" unique_id=1401939034 instance=ExtResource("10_6rmj2")]
+layout_mode = 2
+VehicleType = "cementMixerTruck"
+
+[node name="Constuction equipment" type="VBoxContainer" parent="Control/Shop/generalShop/HBoxContainer" unique_id=520162244]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/separation = 12
+
+[node name="Catogory" type="Panel" parent="Control/Shop/generalShop/HBoxContainer/Constuction equipment" unique_id=1663053976]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1mc3")
+
+[node name="Label" type="Label" parent="Control/Shop/generalShop/HBoxContainer/Constuction equipment/Catogory" unique_id=91360512]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 137.0
+offset_bottom = 28.0
+text = "Construction"
+horizontal_alignment = 1
+
+[node name="spacer" type="Container" parent="Control/Shop/generalShop/HBoxContainer/Constuction equipment" unique_id=1175652566]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="vehicleTile" parent="Control/Shop/generalShop/HBoxContainer/Constuction equipment" unique_id=155761123 instance=ExtResource("10_6rmj2")]
+layout_mode = 2
+VehicleType = "Vögele_Super_1603-3i"
+
+[node name="vehicleTile2" parent="Control/Shop/generalShop/HBoxContainer/Constuction equipment" unique_id=1726485385 instance=ExtResource("10_6rmj2")]
+layout_mode = 2
+VehicleType = "Komatsu_D65PXI"
+
+[node name="vehicleTile3" parent="Control/Shop/generalShop/HBoxContainer/Constuction equipment" unique_id=2109558548 instance=ExtResource("10_6rmj2")]
+layout_mode = 2
+VehicleType = "Volvo_EC300DL"
+
+[node name="Trailers" type="VBoxContainer" parent="Control/Shop/generalShop/HBoxContainer" unique_id=1263152703]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/separation = 12
+
+[node name="Catogory" type="Panel" parent="Control/Shop/generalShop/HBoxContainer/Trailers" unique_id=1225072495]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1mc3")
+
+[node name="Label" type="Label" parent="Control/Shop/generalShop/HBoxContainer/Trailers/Catogory" unique_id=1093512668]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 137.0
+offset_bottom = 28.0
+text = "Trailers"
+horizontal_alignment = 1
+
+[node name="spacer" type="Container" parent="Control/Shop/generalShop/HBoxContainer/Trailers" unique_id=620980244]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="vehicleTile" parent="Control/Shop/generalShop/HBoxContainer/Trailers" unique_id=5960634 instance=ExtResource("10_6rmj2")]
+layout_mode = 2
+VehicleType = "flatbedTrailer"
+
+[node name="vehicleTile2" parent="Control/Shop/generalShop/HBoxContainer/Trailers" unique_id=2113264415 instance=ExtResource("10_6rmj2")]
+layout_mode = 2
+VehicleType = "bulkTrailer"
+
+[node name="Shop viewing" type="Control" parent="Control/Shop" unique_id=158751998]
+visible = false
+anchors_preset = 0
+offset_left = 32.0
+offset_top = 100.0
+offset_right = 768.0
+offset_bottom = 480.0
+script = ExtResource("9_7dvkv")
+
+[node name="VehicleImg" type="Panel" parent="Control/Shop/Shop viewing" unique_id=1273214044]
+layout_mode = 0
+offset_left = 526.0
+offset_top = 30.0
+offset_right = 706.0
+offset_bottom = 210.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_rleeb")
+
+[node name="TextureRect" type="TextureRect" parent="Control/Shop/Shop viewing/VehicleImg" unique_id=381773144]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = 165.0
+offset_bottom = 165.0
+texture = SubResource("AtlasTexture_gng4c")
+stretch_mode = 5
+
+[node name="Vehicle name" type="Label" parent="Control/Shop/Shop viewing" unique_id=796018046]
+layout_mode = 0
+offset_left = 294.0
+offset_top = 30.0
+offset_right = 506.0
+offset_bottom = 75.0
+theme_override_font_sizes/font_size = 32
+text = "Flatbed Truck"
+horizontal_alignment = 2
+
+[node name="VehicleDescription" type="Label" parent="Control/Shop/Shop viewing" unique_id=1742712695]
+layout_mode = 0
+offset_left = 294.0
+offset_top = 77.0
+offset_right = 506.0
+offset_bottom = 173.0
+theme_override_colors/font_color = Color(0.75, 0.75, 0.75, 1)
+text = "this vehicle is usefull for transporting pallets or other packed goods"
+horizontal_alignment = 2
+autowrap_mode = 3
+
+[node name="BuyButton" type="Button" parent="Control/Shop/Shop viewing" unique_id=608477983]
+layout_mode = 0
+offset_left = 586.0
+offset_top = 320.0
+offset_right = 706.0
+offset_bottom = 350.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_8k7j3")
+theme_override_styles/hover = SubResource("StyleBoxFlat_jkdwc")
+text = "Buy"
+
+[node name="FinanceButton" type="Button" parent="Control/Shop/Shop viewing" unique_id=1431917084]
+layout_mode = 0
+offset_left = 586.0
+offset_top = 280.0
+offset_right = 706.0
+offset_bottom = 310.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_rlppe")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ycmcx")
+text = "Finance"
+
+[node name="VboxContainer" type="VBoxContainer" parent="Control/Shop/Shop viewing" unique_id=1786850172]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = 210.0
+offset_bottom = 380.0
+theme_override_constants/separation = 10
+
+[node name="stat card" type="Panel" parent="Control/Shop/Shop viewing/VboxContainer" unique_id=956308813]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vsj0x")
+
+[node name="TextureRect" type="TextureRect" parent="Control/Shop/Shop viewing/VboxContainer/stat card" unique_id=1015400680]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = 50.0
+offset_bottom = 45.0
+texture = ExtResource("13_vsj0x")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Control/Shop/Shop viewing/VboxContainer/stat card" unique_id=46233059]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 5.0
+offset_right = 169.0
+offset_bottom = 45.0
+text = "208 hp"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="stat card2" type="Panel" parent="Control/Shop/Shop viewing/VboxContainer" unique_id=1394128404]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vsj0x")
+
+[node name="TextureRect" type="TextureRect" parent="Control/Shop/Shop viewing/VboxContainer/stat card2" unique_id=1181011251]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = 50.0
+offset_bottom = 45.0
+texture = ExtResource("14_qsv74")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Control/Shop/Shop viewing/VboxContainer/stat card2" unique_id=889211224]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 5.0
+offset_right = 169.0
+offset_bottom = 45.0
+text = "600 L"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="stat card3" type="Panel" parent="Control/Shop/Shop viewing/VboxContainer" unique_id=136492029]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vsj0x")
+
+[node name="TextureRect" type="TextureRect" parent="Control/Shop/Shop viewing/VboxContainer/stat card3" unique_id=1047817771]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = 50.0
+offset_bottom = 45.0
+texture = ExtResource("15_h1mc3")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Control/Shop/Shop viewing/VboxContainer/stat card3" unique_id=1095325724]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 5.0
+offset_right = 169.0
+offset_bottom = 45.0
+text = "40 kph"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="stat card4" type="Panel" parent="Control/Shop/Shop viewing/VboxContainer" unique_id=585308003]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vsj0x")
+
+[node name="TextureRect" type="TextureRect" parent="Control/Shop/Shop viewing/VboxContainer/stat card4" unique_id=1086820484]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = 50.0
+offset_bottom = 45.0
+texture = ExtResource("16_f7tlh")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Control/Shop/Shop viewing/VboxContainer/stat card4" unique_id=1626008507]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 5.0
+offset_right = 169.0
+offset_bottom = 45.0
+text = "3 points"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="stat card5" type="Panel" parent="Control/Shop/Shop viewing/VboxContainer" unique_id=179329025]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vsj0x")
+
+[node name="TextureRect" type="TextureRect" parent="Control/Shop/Shop viewing/VboxContainer/stat card5" unique_id=1873963841]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = 50.0
+offset_bottom = 45.0
+texture = ExtResource("17_8k7j3")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Control/Shop/Shop viewing/VboxContainer/stat card5" unique_id=911216645]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 5.0
+offset_right = 169.0
+offset_bottom = 45.0
+text = "10000 kg"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="Control/Shop" unique_id=1704889664]
+layout_mode = 0
+offset_left = 761.0
+offset_top = 10.0
+offset_right = 778.0
+offset_bottom = 41.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_kupmu")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_catpy")
+theme_override_styles/hover = SubResource("StyleBoxFlat_41akx")
+text = "x"
+
+[node name="PopUPText" type="Label" parent="Control" unique_id=875857133]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -262.5
+offset_top = 45.0
+offset_right = 262.5
+offset_bottom = 68.0
+grow_horizontal = 2
+horizontal_alignment = 1
+
+[node name="DateUI" type="Panel" parent="Control" unique_id=270816997]
+layout_mode = 1
+offset_left = 20.0
+offset_top = 10.0
+offset_right = 80.0
+offset_bottom = 70.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_6tc23")
+
+[node name="Month" type="Label" parent="Control/DateUI" unique_id=327395262]
+layout_mode = 0
+offset_right = 60.0
+offset_bottom = 37.0
+theme_override_font_sizes/font_size = 24
+text = "Dec"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Year" type="Label" parent="Control/DateUI" unique_id=630533186]
+layout_mode = 0
+offset_top = 37.0
+offset_right = 60.0
+offset_bottom = 60.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_4p8sv")
+text = "2026"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TimeUI" type="Panel" parent="Control" unique_id=439299685]
+layout_mode = 1
+offset_left = 90.0
+offset_top = 10.0
+offset_right = 140.0
+offset_bottom = 33.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_q0fjp")
+
+[node name="time" type="Label" parent="Control/TimeUI" unique_id=201992388]
+layout_mode = 1
+offset_right = 50.0
+offset_bottom = 23.0
+text = "11:00"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SpeedUI" type="Panel" parent="Control" unique_id=385806385]
+layout_mode = 1
+offset_left = 90.0
+offset_top = 40.0
+offset_right = 130.0
+offset_bottom = 63.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_yyr6m")
+
+[node name="Label" type="Label" parent="Control/SpeedUI" unique_id=648771499]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = ">>>"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MoneyUI" type="PanelContainer" parent="Control" unique_id=264487832]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -135.0
+offset_top = 10.0
+offset_right = -20.0
+offset_bottom = 33.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_q0fjp")
+
+[node name="Money" type="Label" parent="Control/MoneyUI" unique_id=1763462890]
+layout_mode = 2
+text = "€9.999.999,00"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AcceptedOrders" type="VBoxContainer" parent="Control" unique_id=522217328]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -135.0
+offset_top = 50.0
+offset_right = -20.0
+offset_bottom = 190.0
+grow_horizontal = 0
+script = ExtResource("25_tqkrj")
+
+[node name="MouseUI" type="Panel" parent="." unique_id=1595812561]
+visible = false
+custom_minimum_size = Vector2(100, 50)
+offset_right = 100.0
+offset_bottom = 50.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_gglip")
+script = ExtResource("18_8k7j3")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MouseUI" unique_id=473859019]
+custom_minimum_size = Vector2(90, 40)
+layout_mode = 0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 95.0
+offset_bottom = 45.0
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+
+[connection signal="mouse_entered" from="Control/selectedTileUI/TextureRect" to="." method="_on_texture_rect_mouse_entered"]
+[connection signal="mouse_exited" from="Control/selectedTileUI/TextureRect" to="." method="_on_texture_rect_mouse_exited"]
+[connection signal="gui_input" from="Control/bottomLeftButtons/RouteButton" to="." method="_on_route_button_gui_input"]
+[connection signal="gui_input" from="Control/bottomLeftButtons/GarageMenuButton" to="." method="_on_garage_menu_button_gui_input"]
+[connection signal="gui_input" from="Control/bottomLeftButtons/TradeButton" to="." method="_on_trade_button_gui_input"]
+[connection signal="toggled" from="Control/OverlayUI/CheckBox" to="." method="_on_check_box_toggled"]
+[connection signal="toggled" from="Control/OverlayUI/CheckBox2" to="." method="_on_check_box_2_toggled"]
+[connection signal="toggled" from="Control/OverlayUI/CheckBox3" to="." method="_on_check_box_3_toggled"]
+[connection signal="pressed" from="Control/GargeUi/ShopButton" to="." method="_on_shop_button_pressed"]
+[connection signal="gui_input" from="Control/VehicleUI/Route" to="Control/VehicleUI" method="_on_route_gui_input"]
+[connection signal="gui_input" from="Control/VehicleUI/CopleTrailer" to="Control/VehicleUI" method="_on_cople_trailer_gui_input"]
+[connection signal="gui_input" from="Control/VehicleUI/RouteUI/Panel" to="Control/VehicleUI/RouteUI" method="_on_panel_gui_input"]
+[connection signal="gui_input" from="Control/FactoryUI/FullInventory" to="Control/FactoryUI" method="_on_full_inventory_gui_input"]
+[connection signal="gui_input" from="Control/FactoryUI/ChangeRecipe" to="Control/FactoryUI" method="_on_change_recipe_gui_input"]
+[connection signal="pressed" from="Control/RouteUI/RouteUI_View/RouteButton" to="Control/RouteUI" method="_on_route_button_pressed"]
+[connection signal="gui_input" from="Control/RouteUI/RouteUI_Create/CreateRoute" to="Control/RouteUI" method="_on_create_route_gui_input"]
+[connection signal="gui_input" from="Control/RouteUI/RouteUI_Create/Cancel" to="Control/RouteUI" method="_on_cancel_gui_input"]
+[connection signal="gui_input" from="Control/Shop/generalShop/HBoxContainer/Tractors/vehicleTile" to="." method="_on_vehicle_tile_tractor_gui_input"]
+[connection signal="gui_input" from="Control/Shop/generalShop/HBoxContainer/Tractors/vehicleTile2" to="." method="_on_vehicle_tile_ford_7810_gui_input"]
+[connection signal="gui_input" from="Control/Shop/generalShop/HBoxContainer/Dump trucks/vehicleTile" to="." method="_on_vehicle_tile_articulatedDumpTruck_gui_input"]
+[connection signal="gui_input" from="Control/Shop/generalShop/HBoxContainer/Flatbed trucks/vehicleTile" to="." method="_on_vehicle_tile_flatbedTruck_gui_input"]
+[connection signal="gui_input" from="Control/Shop/generalShop/HBoxContainer/Cement mixer trucks/vehicleTile" to="." method="_on_vehicle_tile_cementMixerTruck_gui_input"]
+[connection signal="gui_input" from="Control/Shop/generalShop/HBoxContainer/Constuction equipment/vehicleTile" to="." method="_on_vehicle_tile_asphaltPaver_gui_input"]
+[connection signal="gui_input" from="Control/Shop/generalShop/HBoxContainer/Constuction equipment/vehicleTile2" to="." method="_on_vehicle_tile_dozer_gui_input"]
+[connection signal="gui_input" from="Control/Shop/generalShop/HBoxContainer/Constuction equipment/vehicleTile3" to="." method="_on_vehicle_tile_excavator_gui_input"]
+[connection signal="gui_input" from="Control/Shop/generalShop/HBoxContainer/Trailers/vehicleTile" to="." method="_on_vehicle_tile_flatbed_gui_input"]
+[connection signal="gui_input" from="Control/Shop/generalShop/HBoxContainer/Trailers/vehicleTile2" to="." method="_on_vehicle_tile_bulkTrailer_gui_input"]
+[connection signal="pressed" from="Control/Shop/Shop viewing/BuyButton" to="Control/Shop/Shop viewing" method="_on_buy_button_pressed"]
+[connection signal="pressed" from="Control/Shop/Shop viewing/FinanceButton" to="Control/Shop/Shop viewing" method="_on_finance_button_pressed"]
+[connection signal="mouse_entered" from="Control/Shop/Shop viewing/VboxContainer/stat card" to="MouseUI" method="_on_stat_card_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Shop/Shop viewing/VboxContainer/stat card" to="MouseUI" method="_on_stat_card_mouse_exited"]
+[connection signal="mouse_entered" from="Control/Shop/Shop viewing/VboxContainer/stat card2" to="MouseUI" method="_on_stat_card_2_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Shop/Shop viewing/VboxContainer/stat card2" to="MouseUI" method="_on_stat_card_2_mouse_exited"]
+[connection signal="mouse_entered" from="Control/Shop/Shop viewing/VboxContainer/stat card3" to="MouseUI" method="_on_stat_card_3_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Shop/Shop viewing/VboxContainer/stat card3" to="MouseUI" method="_on_stat_card_3_mouse_exited"]
+[connection signal="mouse_entered" from="Control/Shop/Shop viewing/VboxContainer/stat card4" to="MouseUI" method="_on_stat_card_4_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Shop/Shop viewing/VboxContainer/stat card4" to="MouseUI" method="_on_stat_card_4_mouse_exited"]
+[connection signal="mouse_entered" from="Control/Shop/Shop viewing/VboxContainer/stat card5" to="MouseUI" method="_on_stat_card_5_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Shop/Shop viewing/VboxContainer/stat card5" to="MouseUI" method="_on_stat_card_5_mouse_exited"]
+[connection signal="pressed" from="Control/Shop/Button" to="." method="_on_shopExit_button_pressed"]

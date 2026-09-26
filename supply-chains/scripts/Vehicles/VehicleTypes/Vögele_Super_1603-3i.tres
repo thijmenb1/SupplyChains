@@ -1,0 +1,76 @@
+[gd_resource type="Resource" script_class="VehicleData" format=3 uid="uid://dvqr35o84qprt"]
+
+[ext_resource type="Script" uid="uid://dmiv8armwh43h" path="res://scripts/Vehicles/Resources/VehicleData.gd" id="1_b2ma8"]
+[ext_resource type="Script" uid="uid://ds82kyunv82m4" path="res://scripts/Vehicles/Resources/VehicleDimensions.gd" id="1_wr4ps"]
+[ext_resource type="Script" uid="uid://bvv4720pqf6dc" path="res://scripts/Vehicles/Resources/VehicleDurability.gd" id="2_4fcrw"]
+[ext_resource type="Script" uid="uid://cchmqkioegkvj" path="res://scripts/Vehicles/Resources/VehicleEngine.gd" id="3_2ukbj"]
+[ext_resource type="Script" uid="uid://c61buw8x66e2" path="res://scripts/Vehicles/Resources/VehicleEquipment.gd" id="4_66ua3"]
+[ext_resource type="Script" uid="uid://f7y38bail327" path="res://scripts/Vehicles/Resources/VehicleGeneral.gd" id="5_1axll"]
+[ext_resource type="Script" uid="uid://csvx4re11qnyx" path="res://scripts/Vehicles/Resources/VehicleMobility.gd" id="6_y35xj"]
+
+[sub_resource type="Resource" id="Resource_2w8ku"]
+script = ExtResource("1_wr4ps")
+width_meter = 2.55
+width_pixel = 11
+length_meter = 6.0
+length_pixel = 15
+height = 2.95
+wheelbase_meter = 3.1
+wheelbase_pixel = -1
+metadata/_custom_type_script = "uid://ds82kyunv82m4"
+
+[sub_resource type="Resource" id="Resource_0gopv"]
+script = ExtResource("2_4fcrw")
+reliability = 0.96
+health = 1800
+metadata/_custom_type_script = "uid://bvv4720pqf6dc"
+
+[sub_resource type="Resource" id="Resource_2i0ao"]
+script = ExtResource("3_2ukbj")
+horse_power = 155
+torque = 750
+fuel_type = "Diesel"
+fuel_capacity = 220.0
+fuel_consumption = 20.0
+metadata/_custom_type_script = "uid://cchmqkioegkvj"
+
+[sub_resource type="Resource" id="Resource_mm5dv"]
+script = ExtResource("4_66ua3")
+working_width = 7.0
+capacity = 6.5
+min_working_width = 2.55
+max_working_width = 7.0
+working_speed = 1.08
+metadata/_custom_type_script = "uid://c61buw8x66e2"
+
+[sub_resource type="Resource" id="Resource_fi8s7"]
+script = ExtResource("5_1axll")
+vehicle_name = "Vögele Super 1603-3i"
+vehicle_class = "Asphalt Paver"
+manufacturer = "Vögele"
+atlas_region = Rect2(45, 0, 13, 18)
+vehicle_description = "A versatile wheeled asphalt paver capable of rapid self-relocation between job sites with a maximum pave width up to 7 meters."
+metadata/_custom_type_script = "uid://f7y38bail327"
+
+[sub_resource type="Resource" id="Resource_67eiy"]
+script = ExtResource("6_y35xj")
+vehicle_speed = 20.0
+drive_type = "6x4 RWD"
+turning_radius = 3.5
+traction = 0.85
+weight = 17900.0
+tire_count = 6
+contact_area = -1.0
+offroad_capability = 0.5
+metadata/_custom_type_script = "uid://csvx4re11qnyx"
+
+[resource]
+script = ExtResource("1_b2ma8")
+general = SubResource("Resource_fi8s7")
+engine = SubResource("Resource_2i0ao")
+mobility = SubResource("Resource_67eiy")
+dimensions = SubResource("Resource_2w8ku")
+durability = SubResource("Resource_0gopv")
+equipment = SubResource("Resource_mm5dv")
+cost = 95
+metadata/_custom_type_script = "uid://dmiv8armwh43h"

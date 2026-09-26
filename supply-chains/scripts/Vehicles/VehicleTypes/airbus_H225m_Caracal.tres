@@ -1,0 +1,69 @@
+[gd_resource type="Resource" script_class="VehicleData" format=3 uid="uid://g1pws0faxaky"]
+
+[ext_resource type="Script" uid="uid://ds82kyunv82m4" path="res://scripts/Vehicles/Resources/VehicleDimensions.gd" id="1_fkheq"]
+[ext_resource type="Script" uid="uid://f7y38bail327" path="res://scripts/Vehicles/Resources/VehicleGeneral.gd" id="1_g46o5"]
+[ext_resource type="Script" uid="uid://dmiv8armwh43h" path="res://scripts/Vehicles/Resources/VehicleData.gd" id="1_pa2v3"]
+[ext_resource type="Script" uid="uid://bvv4720pqf6dc" path="res://scripts/Vehicles/Resources/VehicleDurability.gd" id="2_2gn82"]
+[ext_resource type="Script" uid="uid://cchmqkioegkvj" path="res://scripts/Vehicles/Resources/VehicleEngine.gd" id="2_dy8oo"]
+[ext_resource type="Script" uid="uid://csvx4re11qnyx" path="res://scripts/Vehicles/Resources/VehicleMobility.gd" id="4_2gn82"]
+[ext_resource type="Script" uid="uid://cu5whbessmcnq" path="res://scripts/Vehicles/Resources/VehicleTransport.gd" id="7_0ll5k"]
+
+[sub_resource type="Resource" id="Resource_0ll5k"]
+script = ExtResource("1_fkheq")
+width_meter = 16.2
+width_pixel = 81
+length_meter = 19.5
+length_pixel = 96
+height = 4.6
+metadata/_custom_type_script = "uid://ds82kyunv82m4"
+
+[sub_resource type="Resource" id="Resource_rend3"]
+script = ExtResource("2_2gn82")
+reliability = 0.92
+health = 3200
+metadata/_custom_type_script = "uid://bvv4720pqf6dc"
+
+[sub_resource type="Resource" id="Resource_j7ij5"]
+script = ExtResource("2_dy8oo")
+horse_power = 4202
+torque = 9500
+fuel_type = "jet"
+fuel_capacity = 2539.0
+fuel_consumption = 800.0
+metadata/_custom_type_script = "uid://cchmqkioegkvj"
+
+[sub_resource type="Resource" id="Resource_c8lcn"]
+script = ExtResource("1_g46o5")
+vehicle_name = "Airbus H224M caracal"
+vehicle_class = "Heavy lift helicopter"
+manufacturer = "Airbus"
+atlas_region = Rect2(219, 56, 81, 96)
+vehicle_description = "A heavy, twin-engine tactical transport helicopter built for special operations and combat search and rescue. Armored, long-ranged, and able to move nearly thirty troops or a hefty sling load into places fixed-wing aircraft can't reach."
+metadata/_custom_type_script = "uid://f7y38bail327"
+
+[sub_resource type="Resource" id="Resource_og4cc"]
+script = ExtResource("4_2gn82")
+vehicle_speed = 324.0
+drive_type = "Twin turboshaft"
+weight = 7200.0
+tire_count = 3
+contact_area = 0.5
+offroad_capability = 1.0
+metadata/_custom_type_script = "uid://csvx4re11qnyx"
+
+[sub_resource type="Resource" id="Resource_g78y6"]
+script = ExtResource("7_0ll5k")
+cargoType = "sling"
+cargo_weight_capacity = 4750
+metadata/_custom_type_script = "uid://cu5whbessmcnq"
+
+[resource]
+script = ExtResource("1_pa2v3")
+general = SubResource("Resource_c8lcn")
+engine = SubResource("Resource_j7ij5")
+mobility = SubResource("Resource_og4cc")
+dimensions = SubResource("Resource_0ll5k")
+durability = SubResource("Resource_rend3")
+transport = SubResource("Resource_g78y6")
+cost = 250
+metadata/_custom_type_script = "uid://dmiv8armwh43h"

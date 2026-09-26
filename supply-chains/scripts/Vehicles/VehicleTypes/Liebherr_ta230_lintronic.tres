@@ -1,0 +1,75 @@
+[gd_resource type="Resource" script_class="VehicleData" format=3 uid="uid://y438to4g8rjt"]
+
+[ext_resource type="Script" uid="uid://ds82kyunv82m4" path="res://scripts/Vehicles/Resources/VehicleDimensions.gd" id="1_6vdpc"]
+[ext_resource type="Script" uid="uid://dmiv8armwh43h" path="res://scripts/Vehicles/Resources/VehicleData.gd" id="1_vipst"]
+[ext_resource type="Script" uid="uid://bvv4720pqf6dc" path="res://scripts/Vehicles/Resources/VehicleDurability.gd" id="2_tmil4"]
+[ext_resource type="Script" uid="uid://cchmqkioegkvj" path="res://scripts/Vehicles/Resources/VehicleEngine.gd" id="3_pqtq0"]
+[ext_resource type="Script" uid="uid://f7y38bail327" path="res://scripts/Vehicles/Resources/VehicleGeneral.gd" id="4_iq0xe"]
+[ext_resource type="Script" uid="uid://csvx4re11qnyx" path="res://scripts/Vehicles/Resources/VehicleMobility.gd" id="5_0ti55"]
+[ext_resource type="Script" uid="uid://cu5whbessmcnq" path="res://scripts/Vehicles/Resources/VehicleTransport.gd" id="7_6swen"]
+
+[sub_resource type="Resource" id="Resource_blmws"]
+script = ExtResource("1_6vdpc")
+width_meter = 3.0
+width_pixel = 15
+length_meter = 10.2
+length_pixel = 52
+height = 3.6
+wheelbase_meter = 4.8
+wheelbase_pixel = -1
+metadata/_custom_type_script = "uid://ds82kyunv82m4"
+
+[sub_resource type="Resource" id="Resource_c0vuy"]
+script = ExtResource("2_tmil4")
+reliability = 0.95
+health = 3000
+metadata/_custom_type_script = "uid://bvv4720pqf6dc"
+
+[sub_resource type="Resource" id="Resource_frfja"]
+script = ExtResource("3_pqtq0")
+horse_power = 422
+torque = 2100
+fuel_type = "Diesel"
+fuel_capacity = 420.0
+fuel_consumption = 35.0
+metadata/_custom_type_script = "uid://cchmqkioegkvj"
+
+[sub_resource type="Resource" id="Resource_nr1tq"]
+script = ExtResource("4_iq0xe")
+vehicle_name = "Liebherr ta230 lintronic"
+vehicle_class = "Articulated Dump Truck"
+manufacturer = "Liebherr"
+atlas_region = Rect2(18, 28, 15, 52)
+vehicle_description = "A heavy off-road dump truck designed for transporting large quantities of material through difficult terrain."
+metadata/_custom_type_script = "uid://f7y38bail327"
+
+[sub_resource type="Resource" id="Resource_nuhmy"]
+script = ExtResource("5_0ti55")
+vehicle_speed = 57.0
+drive_type = "6x6 AWD"
+turning_radius = 9.5
+traction = 0.98
+weight = 24500.0
+tire_count = 6
+contact_area = 3.5
+offroad_capability = 0.98
+metadata/_custom_type_script = "uid://csvx4re11qnyx"
+
+[sub_resource type="Resource" id="Resource_ejpei"]
+script = ExtResource("7_6swen")
+cargoType = "Bulk"
+cargo_weight_capacity = 28000
+cargo_volume_capacity = 15.5
+dump_time = 30.0
+metadata/_custom_type_script = "uid://cu5whbessmcnq"
+
+[resource]
+script = ExtResource("1_vipst")
+general = SubResource("Resource_nr1tq")
+engine = SubResource("Resource_frfja")
+mobility = SubResource("Resource_nuhmy")
+dimensions = SubResource("Resource_blmws")
+durability = SubResource("Resource_c0vuy")
+transport = SubResource("Resource_ejpei")
+cost = 100
+metadata/_custom_type_script = "uid://dmiv8armwh43h"

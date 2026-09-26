@@ -1,0 +1,84 @@
+[gd_resource type="Resource" script_class="VehicleData" format=3 uid="uid://bmgks03288exl"]
+
+[ext_resource type="Script" uid="uid://pryfvbqwggha" path="res://scripts/Vehicles/Resources/VehicleAttachmentPoints.gd" id="1_bj5st"]
+[ext_resource type="Script" uid="uid://ds82kyunv82m4" path="res://scripts/Vehicles/Resources/VehicleDimensions.gd" id="2_f3rge"]
+[ext_resource type="Script" uid="uid://bvv4720pqf6dc" path="res://scripts/Vehicles/Resources/VehicleDurability.gd" id="3_cqkag"]
+[ext_resource type="Script" uid="uid://cchmqkioegkvj" path="res://scripts/Vehicles/Resources/VehicleEngine.gd" id="4_8p7yi"]
+[ext_resource type="Script" uid="uid://f7y38bail327" path="res://scripts/Vehicles/Resources/VehicleGeneral.gd" id="5_kl02r"]
+[ext_resource type="Script" uid="uid://csvx4re11qnyx" path="res://scripts/Vehicles/Resources/VehicleMobility.gd" id="6_q5yd7"]
+[ext_resource type="Script" uid="uid://dmiv8armwh43h" path="res://scripts/Vehicles/Resources/VehicleData.gd" id="7_4q5bl"]
+
+[sub_resource type="Resource" id="Resource_egpb3"]
+script = ExtResource("1_bj5st")
+front_3point = true
+front_3point_lift_capacity = 5800
+front_attachment_point_coords = Vector2(12, 0)
+rear_3point = true
+rear_3point_lift_capacity = 12000
+rear_attachment_point_coords = Vector2(-11, 0)
+front_pto = true
+front_pto_power = 120
+rear_pto = true
+rear_pto_power = 380
+hydraulic_flow = 200
+max_tow_weight = 50000
+connection_count = 3
+metadata/_custom_type_script = "uid://pryfvbqwggha"
+
+[sub_resource type="Resource" id="Resource_a261f"]
+script = ExtResource("2_f3rge")
+width_meter = 2.75
+width_pixel = 13
+length_meter = 6.2
+length_pixel = 27
+height = 3.4
+wheelbase_meter = 3.1
+wheelbase_pixel = 15
+metadata/_custom_type_script = "uid://ds82kyunv82m4"
+
+[sub_resource type="Resource" id="Resource_falvi"]
+script = ExtResource("3_cqkag")
+reliability = 0.97
+health = 1500
+metadata/_custom_type_script = "uid://bvv4720pqf6dc"
+
+[sub_resource type="Resource" id="Resource_1x81i"]
+script = ExtResource("4_8p7yi")
+horse_power = 425
+torque = 1750
+fuel_type = "Diesel"
+fuel_capacity = 600.0
+fuel_consumption = 32.0
+metadata/_custom_type_script = "uid://cchmqkioegkvj"
+
+[sub_resource type="Resource" id="Resource_hpusy"]
+script = ExtResource("5_kl02r")
+vehicle_name = "Valtra s416"
+vehicle_class = "Heavy duty Tractor"
+manufacturer = "Valtra"
+atlas_region = Rect2(15, 0, 13, 24)
+vehicle_description = "This vehicle is usefull for transporting goods to remote places or when you have not placed roads with the use of trailers"
+metadata/_custom_type_script = "uid://f7y38bail327"
+
+[sub_resource type="Resource" id="Resource_rtk6q"]
+script = ExtResource("6_q5yd7")
+vehicle_speed = 53.0
+drive_type = "4WD"
+turning_radius = 6.5
+traction = 0.95
+weight = 13500.0
+tire_count = 4
+contact_area = 1.6
+offroad_capability = 0.95
+metadata/_custom_type_script = "uid://csvx4re11qnyx"
+
+[resource]
+script = ExtResource("7_4q5bl")
+general = SubResource("Resource_hpusy")
+engine = SubResource("Resource_1x81i")
+mobility = SubResource("Resource_rtk6q")
+attachments = SubResource("Resource_egpb3")
+dimensions = SubResource("Resource_a261f")
+durability = SubResource("Resource_falvi")
+cost = 80
+metadata/_custom_type_script = "uid://dmiv8armwh43h"

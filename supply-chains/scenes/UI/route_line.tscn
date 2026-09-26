@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cgwm6mk850hx8"]
+
+[ext_resource type="Script" uid="uid://qd784or20wky" path="res://scripts/UI/route_line.gd" id="1_rmtx2"]
+
+[node name="RouteLine" type="Node2D" unique_id=25804277]
+script = ExtResource("1_rmtx2")

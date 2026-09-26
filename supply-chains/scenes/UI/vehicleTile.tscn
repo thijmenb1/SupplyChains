@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://cvldihw4f7dtu"]
+
+[ext_resource type="Script" uid="uid://duwwmkicyw7as" path="res://scripts/UI/vehicleTile.gd" id="1_bry4u"]
+[ext_resource type="Texture2D" uid="uid://dcsaf2llywke1" path="res://assets/Vehicles/trucks_topdown_spritesheet.png" id="1_cuqrr"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7dvkv"]
+bg_color = Color(1, 1, 1, 0.2)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sesyt"]
+atlas = ExtResource("1_cuqrr")
+region = Rect2(45, 0, 13, 18)
+
+[node name="vehicleTile" type="Panel" unique_id=1246992017]
+custom_minimum_size = Vector2(139, 75)
+theme_override_styles/panel = SubResource("StyleBoxFlat_7dvkv")
+script = ExtResource("1_bry4u")
+
+[node name="VehicleSprite" type="TextureRect" parent="." unique_id=1287359985]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 6.0
+offset_right = 24.0
+offset_bottom = 24.0
+scale = Vector2(2, 2)
+texture = SubResource("AtlasTexture_sesyt")
+stretch_mode = 5
+
+[node name="VehicleName" type="Label" parent="." unique_id=2000025068]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 58.0
+offset_right = 135.0
+offset_bottom = 74.0
+theme_override_font_sizes/font_size = 11
+text = "Tractor"
+horizontal_alignment = 1
+
+[node name="CoordsText" type="Label" parent="." unique_id=1871368145]
+layout_mode = 0
+offset_left = 68.0
+offset_top = 9.0
+offset_right = 137.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 11
+text = "coords:
+(1000,1000) "
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]

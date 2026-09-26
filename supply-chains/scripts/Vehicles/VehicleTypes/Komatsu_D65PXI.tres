@@ -1,0 +1,72 @@
+[gd_resource type="Resource" script_class="VehicleData" format=3 uid="uid://ds5pvakk6ruct"]
+
+[ext_resource type="Script" uid="uid://ds82kyunv82m4" path="res://scripts/Vehicles/Resources/VehicleDimensions.gd" id="1_34krf"]
+[ext_resource type="Script" uid="uid://dmiv8armwh43h" path="res://scripts/Vehicles/Resources/VehicleData.gd" id="1_wek87"]
+[ext_resource type="Script" uid="uid://bvv4720pqf6dc" path="res://scripts/Vehicles/Resources/VehicleDurability.gd" id="2_h0gts"]
+[ext_resource type="Script" uid="uid://cchmqkioegkvj" path="res://scripts/Vehicles/Resources/VehicleEngine.gd" id="3_150ko"]
+[ext_resource type="Script" uid="uid://c61buw8x66e2" path="res://scripts/Vehicles/Resources/VehicleEquipment.gd" id="4_khcmh"]
+[ext_resource type="Script" uid="uid://f7y38bail327" path="res://scripts/Vehicles/Resources/VehicleGeneral.gd" id="5_vlex6"]
+[ext_resource type="Script" uid="uid://csvx4re11qnyx" path="res://scripts/Vehicles/Resources/VehicleMobility.gd" id="6_pu1w1"]
+
+[sub_resource type="Resource" id="Resource_p6v4f"]
+script = ExtResource("1_34krf")
+width_meter = 3.4
+width_pixel = 17
+length_meter = 5.7
+length_pixel = 25
+height = 3.16
+wheelbase_meter = 2.98
+wheelbase_pixel = -1
+metadata/_custom_type_script = "uid://ds82kyunv82m4"
+
+[sub_resource type="Resource" id="Resource_3grh6"]
+script = ExtResource("2_h0gts")
+reliability = 0.96
+health = 2500
+metadata/_custom_type_script = "uid://bvv4720pqf6dc"
+
+[sub_resource type="Resource" id="Resource_qc0v3"]
+script = ExtResource("3_150ko")
+horse_power = 217
+torque = 980
+fuel_type = "Diesel"
+fuel_capacity = 415.0
+fuel_consumption = 25.0
+metadata/_custom_type_script = "uid://cchmqkioegkvj"
+
+[sub_resource type="Resource" id="Resource_56dus"]
+script = ExtResource("4_khcmh")
+working_width = 3.4
+capacity = 3.7
+metadata/_custom_type_script = "uid://c61buw8x66e2"
+
+[sub_resource type="Resource" id="Resource_2qaoi"]
+script = ExtResource("5_vlex6")
+vehicle_name = "Komatsu D65PXI"
+vehicle_class = "Crawler Dozer"
+manufacturer = "Komatsu"
+atlas_region = Rect2(28, 0, 17, 25)
+vehicle_description = "A heavy intelligent crawler dozer equipped with integrated 3D GNSS machine control, ideal for bulk earthmoving, grading, and site clearing."
+metadata/_custom_type_script = "uid://f7y38bail327"
+
+[sub_resource type="Resource" id="Resource_6wnjf"]
+script = ExtResource("6_pu1w1")
+vehicle_speed = 11.0
+drive_type = "Tracked"
+traction = 0.98
+weight = 22500.0
+tire_count = 2
+contact_area = 3.8
+offroad_capability = 0.99
+metadata/_custom_type_script = "uid://csvx4re11qnyx"
+
+[resource]
+script = ExtResource("1_wek87")
+general = SubResource("Resource_2qaoi")
+engine = SubResource("Resource_qc0v3")
+mobility = SubResource("Resource_6wnjf")
+dimensions = SubResource("Resource_p6v4f")
+durability = SubResource("Resource_3grh6")
+equipment = SubResource("Resource_56dus")
+cost = 110
+metadata/_custom_type_script = "uid://dmiv8armwh43h"
