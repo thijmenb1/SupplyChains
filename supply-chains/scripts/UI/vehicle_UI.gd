@@ -46,41 +46,52 @@ func _process(_delta: float) -> void:
 			
 		if has_hitch:
 			attatchment = vehicle_values.get("attachmentPoints").get("hitch", null)
-			progressbar2.max_value = Global.getVehicleProperties(attatchment.vehicleType).transport.cargo_volume_capacity
-			progressbar2.value = attatchment.cargoVolume
 		elif has_front3Point:
-			pass
+			attatchment = vehicle_values.get("attachmentPoints").get("front3Point", null)
 		elif has_rear3Point:
-			pass
-			
-		if attatchment.cargoWeight >= Global.getVehicleProperties(attatchment.vehicleType).transport.cargo_weight_capacity:
-			progressWeigth2.visible = true
-		else:
-			progressWeigth2.visible = false
-			
-		progressbar1.position = Vector2(427, 15)
+			attatchment = vehicle_values.get("attachmentPoints").get("rear3Point", null)
+		
+		if attatchment != null:
+			progressbar2.visible = true
+			progressbar2.max_value = Global.getVehicleProperties(attatchment.vehicleType).transport.cargo_volume_capacity
+			progressbar2.value = attatchment.cargo.cargoVolume
+			progressText2.text = str(int(attatchment.cargo.cargoVolume))
+		
+			if attatchment.cargo.cargoWeight >= Global.getVehicleProperties(attatchment.vehicleType).transport.cargo_weight_capacity:
+				progressWeigth2.visible = true
+			else:
+				progressWeigth2.visible = false
 			
 	else:
 		progressbar2.visible = false
 		progressbar1.position = Vector2(427, 35)
-		
+	
+	progressbar1.position = Vector2(427, 15)
+	
 	FuelText.text = str(vehicle_values.get("fuel")) + "L"
 	WeightText.text = str(int(vehicle_values.get("totalWeigth"))) + "kg"
 	HealthText.text = str(vehicle_values.get("healt"))
 	EngineText.text = str(vehicle_values.get("engineLoad")) + "/" + str(vehicle_specs.engine.horse_power) + "hp"
 		
 	if vehicle_specs.transport != null:
+		progressbar1.visible = true
 		progressbar1.max_value = parse_capacity(vehicle_specs.transport.cargo_volume_capacity)
 		progressbar1.value = vehicle_values.get("cargoVolume", 0)
+		progressText1.text = str(int(progressbar1.value)) + " / " + str(int(progressbar1.max_value))
 		if vehicle_values.get("cargoWeight") >= vehicle_specs.transport.cargo_weight_capacity:
 			progressWeigth1.visible = true
 		else:
 			progressWeigth1.visible = false
 	elif vehicle_specs.equipment != null:
+		progressbar1.visible = true
 		progressbar1.max_value = parse_capacity(vehicle_specs.equipment.capacity)
 		progressbar1.value = vehicle_values.get("cargoVolume", 0)
+		progressText1.text = str(int(progressbar1.value)) + " / " + str(int(progressbar1.max_value))
+		progressWeigth1.visible = false
 	else:
-		progressbar1.max_value = 0.0
+		progressbar1.value = 0
+		progressText1.text = "n/a"
+		progressWeigth1.visible = false
 
 func parse_capacity(value) -> float:
 	if value is String:

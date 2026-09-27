@@ -94,9 +94,16 @@ func _apply_build_stage_tool() -> void:
 			Global.selected_factory_type = "cargoTerminal"
 			Global.clickMode = "place_factory"
 			Global.baseBuild = false
+		Global.BuildStage.PLACE_TAXIWAY:
+			selected_terrainSet = 0
+			Global.selected_terrain = Tiles.AIRSTRIP_DIRT
+			Global.clickMode = "place_taxiway"
+			Global.baseBuild = false
+			if Global.has_taxiway_connection():
+				Global.advance_build_stage()
 		Global.BuildStage.PLACE_BASE_TILES:
-			selected_terrainSet =0
-			Global.selcted_tile = Vector2i(0,19)
+			selected_terrainSet = 0
+			Global.selected_terrain = Tiles.BASE
 			Global.clickMode = "place_terrainSet"
 			Global.baseBuild = false
 		Global.BuildStage.READY:

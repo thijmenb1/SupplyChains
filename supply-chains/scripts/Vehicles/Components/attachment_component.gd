@@ -12,7 +12,7 @@ func setup(t_vehicle: VehicleBody, attachment_points: VehicleAttachmentPoints) -
 	if attachment_points.front_3point:
 		points["front3Point"] = null
 	if attachment_points.rear_3point:
-		points["rear3point"] = null
+		points["rear3Point"] = null
 	if attachment_points.hitch_type:
 		points["hitch"] = null
 	vehicle.frontAttatchmentPoint.position = attachment_points.front_attachment_point_coords

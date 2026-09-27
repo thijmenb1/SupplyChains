@@ -25,7 +25,7 @@ const TRADE_BASE_PRICES: Dictionary = {
 	"steelBeam": 30.0,
 	"copperWire": 30.0,
 	"goldWire": 90.0,
-	"PCBPallet": 250.0,
+#	"PCBPallet": 250.0,
 }
 
 const MAX_ORDERS := 10

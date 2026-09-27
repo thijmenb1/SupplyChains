@@ -1,13 +1,13 @@
 extends Node
 class_name  CargoComponent
 
-var vehicle: VehicleBody
+var vehicle: CharacterBody2D
 var transport: VehicleTransport
 var cargo: Dictionary = {}
 var cargoWeight: float = 0.0
 var cargoVolume: float = 0.0
 
-func setup(t_vehicle: VehicleBody, t_transport: VehicleTransport) -> void:
+func setup(t_vehicle: CharacterBody2D, t_transport: VehicleTransport) -> void:
 	vehicle = t_vehicle
 	transport = t_transport
 
@@ -18,7 +18,7 @@ func load_vehicle(loading_cargo: String, quantity: float) -> void:
 		return
 	
 	var added_weight: float = cargo_props.get("Weight", 0) * quantity
-	if cargoWeight + added_weight <= transport.get("CargoCapacity") and cargoVolume + quantity <= transport.carg:
+	if cargoWeight + added_weight <= transport.cargo_weight_capacity and cargoVolume + quantity <= transport.cargo_volume_capacity:
 		cargoWeight += added_weight
 		cargoVolume += quantity
 		cargo[loading_cargo] = cargo.get(loading_cargo, 0.0) + quantity

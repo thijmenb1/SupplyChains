@@ -73,3 +73,12 @@ func set_cells_astar_weight(cells: Array[Vector2i], weight: float) -> void:
 
 func set_footprint_astar_weight(grid_pos: Vector2i, size: Vector2i, weight: float) -> void:
 	set_cells_astar_weight(get_footprint_cells(grid_pos, size), weight)
+
+func _has_fully_paved_path(start: Vector2i, end: Vector2i) -> bool:
+	var raw_points = astar.get_id_path(start, end)
+	if raw_points.is_empty():
+		return false
+	for id in raw_points:
+		if astar.get_point_weight_scale(id) > ROAD_WEIGHT_THRESHOLD:
+			return false
+	return true

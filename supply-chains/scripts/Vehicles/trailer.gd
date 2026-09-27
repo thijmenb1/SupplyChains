@@ -8,9 +8,8 @@ var vehicleNumber: int
 var vehicleID: String
 @export var hitch_type: Global.HitchType = Global.HitchType.PIN
 
-var cargo: Dictionary
-var cargoWeight: int	#kg
-var cargoVolume: float
+var vehicleSpecs: VehicleData
+var cargo: CargoComponent
 
 var is_coupled: bool = false
 var towing_vehicle: CharacterBody2D = null
@@ -20,6 +19,12 @@ func _ready():
 	animatedSprite.animation = vehicleType
 	vehicleID = vehicleType + "*" + str(vehicleNumber)
 	VehicleManager.register_vehicle(vehicleID, self)
+	
+	vehicleSpecs = Global.getVehicleProperties(vehicleType)
+	if vehicleSpecs != null and vehicleSpecs.transport != null:
+		cargo = CargoComponent.new()
+		add_child(cargo)
+		cargo.setup(self, vehicleSpecs.transport)
 
 func couple_to(Vehicle: VehicleBody, target_hitch: Marker2D) -> bool:
 	towing_vehicle = Vehicle

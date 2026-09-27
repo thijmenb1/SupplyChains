@@ -21,6 +21,7 @@ VehicleManager="*uid://b63jtdb02jblj"
 Tiles="*uid://cxn577r1pc8mi"
 GridManager="*uid://4kc4d2gimv0h"
 TradeSystem="*uid://bvphug6qryibc"
+Save="*uid://d1frtamvb3764"
 
 [display]
 

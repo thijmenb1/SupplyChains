@@ -64,6 +64,7 @@ enum BuildStage {
 	PLACE_RESOURCE_BOX,
 	PLACE_RUNWAY,
 	PLACE_TERMINAL,
+	PLACE_TAXIWAY,
 	PLACE_BASE_TILES,
 	READY
 }
@@ -71,6 +72,7 @@ enum BuildStage {
 var build_stage: BuildStage = BuildStage.PLACE_RESOURCE_BOX
 var starter_vehicles_spawned: bool = false
 
+const RESOURCE_BOX_STOCK: Dictionary = {"ironBeam": 10}
 const STARTER_TRACTOR: String = "ford_7810"
 const STARTER_TRAILER: String = "flatbedTrailer"
 
@@ -86,7 +88,6 @@ func spawn_starter_vehicles() -> void:
 		trailer.couple_to(tractor, tractor.rearAttatchmentPoint)
 
 
-
 func advance_build_stage() -> void:
 	match build_stage:
 		BuildStage.PLACE_RESOURCE_BOX:
@@ -94,9 +95,54 @@ func advance_build_stage() -> void:
 		BuildStage.PLACE_RUNWAY:
 			build_stage = BuildStage.PLACE_TERMINAL
 		BuildStage.PLACE_TERMINAL:
+			build_stage = BuildStage.PLACE_TAXIWAY
+		BuildStage.PLACE_TAXIWAY:
 			build_stage = BuildStage.PLACE_BASE_TILES
 		BuildStage.PLACE_BASE_TILES:
 			build_stage = BuildStage.READY
+
+func check_resource_box_depleted() -> bool:
+	var box := get_resource_box()
+	if box == null:
+		return false
+	
+	var total: int = 0
+	for amount in box.outputResources.values():
+		total += amount
+	if total > 0:
+		return false
+	
+	if road_layer:
+		for cell in get_building_stamp(box.factory_type):
+			road_layer.erase_cell(box.grid_pos + cell["offset"])
+	
+	remove_factory(box)
+	return true
+
+func get_cargo_terminal_grid_pos() -> Vector2i:
+	var terminal := get_warehouse()
+	if terminal != null:
+		return terminal.grid_pos
+	for site in construction_sites:
+		if site.result.get("factory_type", "") == "cargoTerminal":
+			return site.anchor
+	return Vector2i(-9999, -9999)
+
+func get_terminal_place_axis() -> Vector2i:
+	var terminal_pos := get_cargo_terminal_grid_pos()
+	if terminal_pos == Vector2i(-9999, -9999):
+		return Vector2i(0,0)
+	return terminal_pos
+
+func has_taxiway_connection() -> bool:
+	var plane_axis := get_terminal_place_axis()
+	if plane_axis == Vector2i(-9999, -9999):
+		return false
+	for strip in airstrips:
+		for runway_cell in strip["cells"]:
+			if GridManager._has_fully_paved_path(plane_axis, runway_cell):
+				return true
+	return false
 
 # Tile tracking vars
 var selcted_tile : Vector2i = Vector2i(1, 2)
@@ -339,6 +385,9 @@ func _apply_construction_result(site: ConstructionSite) -> void:
 	match site.kind:
 		"factory":
 			var new_factory := create_factory(site.result["factory_type"], site.anchor)
+			if new_factory and new_factory.factory_type == "resourceBox":
+				for resource in RESOURCE_BOX_STOCK:
+					new_factory.outputResources[resource] = RESOURCE_BOX_STOCK[resource]
 			if new_factory and road_layer:
 				for cell in get_building_stamp(site.result["factory_type"]):
 					road_layer.set_cell(site.anchor + cell["offset"], Tiles.ROAD_SOURCE, cell["atlas"])
@@ -407,7 +456,9 @@ func _auto_route_construction_site(site: ConstructionSite) -> void:
 func _unassign_vehicles_from_route(route_index: int) -> void:
 	for vehicle_type in garage:
 		for vehicle in garage[vehicle_type]:
-			if vehicle.movement.assinged_route_index == route_index:
+			if vehicle.get("movement") == null:
+				continue
+			if vehicle.movement.assigned_route_index == route_index:
 				vehicle.movement.clear_route()
 
 func remove_route(route_index: int) -> void:
@@ -461,14 +512,19 @@ func get_accepted_resources(factory_type: String) -> Array:
 	return FACTORY_ACCEPTED_RESOURCES.get(factory_type, [])
 	
 func _process(delta):
+	var sim_delta: float = delta * speed_tier
 	for factory in factorys:
-		factory.update(delta)
+		factory.update(sim_delta)
 	for site in construction_sites.duplicate():
-		if site.update(delta):
+		if site.is_fully_supplied():
+			_drop_routes_touching(site)
+		if site.update(sim_delta):
 			_finish_construction(site)
 	if _routes_dirty:
 		generate_route()
 		_routes_dirty = false
+	if get_resource_box() != null:
+		check_resource_box_depleted()
 
 func pay_cost(cost: float) -> bool:
 	if money < cost:
@@ -635,6 +691,11 @@ func spawn_vehicle(vehicle_type: String) -> Node:
 	
 	occupied_base_tiles[spawn_tile] = true
 	vehicle_layer.add_child(instance)
+	
+	if instance.get("movement") != null:
+		instance.movement.home_tile = spawn_tile
+		instance.movement.has_home_tile = true
+	
 	garage[vehicle_type].append(instance)
 	return instance
 

@@ -16,6 +16,10 @@ var front_left_wheel: Node2D
 var front_rigth_wheel: Node2D
 var pathDebugLine: Line2D
 
+var home_tile: Vector2i = Vector2i.ZERO
+var has_home_tile: bool = false
+var returning_to_base: bool = false
+
 var max_steer_angle_deg: float = 35.0
 var steer_speed: float = 5.0
 var current_steer_angle: float = 0.0
@@ -170,6 +174,8 @@ func tick(delta: float) -> void:
 	if docking_active:
 		_tick_docking(delta)
 		return
+	if assigned_route_index == -1 and not returning_to_base and current_path.is_empty() and path_phase == PATHPHASE.NONE and has_home_tile:
+		_maybe_start_return_to_base()
 	if path_phase == PATHPHASE.TO_STAGING:
 		if _ready_for_dock_handoff():
 			docking_points = (_pending_path_data["points"] as Array[Vector2]).duplicate()
@@ -392,6 +398,10 @@ func handelArival() -> void:
 	if assigned_route_index != -1:
 		_handel_route_arrival()
 		return
+	if returning_to_base:
+		returning_to_base = false
+		current_speed = 0.0
+		return
 	if targetTile == firstLocationTile:
 		targetTile = secondLocationTile
 	elif targetTile == secondLocationTile:
@@ -399,6 +409,13 @@ func handelArival() -> void:
 	else:
 		print("Error: something wrong with nav coords")
 	navigate_to_tile(targetTile)
+
+func _maybe_start_return_to_base() -> void:
+	var current_tile: Vector2i = Vector2i((vehicle.global_position / Global.TILE_SIZE).floor())
+	if current_tile == home_tile:
+		return
+	returning_to_base = true
+	navigate_to_tile(home_tile)
 
 func _handel_route_arrival() -> void:
 	var route_data: Dictionary = Global.routes[assigned_route_index]
@@ -466,6 +483,7 @@ func _start_middle_leg(forward: bool) -> void:
 
 func assign_route(route_index: int) -> void:
 	assigned_route_index = route_index
+	returning_to_base = false
 	if route_index == -1:
 		return
 	var route_data: Dictionary = Global.routes[route_index]
@@ -620,20 +638,33 @@ func _tick_route_wait(delta: float) -> void:
 	if wait_hitch != null and wait_hitch.is_coupled:
 		wait_hitch.set_physics_process(false)
 
+func _get_cargo_component() -> CargoComponent:
+	if vehicle.cargo != null:
+		return vehicle.cargo
+	var hitch = attachments.get_hitch() if attachments else null
+	if hitch != null and "cargo" in hitch and hitch.cargo != null:
+		return hitch.cargo
+	return null
+
 func _handle_route_transfer() -> void:
 	var route_data: Dictionary = Global.routes[assigned_route_index]
 	var resource: String = route_data["resource"]
+	var cargo_component := _get_cargo_component()
+	if cargo_component == null:
+		push_warning("No cargo component available to transfer " + resource)
+	
+	
 	if route_stage == ROUTE_STAGE.AT_SOURCE:
 		var source = route_data["source"]
-		var free_volume: float = vehicle.cargo.transport.cargo_volume_capacity - vehicle.cargo.cargoVolume
+		var free_volume: float = cargo_component.transport.cargo_volume_capacity - cargo_component.cargoVolume
 		var amount: int = source.withdraw_resource(resource, int(free_volume))
 		if amount > 0:
-			vehicle.cargo.load_vehicle(resource, amount)
+			cargo_component.load_vehicle(resource, amount)
 	elif route_stage == ROUTE_STAGE.AT_DEST:
 		var destination = route_data["destination"]
-		var amount: float = vehicle.cargo.cargo.get(resource, 0.0)
+		var amount: float = cargo_component.cargo.get(resource, 0.0)
 		if amount > 0:
-			vehicle.cargo.unload_vehicle(resource, amount)
+			cargo_component.unload_vehicle(resource, amount)
 			destination.deposit_resource(resource, int(amount))
 	
 func _path_length(pts: Array[Vector2]) -> float:
