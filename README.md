@@ -1,4 +1,4 @@
-# Supply Chains - Godot Edition
+# Supply Chains - Godot
 
 A supply chain management simulation game built in Godot, where you transport resources, manage vehicles, and build efficient logistics systems.
 
@@ -21,7 +21,6 @@ The project focuses on simulation, route planning, vehicle management, and resou
 - Godot 4
 - GDScript
 - AStar pathfinding for route and grid logic
-- Custom UI and simulation systems
 
 ## Project Structure
 
@@ -49,53 +48,13 @@ The project focuses on simulation, route planning, vehicle management, and resou
 - Trailer and attachment support
 - Factory and route-based resource flow
 - Trade order system
-- Custom UI panels for economy and logistics
 - Map generation with terrain and road systems
-- Real-time route visualization and pathfinding
+- Real-time route calculation and pathfinding
 
 ## Known Limitations & In-Progress Features ⚠️
 
-Since this is a solo jam project with a tight deadline, some systems are incomplete or partially functional:
-
-### High Priority (Currently Working On)
-- 🔧 **Route visualization** - Dotted line display for offroad sections works, but needs polish
-- 🔧 **Vehicle pathfinding** - A* grid works but needs refinement for edge cases
-- 🔧 **Factory production chains** - Core logic in place, some recipes still need balancing
-
-### Medium Priority (Partial Implementation)
-- ⏳ **AI vehicle behavior** - Vehicles spawn but don't autonomously follow routes yet
-- ⏳ **Save/Load system** - Not implemented; game state only persists during session
-- ⏳ **Resource prices** - Static pricing; dynamic market fluctuation not implemented
-- ⏳ **Repair/maintenance** - Vehicles can break but repair system incomplete
-- ⏳ **Advanced factory logistics** - Multi-input/multi-output factories partially done
-
-### Lower Priority (Cosmetic/Polish)
-- 📋 **Sound effects** - No audio implementation yet
-- 📋 **Tutorial system** - Gameplay is intuitive but formal tutorial missing
-- 📋 **Advanced vehicle customization** - Basic vehicle types only; upgrades limited
-
-## Getting Started
-
-### Requirements
-
-- Godot 4.x
-- A local project folder with the `supply-chains/` project files
-
-### Running the Game
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/thijmenb1/SupplyChains.git
-   ```
-
-2. Open the `supply-chains` folder in Godot 4
-
-3. Press F5 or click Run to start the project
-
-## License
-
-This project is distributed under the MIT License unless otherwise noted.
-
----
+Since I am a solo dev a lot of features did not get polished or straight up dont work i have tryed my best to make the game as fun as posible with thes limitations but not everything is perfect.
+Things that dont work (yet):
+- the articulated dumptruck. just didnt have time to make the articulation work
 
 **Game Jam Project | Godot 4 | Solo Dev | 2 Days to Launch 🚀**
