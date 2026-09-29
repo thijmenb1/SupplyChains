@@ -147,3 +147,25 @@ func get_recipe(index: int, FactoryType: String = factory_type) -> Dictionary:
 					}
 		_:
 			return {}
+
+func to_dict() -> Dictionary:
+	return {
+		"factory_name": factory_name,
+		"factory_type": factory_type,
+		"grid_pos": grid_pos,
+		"inputResources": inputResources,
+		"outputResources": outputResources,
+		"is_crafting": is_crafting,
+		"craft_time_left": craft_time_left,
+		"craft_time": craft_time,
+		"recipeIndex": recipeIndex,
+	}
+
+func apply_dict(d: Dictionary) -> void:
+	factory_name = d.get("factory_name", factory_name)
+	inputResources = d.get("inputResources", {}).duplicate()
+	outputResources = d.get("outputResources", {}).duplicate()
+	is_crafting = d.get("is_crafting", false)
+	craft_time_left = d.get("craft_time_left", 0.0)
+	craft_time = d.get("craft_time", craft_time)
+	recipeIndex = d.get("recipeIndex", 0)

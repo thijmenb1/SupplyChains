@@ -44,6 +44,7 @@ position = Vector2(7.6737022, -0.10000023)
 rotation = 1.5707964
 scale = Vector2(1, 1.0048077)
 polygon = PackedVector2Array(5.6, 13.5, -5.4, 13.5, -5.4, -7.4, -0.4, -7.4, -0.4, -13.4, 0.6, -13.4, 0.6, -7.4, 5.6, -7.4)
+disabled = true
 
 [node name="TowPoint" type="Marker2D" parent="." unique_id=428704193]
 position = Vector2(21.173702, 0)

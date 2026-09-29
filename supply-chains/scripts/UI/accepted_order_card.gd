@@ -63,7 +63,7 @@ func _process(delta):
 	timeLabel2.text = str(remaining_min) + ":" + (str(remaining_sec) if remaining_sec >= 10 else "0" + str(remaining_sec))
 	landingText_hover.text = "to land on runway " + order["place"]
 	landingText.text = "to land on R" + order["place"]
-	loadedText1.text = "99" + "/" + str(Global.trade_orders[index]["quantity"])
+	loadedText1.text = "99" + "/" + str(order["quantity"])
 	loadedText2.text = "99" + "/" + str(order["quantity"])
 	loadingText.text = "loaded at terminal " + order["place"]
 	loadingText_hover.text = "loaded at T" + order["place"]
@@ -72,7 +72,7 @@ func _process(delta):
 	texture.region = Rect2(ATLAS_VAL_IMG[order["resource"]], Vector2i(6,6))
 	resourceText1.texture = texture
 	resourceText2.texture = texture
-	Global.trade_orders[index]["mode"] = mode
+	order["mode"] = mode
 
 func _on_mouse_entered():
 	if mode == "landing":

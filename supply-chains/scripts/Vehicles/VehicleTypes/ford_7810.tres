@@ -29,7 +29,7 @@ width_meter = 2.2
 width_pixel = 11
 length_meter = 4.2
 length_pixel = 21
-height = 2.7199999999999998
+height = 2.72
 wheelbase_meter = 2.22
 wheelbase_pixel = 14
 metadata/_custom_type_script = "uid://ds82kyunv82m4"
@@ -51,7 +51,7 @@ metadata/_custom_type_script = "uid://cchmqkioegkvj"
 
 [sub_resource type="Resource" id="Resource_olrqv"]
 script = ExtResource("5_4o1hv")
-vehicle_name = "Ford 7810"
+vehicle_name = "old tractor"
 vehicle_class = "small tractor"
 manufacturer = "Ford"
 atlas_region = Rect2(71, 0, 11, 21)

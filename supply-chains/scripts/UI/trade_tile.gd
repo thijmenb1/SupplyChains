@@ -46,13 +46,13 @@ func setup() -> void:
 	texture.region = Rect2(ATLAS_VAL_IMG[order["resource"]], Vector2i(6,6))
 	resourceSpriteText.texture = texture
 	
-	if Global.trade_orders[index]["accepted"] == false:
+	if order["accepted"] == false:
 		not_accepted.visible = true
 		landing.visible = false
 		loading.visible = false
 		time_remaining = order_time_remaining(order["expires_at"])
 		timeLeftLabel.text = str(time_remaining.x) + ":" + str(time_remaining.y) if time_remaining.y >= 10 else str(time_remaining.x) + ":" + "0" + str(time_remaining.y)
-	elif Global.trade_orders[index].get("mode") == "landing" or Global.trade_orders[index].get("mode") == "landing_hover":
+	elif order.get("mode") == "landing" or order.get("mode") == "landing_hover":
 		not_accepted.visible = false
 		landing.visible = true
 		loading.visible = false
@@ -60,7 +60,7 @@ func setup() -> void:
 		var remaining_min: int = remaining / 60
 		var remaining_sec: int = remaining - (remaining_min * 60)
 		timeLeftLanding.text = str(remaining_min) + ":" + (str(remaining_sec) if remaining_sec >= 10 else "0" + str(remaining_sec))
-	elif Global.trade_orders[index].get("mode") == "loading" or Global.trade_orders[index].get("mode") == "loading_hover":
+	elif order.get("mode") == "loading" or order.get("mode") == "loading_hover":
 		not_accepted.visible = false
 		landing.visible = false
 		loading.visible = true
@@ -73,7 +73,7 @@ func order_time_remaining(expires_at: float) -> Vector2i:
 
 
 func _on_button_pressed():
-	Global.trade_orders[index]["arrival_time"] = Global.elapsed_game_seconds + randi_range(30, 300)
+	order["arrival_time"] = Global.elapsed_game_seconds + randi_range(30, 300)
 	var airport: int = -1
 	for i in Global.airstrips.size():
 		if Global.occupied_airstrips.has(i):
@@ -81,8 +81,8 @@ func _on_button_pressed():
 			Global.occupied_airstrips.append(i)
 			break
 	if airport != -1:
-		Global.trade_orders[index]["accepted"] = true
-		Global.trade_orders[index]["place"] = Vector2i(airport,1)
+		order["accepted"] = true
+		order["place"] = Vector2i(airport,1)
 	else:
 		print(Global.airstrips)
 		print("No unoccupied airstrips avilable.")

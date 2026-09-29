@@ -6,6 +6,9 @@ var path_points: PackedVector2Array
 var color: Color
 
 func _process(_delta):
+	if route_index < 0 or route_index >= Global.routes.size() or Global.routes[route_index].is_empty():
+		queue_free()
+		return
 	if Global.routes[route_index].get("Offroad_route", null) != null && road_mode == "offroad":
 		path_points = Global.routes[route_index]["Offroad_route"]
 		color = Global.route_color[route_index]

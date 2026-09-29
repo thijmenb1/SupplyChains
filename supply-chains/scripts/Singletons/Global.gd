@@ -18,34 +18,17 @@ func mark_routes_dirty() -> void:
 	_routes_dirty = true
 
 # Finace vars
-
 var money: float = 100000
 var debt: float
-var maxDebt: int = 100
+const maxDebt: int = 100
 
 var trade_orders: Array[Dictionary]
 
-#Think its not needed anymore
-"""
-var resources := {
-	"ironBeam": 999,
-	"gravel": 999,
-	"sand": 999,
-	"fule": 999,
-	"coal": 999,
-	"steelBeam": 999,
-	"PCBPallet": 999
-}
-var resourcesDebt := {
-	"ironBeam": 0,
-	"copperSpool": 0,
-	"sulferPallet": 0,
-	"cabelSpool": 0,
-	"copperSulfideIBC": 0,
-	"steelBeam": 0,
-	"PCBPallet": 0
-}
-"""
+var save_games: Array[Dictionary]
+var loaded_save_index: int
+
+var world_seed: int = 0
+var pending_load: Dictionary = {}
 
 var garage := {
 	"valtra_s416": [],
@@ -164,16 +147,16 @@ const HOURS_PER_DAY = 24
 const MINUTES_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR
 const START_HOURS: int = 8
 
-const SPEED_TIERS: Array[float] = [0.0, 1.0, 4.0, 60.0]	#60.0 just for dev should be 12.0
+const SPEED_TIERS: Array[float] = [0.0, 1.0, 4.0, 12.0]
 
 var speed_index: int = 1
 var speed_tier: float = SPEED_TIERS[speed_index]
 
 var elapsed_game_seconds: float = START_HOURS * MINUTES_PER_HOUR * SECONDS_PER_MINUTE
 
-var minute : int 
+var minute: int 
 var hour: int
-var day : int
+var day: int
 var month: String
 var year: int
 
@@ -337,6 +320,15 @@ func start_construction(kind: String, cells: Array[Vector2i], cost_def: Dictiona
 	mark_routes_dirty()
 	_auto_route_construction_site(site)
 	return site
+
+func restore_construction_site(site: ConstructionSite) -> void:
+	if site.kind == "factory":
+		site.paths = _bake_factory_paths(site.result["factory_type"], site.anchor)
+	GridManager.register_on_cells(site, site.cells)
+	GridManager.set_cells_astar_weight(site.cells, 1.0)
+	if construction_layer:
+		_paint_ghost(site)
+	construction_sites.append(site)
 
 func _paint_ghost(site: ConstructionSite) -> void:
 	if site.kind == "factory":
@@ -698,6 +690,23 @@ func spawn_vehicle(vehicle_type: String) -> Node:
 	
 	garage[vehicle_type].append(instance)
 	return instance
+
+func restore_vehicle(vehicle_type: String, vehicle_number: int, pos: Vector2, rot: float) -> Node:
+	if vehicle_layer == null:
+		return null
+	var props: VehicleData = getVehicleProperties(vehicle_type)
+	if props == null:
+		return null
+	var scene: PackedScene = TRAILER_SCENE if props.general.is_trailer else VEHICLE_SCENE
+	var instance := scene.instantiate()
+	instance.vehicleType = vehicle_type
+	instance.vehicleNumber = vehicle_number
+	vehicle_layer.add_child(instance)
+	instance.global_position = pos
+	instance.global_rotation = rot
+	garage[vehicle_type].append(instance)
+	return instance
+
 
 var route_layer: Node2D
 const ON_ROAD_CHAMFER_DISTANCE: float = 12.0

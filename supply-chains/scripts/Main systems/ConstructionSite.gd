@@ -73,3 +73,23 @@ func update(delta: float) -> bool:
 		is_complete = true
 		return true
 	return false
+
+func to_dict() -> Dictionary:
+	return {
+		"kind": kind,
+		"cells": cells,
+		"result": result,
+		"required_resources": required_resources,
+		"deliverd_resources": deliverd_resources,
+		"build_time": build_time,
+		"build_time_left": build_time_left,
+	}
+
+static func from_dict(d: Dictionary) -> ConstructionSite:
+	var t_cells: Array[Vector2i] = []
+	t_cells.assign(d["cells"])
+	var cost_def := {"resources": d["required_resources"], "build_time": d["build_time"]}
+	var site := ConstructionSite.new(d["kind"], t_cells, cost_def, d["result"])
+	site.deliverd_resources = d["deliverd_resources"].duplicate()
+	site.build_time_left = d["build_time_left"]
+	return site

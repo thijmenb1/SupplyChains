@@ -6,13 +6,15 @@ extends Panel
 var last_route_count
 
 func _process(_delta):
-	if last_route_count != Global.routes.size():
-		last_route_count = Global.routes.size()
+	if last_route_count != Global.active_route_count():
+		last_route_count = Global.active_route_count()
 		_populate_routes_dropdown()
 
 func _populate_routes_dropdown():
 	RouteDropdown.clear()
-	for i in Global.routes.size():
+	for i in Global.active_route_count():
+		if Global.routes[i].is_empty():
+			continue
 		RouteDropdown.add_item("Route " + str(i + 1))
 
 func _on_panel_gui_input(event):

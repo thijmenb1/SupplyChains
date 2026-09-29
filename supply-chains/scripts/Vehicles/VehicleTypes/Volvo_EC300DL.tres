@@ -41,7 +41,7 @@ metadata/_custom_type_script = "uid://c61buw8x66e2"
 
 [sub_resource type="Resource" id="Resource_3r1dw"]
 script = ExtResource("1_tvor8")
-vehicle_name = "Volvo EC300DL"
+vehicle_name = "excavator"
 vehicle_class = "Heavy crawler Excavator"
 manufacturer = "Volvo"
 atlas_region = Rect2(0, 117, 11, 28)

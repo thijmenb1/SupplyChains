@@ -59,10 +59,11 @@ func _ready():
 	GridManager.setup_astar_grid(total_grid_span, total_grid_span)
 	
 	# Randomize seeds
-	noiseHeigthText.noise.seed = randi()
-	noiseTempText.noise.seed = randi()
-	noiseMoistText.noise.seed = randi()
-	noiseOreText.noise.seed = randi()
+	Global.world_seed = Global.pending_load.get("world_seed", randi() & 0x7fffffff)
+	noiseHeigthText.noise.seed = Global.world_seed
+	noiseTempText.noise.seed = Global.world_seed + 1
+	noiseMoistText.noise.seed = Global.world_seed + 2
+	noiseOreText.noise.seed = Global.world_seed + 3
 	
 	noise_alt = noiseHeigthText.noise
 	noise_temp = noiseTempText.noise
@@ -78,6 +79,11 @@ func _ready():
 	Global.route_layer = $RouteLayer
 	Global.road_layer = $RoadLayer
 	Global.construction_layer = $ConstructionLayer
+	
+	Save.apply_pending_load()
+	
+	if camera:
+		update_chunks_around_camera()
 
 func _apply_build_stage_tool() -> void:
 	match Global.build_stage:
@@ -148,7 +154,10 @@ func _process(_delta):
 			Global.selected_factory_type = "gaspower"
 			Global.clickMode = "place_factory"
 	if Input.is_action_just_pressed("esc"):
-		Global.clickMode = "highlight"
+		if Global.clickMode != "highlight":
+			Global.clickMode = "highlight"
+		else:
+			pass
 	if Input.is_action_just_pressed("speedUpTime"):
 		Global.speed_up()
 	if Input.is_action_just_pressed("slowDownTime"):
@@ -517,13 +526,13 @@ func setBiome(x: int, y: int) -> void:
 			TerrainLayer.set_cell(coords, Tiles.TERAIN_SOURCE, Tiles.TOUNDRA_ATLAS)
 		elif temperature < 0.20:
 			if moisture < -0.1:
-				var random: float = randf()
+				var random: float = _cell_rand(x, y, 1)
 				if random <= 0.15:
 					TerrainLayer.set_cell(coords, Tiles.TERAIN_SOURCE, Tiles.GRASS_ALT_ATLAS)
 				else:
 					TerrainLayer.set_cell(coords, Tiles.TERAIN_SOURCE, Tiles.GRASS_ATLAS)
 			else:
-				var random: float = randf()
+				var random: float = _cell_rand(x, y, 1)
 				if random <= 0.15:
 					var tree = TreeScene.instantiate()
 					tree.position = TerrainLayer.map_to_local(coords)
@@ -533,7 +542,7 @@ func setBiome(x: int, y: int) -> void:
 			if moisture < -0.05:
 				TerrainLayer.set_cell(coords, Tiles.TERAIN_SOURCE, Tiles.SAND_ATLAS)
 			else:
-				var random: float = randf()
+				var random: float = _cell_rand(x, y, 1)
 				if random <= 0.15:
 					TerrainLayer.set_cell(coords, Tiles.TERAIN_SOURCE, Tiles.SAVANA_ALT_ATLAS)
 				else:
@@ -550,7 +559,7 @@ func placeOres(x: int, y: int):
 	var coords := Vector2i(x, y)
 	var ore = noise_ore.get_noise_2d(x,y)
 	var altitude = noise_alt.get_noise_2d(x,y)
-	var rng = randf()
+	var rng = _cell_rand(x, y, 0)
 	
 	if ore > -0.30 && altitude > 0.10:
 		if rng <= 0.01:
@@ -602,4 +611,8 @@ func update_astar_cell_from_biome(coords: Vector2i, altitude: float):
 	elif altitude < -0.10:
 		GridManager.astar.set_point_solid(coords, true)
 	else:
-		GridManager.astar.set_point_weight_scale(coords, 5.0)
+		if RoadLayer.get_cell_source_id(coords) == -1 and Global.get_construction_site_at(coords) == null:
+			GridManager.astar.set_point_weight_scale(coords, 5.0)
+
+func _cell_rand(x: int, y: int, salt: int) -> float:
+	return float(posmod(hash(Vector3i(x, y, Global.world_seed + salt)), 10000)) / 10000.0

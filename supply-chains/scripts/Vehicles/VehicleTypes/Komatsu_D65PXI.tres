@@ -42,7 +42,7 @@ metadata/_custom_type_script = "uid://c61buw8x66e2"
 
 [sub_resource type="Resource" id="Resource_2qaoi"]
 script = ExtResource("5_vlex6")
-vehicle_name = "Komatsu D65PXI"
+vehicle_name = "Dozer"
 vehicle_class = "Crawler Dozer"
 manufacturer = "Komatsu"
 atlas_region = Rect2(28, 0, 17, 25)

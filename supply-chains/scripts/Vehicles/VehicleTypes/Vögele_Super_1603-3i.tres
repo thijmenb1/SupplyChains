@@ -45,7 +45,7 @@ metadata/_custom_type_script = "uid://c61buw8x66e2"
 
 [sub_resource type="Resource" id="Resource_fi8s7"]
 script = ExtResource("5_1axll")
-vehicle_name = "Vögele Super 1603-3i"
+vehicle_name = "paver"
 vehicle_class = "Asphalt Paver"
 manufacturer = "Vögele"
 atlas_region = Rect2(45, 0, 13, 18)

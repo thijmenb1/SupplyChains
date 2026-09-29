@@ -1,0 +1,216 @@
+[gd_scene format=3 uid="uid://dnn2grsks5al0"]
+
+[ext_resource type="Script" uid="uid://dd50jmihrgo7o" path="res://scripts/UI/save_menu.gd" id="1_24tsp"]
+
+[node name="Control" type="Control" unique_id=933130367]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_24tsp")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1504502082]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=707315953]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1901289552]
+custom_minimum_size = Vector2(640, 400)
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Save1" type="Panel" parent="CenterContainer/VBoxContainer" unique_id=18387853]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+
+[node name="ContainsSave" type="Control" parent="CenterContainer/VBoxContainer/Save1" unique_id=1819462775]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/VBoxContainer/Save1/ContainsSave" unique_id=1904285419]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = 153.0
+offset_bottom = 85.0
+theme_override_font_sizes/font_size = 40
+text = "Save 1"
+
+[node name="SaveDate and time" type="Label" parent="CenterContainer/VBoxContainer/Save1/ContainsSave" unique_id=356376518]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 107.0
+offset_right = 233.0
+offset_bottom = 130.0
+text = "Saved on 11-10-2026 10:10"
+
+[node name="moneyInSave" type="Label" parent="CenterContainer/VBoxContainer/Save1/ContainsSave" unique_id=153535974]
+custom_minimum_size = Vector2(144, 23)
+layout_mode = 0
+offset_left = 456.0
+offset_top = 107.0
+offset_right = 600.0
+offset_bottom = 130.0
+text = "money: 999.999,00"
+horizontal_alignment = 2
+
+[node name="TimeInSave" type="Label" parent="CenterContainer/VBoxContainer/Save1/ContainsSave" unique_id=397754328]
+layout_mode = 0
+offset_left = 489.0
+offset_top = 30.0
+offset_right = 600.0
+offset_bottom = 53.0
+text = "11-10-20 10:10"
+
+[node name="Create_new" type="Control" parent="CenterContainer/VBoxContainer/Save1" unique_id=2012682989]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/VBoxContainer/Save1/Create_new" unique_id=112347794]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 47.5
+offset_right = 153.0
+offset_bottom = 102.5
+theme_override_font_sizes/font_size = 40
+text = "+ Add new save"
+
+[node name="Save2" type="Panel" parent="CenterContainer/VBoxContainer" unique_id=1593159323]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+
+[node name="ContainsSave" type="Control" parent="CenterContainer/VBoxContainer/Save2" unique_id=946447848]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/VBoxContainer/Save2/ContainsSave" unique_id=734461395]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = 153.0
+offset_bottom = 85.0
+theme_override_font_sizes/font_size = 40
+text = "Save 1"
+
+[node name="SaveDate and time" type="Label" parent="CenterContainer/VBoxContainer/Save2/ContainsSave" unique_id=248920547]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 107.0
+offset_right = 233.0
+offset_bottom = 130.0
+text = "Saved on 11-10-2026 10:10"
+
+[node name="moneyInSave" type="Label" parent="CenterContainer/VBoxContainer/Save2/ContainsSave" unique_id=1223608534]
+custom_minimum_size = Vector2(144, 23)
+layout_mode = 0
+offset_left = 456.0
+offset_top = 107.0
+offset_right = 600.0
+offset_bottom = 130.0
+text = "money: 999.999,00"
+horizontal_alignment = 2
+
+[node name="TimeInSave" type="Label" parent="CenterContainer/VBoxContainer/Save2/ContainsSave" unique_id=1923977893]
+layout_mode = 0
+offset_left = 489.0
+offset_top = 30.0
+offset_right = 600.0
+offset_bottom = 53.0
+text = "11-10-20 10:10"
+
+[node name="Create_new" type="Control" parent="CenterContainer/VBoxContainer/Save2" unique_id=1523206438]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/VBoxContainer/Save2/Create_new" unique_id=1169042921]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 47.5
+offset_right = 153.0
+offset_bottom = 102.5
+theme_override_font_sizes/font_size = 40
+text = "+ Add new save"
+
+[node name="Save3" type="Panel" parent="CenterContainer/VBoxContainer" unique_id=2051435471]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+
+[node name="ContainsSave" type="Control" parent="CenterContainer/VBoxContainer/Save3" unique_id=1622808974]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/VBoxContainer/Save3/ContainsSave" unique_id=1217917553]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = 153.0
+offset_bottom = 85.0
+theme_override_font_sizes/font_size = 40
+text = "Save 1"
+
+[node name="SaveDate and time" type="Label" parent="CenterContainer/VBoxContainer/Save3/ContainsSave" unique_id=2107107613]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 107.0
+offset_right = 233.0
+offset_bottom = 130.0
+text = "Saved on 11-10-2026 10:10"
+
+[node name="moneyInSave" type="Label" parent="CenterContainer/VBoxContainer/Save3/ContainsSave" unique_id=2136750912]
+custom_minimum_size = Vector2(144, 23)
+layout_mode = 0
+offset_left = 456.0
+offset_top = 107.0
+offset_right = 600.0
+offset_bottom = 130.0
+text = "money: 999.999,00"
+horizontal_alignment = 2
+
+[node name="TimeInSave" type="Label" parent="CenterContainer/VBoxContainer/Save3/ContainsSave" unique_id=1399465931]
+layout_mode = 0
+offset_left = 489.0
+offset_top = 30.0
+offset_right = 600.0
+offset_bottom = 53.0
+text = "11-10-20 10:10"
+
+[node name="Create_new" type="Control" parent="CenterContainer/VBoxContainer/Save3" unique_id=1941343492]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/VBoxContainer/Save3/Create_new" unique_id=83056298]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 47.5
+offset_right = 153.0
+offset_bottom = 102.5
+theme_override_font_sizes/font_size = 40
+text = "+ Add new save"
+
+[connection signal="gui_input" from="CenterContainer/VBoxContainer/Save1" to="." method="_on_save_1_gui_input"]
+[connection signal="gui_input" from="CenterContainer/VBoxContainer/Save2" to="." method="_on_save_2_gui_input"]
+[connection signal="gui_input" from="CenterContainer/VBoxContainer/Save3" to="." method="_on_save_3_gui_input"]
