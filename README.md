@@ -2,7 +2,7 @@
 
 A supply chain management simulation game built in Godot, where you transport resources, manage vehicles, and build efficient logistics systems.
 
-> **⏰ Game Jam Status:** Active development | Deadline: 2 days remaining
+> **⏰ Game Jam Status:** Active development | Deadline: 1 days remaining
 
 ## About the Project
 
