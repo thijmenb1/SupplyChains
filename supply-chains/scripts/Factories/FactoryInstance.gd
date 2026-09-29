@@ -61,7 +61,11 @@ func finish_craft() -> void:
 			outputResources[resource] = outputResources.get(resource, 0) + amount
 
 func deposit_resource(resource: String, amount: int) -> void:
-	if Global.factory_accepts_resouce(factory_type, resource):
+	if not Global.factory_accepts_resouce(factory_type, resource):
+		return
+	if factory_type == "cargoTerminal":
+		outputResources[resource] = outputResources.get(resource, 0) + amount
+	else:
 		inputResources[resource] = inputResources.get(resource, 0) + amount
 
 func withdraw_resource(resource: String, amount: int) -> int:

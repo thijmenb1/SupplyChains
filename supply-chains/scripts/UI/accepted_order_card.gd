@@ -34,6 +34,9 @@ const ATLAS_VAL_IMG: Dictionary = {
 }
 
 func _process(delta):
+	if order.get("stage", "landing") in ["loading", "leaving"] and mode.begins_with("landing"):
+		mode = mode.replace("landing", "loading")
+	
 	match mode:
 		"landing_hover":
 			landing_hover.visible = true
@@ -63,8 +66,8 @@ func _process(delta):
 	timeLabel2.text = str(remaining_min) + ":" + (str(remaining_sec) if remaining_sec >= 10 else "0" + str(remaining_sec))
 	landingText_hover.text = "to land on runway " + order["place"]
 	landingText.text = "to land on R" + order["place"]
-	loadedText1.text = "99" + "/" + str(order["quantity"])
-	loadedText2.text = "99" + "/" + str(order["quantity"])
+	loadedText1.text = str(order.get("loaded", 0)) + "/" + str(order["quantity"])
+	loadedText2.text = str(order.get("loaded", 0)) + "/" + str(order["quantity"])
 	loadingText.text = "loaded at terminal " + order["place"]
 	loadingText_hover.text = "loaded at T" + order["place"]
 	var texture := AtlasTexture.new()

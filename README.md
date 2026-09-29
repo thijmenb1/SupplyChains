@@ -2,8 +2,6 @@
 
 A supply chain management simulation game built in Godot, where you transport resources, manage vehicles, and build efficient logistics systems.
 
-> **⏰ Game Jam Status:** Active development | Deadline: 1 days remaining
-
 ## About the Project
 
 Supply Chains is a strategic logistics and resource-management game built in Godot 4. Players are tasked with:
@@ -53,8 +51,9 @@ The project focuses on simulation, route planning, vehicle management, and resou
 
 ## Known Limitations & In-Progress Features ⚠️
 
-Since I am a solo dev a lot of features did not get polished or straight up dont work i have tryed my best to make the game as fun as posible with thes limitations but not everything is perfect.
+Since I am a solo dev a lot of features did not get polished or straight up dont work i have tried my best to make the game as fun as possible with these limitations but not everything is perfect.
 Things that dont work (yet):
-- the articulated dumptruck. just didnt have time to make the articulation work
+- the articulated dumptruck. just didn't have time to make the articulation work
+- there is currently only one hard coded plane did not have time for the rest
+- helicopters are not used jet
 
-**Game Jam Project | Godot 4 | Solo Dev | 2 Days to Launch 🚀**

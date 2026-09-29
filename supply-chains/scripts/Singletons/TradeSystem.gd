@@ -1,5 +1,7 @@
 extends Node
 
+const PLANE_SCENE: PackedScene = preload("res://scenes/Vehicles/delivery_plane.tscn")
+
 const NAMES: Array = [
 	"James", "Sarah", "Michael", "Emma", "David", "Lisa", "Robert", "Jennifer", "Christopher", "Maria",
 	"Daniel", "Amanda", "Matthew", "Sophie", "Joseph", "Rachel", "Andrew", "Elena", "Kevin", "Victoria",
@@ -34,10 +36,13 @@ const ORDER_GENERATION_PROBEBILITY := 0.05
 const MIN_ORDER_LIFETIME := 3600 #in game sec (1h)
 const MAX_ORDER_LIFETIME := 86400 #in game sec (1d)
 const MIN_QUANTITY := 1
-const MAX_QUANTITY := 20	#have to change to plane capacity
+const MAX_QUANTITY := 15
 
 var _next_order_id: int = 0
 var _last_minute: int = -1
+
+const PLANE_SPAWN_MIN_DIST := 3000.0
+const PLANE_SPAWN_MAX_DIST := 8000.0
 
 func _ready() -> void:
 	if Global.trade_orders.size() < MIN_ORDERS:
@@ -53,6 +58,8 @@ func _process(_delta: float) -> void:
 
 func _expire_old_orders() -> void:
 	for i in range(Global.trade_orders.size() -1, -1, -1):
+		if Global.trade_orders[i]["accepted"]:
+			continue
 		if Global.elapsed_game_seconds >= Global.trade_orders[i]["expires_at"]:
 			Global.trade_orders.remove_at(i)
 
@@ -88,3 +95,72 @@ func generate_name() -> String:
 	var firstname: String = NAMES[name_num]
 	var surename: String = SURENAMES[surename_num]
 	return firstname + " " + surename
+
+func get_free_airstrip() -> int:
+	for i in Global.airstrips.size():
+		if not Global.occupied_airstrips.has(i):
+			return i
+	return -1
+
+func get_terminal_stock(resource: String) -> int:
+	var terminal: FactoryInstance = Global.get_warehouse()
+	if terminal == null:
+		return 0
+	return int(terminal.outputResources.get(resource, 0))
+
+func has_stock_for_order(order: Dictionary) -> bool:
+	return get_terminal_stock(order["resource"]) >= int(order["quantity"])
+
+func accept_order(order: Dictionary) -> bool:
+	if order.get("accepted", false):
+		return false
+	if Global.elapsed_game_seconds >= order["expires_at"]:
+		return false
+	
+	var terminal: FactoryInstance = Global.get_warehouse()
+	if terminal == null:
+		print("No cargo terminal built, cant accept orders")
+		return false
+	if not has_stock_for_order(order):
+		print("Not enough %s in cargo terminal" % order["resource"])
+		return false
+	
+	var airstrip: int = get_free_airstrip()
+	if airstrip == -1:
+		print("No unoccupied airstrips available")
+		return false
+	if spawn_delivery_plane(order, airstrip) == null:
+		return false
+	
+	terminal.withdraw_resource(order["resource"], int(order["quantity"]))
+	return true
+
+func spawn_delivery_plane(order: Dictionary, airstrip_index: int) -> DeliveryPlane:
+	if Global.vehicle_layer == null:
+		push_error("Global.vehicle_layer not set, can't spawn plane")
+		return null
+	
+	var plane := PLANE_SCENE.instantiate() as DeliveryPlane
+	Global.vehicle_layer.add_child(plane)
+	var angle: float = randf() * TAU
+	var dist: float = randf_range(PLANE_SPAWN_MIN_DIST, PLANE_SPAWN_MAX_DIST)
+	if not plane.setup(order, airstrip_index, angle, dist):
+		plane.queue_free()
+		return null
+	
+	Global.occupied_airstrips.append(airstrip_index)
+	order["accepted"] = true
+	order["airstrip"] = airstrip_index
+	order["place"] = str(airstrip_index + 1)
+	order["loaded"] = 0
+	plane.delivery_finished.connect(_on_delivery_finished)
+	return plane
+
+func _on_delivery_finished(order: Dictionary, airstrip_index: int) -> void:
+	var payout: float = snapped(order["quantity"] * order["price_per_unit"], 0.01)
+	Global.money += payout
+	Global.occupied_airstrips.erase(airstrip_index)
+	for i in Global.trade_orders.size():
+		if Global.trade_orders[i]["id"] == order["id"]:
+			Global.trade_orders.remove_at(i)
+			break

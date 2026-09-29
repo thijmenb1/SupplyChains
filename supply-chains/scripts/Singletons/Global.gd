@@ -396,7 +396,7 @@ func _apply_construction_result(site: ConstructionSite) -> void:
 				road_layer.set_cells_terrain_connect(site.cells, site.result["terrain_set"], site.result["terrain"], false)
 			GridManager.set_cells_astar_weight(site.cells, 1.0)
 		"taxiway":
-			airstrips.append(site.result["footprint"])
+			taxiways.append(site.result["footprint"])
 			if road_layer:
 				road_layer.set_cells_terrain_connect(site.cells, site.result["terrain_set"], site.result["terrain"], false)
 			GridManager.set_cells_astar_weight(site.cells, 1.0)
@@ -498,6 +498,8 @@ const SUITBEL_DILIVERY_FACTORYS: Dictionary = {
 }
 
 func factory_accepts_resouce(factory_type: String, resource: String) -> bool:
+	if factory_type == "cargoTerminal":
+		return true
 	return resource in FACTORY_ACCEPTED_RESOURCES.get(factory_type, [])
 
 func get_accepted_resources(factory_type: String) -> Array:

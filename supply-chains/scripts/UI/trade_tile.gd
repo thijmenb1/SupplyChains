@@ -73,16 +73,4 @@ func order_time_remaining(expires_at: float) -> Vector2i:
 
 
 func _on_button_pressed():
-	order["arrival_time"] = Global.elapsed_game_seconds + randi_range(30, 300)
-	var airport: int = -1
-	for i in Global.airstrips.size():
-		if Global.occupied_airstrips.has(i):
-			airport = i
-			Global.occupied_airstrips.append(i)
-			break
-	if airport != -1:
-		order["accepted"] = true
-		order["place"] = Vector2i(airport,1)
-	else:
-		print(Global.airstrips)
-		print("No unoccupied airstrips avilable.")
+	TradeSystem.accept_order(order)

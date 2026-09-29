@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://c8qna0h35s0d7"]
+
+[ext_resource type="Texture2D" uid="uid://dcsaf2llywke1" path="res://assets/Vehicles/trucks_topdown_spritesheet.png" id="1_by5ju"]
+[ext_resource type="Script" uid="uid://br7ub8mn57j42" path="res://scripts/Vehicles/DeliveryPlane.gd" id="1_i3reb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i3reb"]
+atlas = ExtResource("1_by5ju")
+region = Rect2(87, 0, 100, 80)
+
+[node name="DeliveryPlane" type="Node2D" unique_id=544340205]
+script = ExtResource("1_i3reb")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=204897293]
+position = Vector2(-40, 0)
+rotation = 1.5707964
+texture = SubResource("AtlasTexture_i3reb")

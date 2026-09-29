@@ -7,6 +7,13 @@ func _process(delta):
 	if Vbox.get_child_count() != Global.trade_orders.size():
 		populate()
 
+func _open_order_count() -> int:
+	var count := 0
+	for order in Global.trade_orders:
+		if not order["accepted"]:
+			count += 1
+	return count
+
 func populate() -> void:
 	for child in Vbox.get_children():
 		child.queue_free()
