@@ -10,6 +10,9 @@ var vehicle_ui_open: bool = false
 var factory_ui_selected: String
 var factory_ui_open: bool = false
 
+const EXCAVATOR_TYPES: Array[String] = ["Volvo_EC300DL"]
+var mining_select_vehicle: String = ""
+
 var routes: Array[Dictionary]
 var route_color: Array[Color] = [Color(0.0, 0.404, 0.624, 1.0), Color(1.0, 0.0, 0.0, 1.0)]
 var _routes_dirty: bool = false
@@ -147,7 +150,7 @@ const HOURS_PER_DAY = 24
 const MINUTES_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR
 const START_HOURS: int = 8
 
-const SPEED_TIERS: Array[float] = [0.0, 1.0, 4.0, 12.0]
+const SPEED_TIERS: Array[float] = [0.0, 1.0, 4.0, 12.0, 10000.0]
 
 var speed_index: int = 1
 var speed_tier: float = SPEED_TIERS[speed_index]
@@ -189,6 +192,8 @@ const BUILDING_DEFS: Dictionary = {
 	"cementMixing":	{"display": "Cement mixer ",	"size": Vector2i(2,2),	"tile": Tiles.CONCRETE_PLANT,	"paths": null,													"dock_reverse": true},
 	"cargoTerminal":{"display": "Cargo terminal ",	"size": Vector2i(4,3),	"tile": Tiles.CARGO_TERMINAL,	"paths": null,													"dock_reverse": true},
 	"resourceBox":	{"display": "Resource box ",	"size": Vector2i(1,1),	"tile": Tiles.START_BOX,		"paths": null,													"dock_reverse": false},
+	"Pumpjack":		{"display": "Pumpjack ",		"size": Vector2i(1,2),	"tile": Tiles.PUMPJACK,			"paths": null,													"dock_reverse": true},
+	"mine":			{"display": "Mine ",			"size": Vector2i(1,1),	"tile": null,					"paths": null,													"dock_reverse": false},
 }
 
 const BUILDING_CONSTRUCTION_COST: Dictionary = {
@@ -256,7 +261,7 @@ func _bake_factory_paths(factory_type: String, grid_pos: Vector2i) -> Dictionary
 	return result
 
 
-func create_factory(factory_type: String, grid_pos: Vector2i) -> FactoryInstance:
+func create_factory(factory_type: String, grid_pos: Vector2i, size_override: Vector2i = Vector2i.ZERO) -> FactoryInstance:
 	var same_type_count := 0
 	for existing in factorys:
 		if existing.factory_type == factory_type:
@@ -267,7 +272,7 @@ func create_factory(factory_type: String, grid_pos: Vector2i) -> FactoryInstance
 		return null
 	
 	var def: Dictionary = BUILDING_DEFS[factory_type]
-	var size: Vector2i = def["size"]
+	var size: Vector2i = size_override if size_override != Vector2i.ZERO else def["size"]
 	
 	var factory_name := factory_type + "*" + str(same_type_count)
 	var new_factory := FactoryInstance.new(factory_name, grid_pos, size)
@@ -275,7 +280,8 @@ func create_factory(factory_type: String, grid_pos: Vector2i) -> FactoryInstance
 	print(new_factory.paths)
 	
 	GridManager.register_building(new_factory, grid_pos, size)
-	GridManager.set_footprint_astar_weight(grid_pos, size, 1.0)
+	if factory_type != "mine":
+		GridManager.set_footprint_astar_weight(grid_pos, size, 1.0)
 	factorys.append(new_factory)
 	update_path_reachability()
 	mark_routes_dirty()
@@ -403,7 +409,7 @@ func _apply_construction_result(site: ConstructionSite) -> void:
 	mark_routes_dirty()
 
 func get_building_stamp(building_type: String) -> Array:
-	if building_type == "": return []
+	if building_type == "" or BUILDING_DEFS[building_type]["tile"] == null: return []
 	var def: Dictionary = BUILDING_DEFS[building_type]
 	var base_atlas: Vector2i = def["tile"]
 	var size: Vector2i = def["size"]
@@ -469,6 +475,9 @@ func active_route_count() -> int:
 	return count
 
 func remove_factory(factory: FactoryInstance) -> void:
+	if factory.factory_type == "mine" and construction_layer:
+		for cell in GridManager.get_footprint_cells(factory.grid_pos, factory.size):
+			construction_layer.erase_cell(cell)
 	GridManager.remove_building(factory.grid_pos, factory.size)
 	GridManager.set_footprint_astar_weight(factory.grid_pos, factory.size, 5.0)
 	mark_routes_dirty()
@@ -483,7 +492,8 @@ const FACTORY_ACCEPTED_RESOURCES: Dictionary = {
 	"coalpower": ["coal"],
 	"cementMixing": ["gravel", "sand", "water"],
 	"chip": ["copperWire", "goldWire"],
-	"gaspower": ["fuel"]
+	"gaspower": ["fuel"],
+	"mine": []
 }
 
 const SUITBEL_DILIVERY_FACTORYS: Dictionary = {
@@ -494,7 +504,8 @@ const SUITBEL_DILIVERY_FACTORYS: Dictionary = {
 	"coalpower": null,
 	"cementMixing": ["base"],
 	"chip": ["base"],
-	"gaspower": null
+	"gaspower": null,
+	"mine": ["refinary", "base", "cementMixing"]
 }
 
 func factory_accepts_resouce(factory_type: String, resource: String) -> bool:
@@ -628,7 +639,7 @@ func getCargoProperties(cargo: String) -> Dictionary:
 				"type": "liquid",
 				"Weight": 800
 			}
-		"fule":
+		"fuel":
 			return {
 				"type": "liquid",
 				"Weight": 800
@@ -849,3 +860,47 @@ func _unhandled_input(event):
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 		else:
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+
+var ore_layer: TileMapLayer
+var terrain_layer: TileMapLayer
+
+const ORE_RESOURCE_BY_ATLAS: Dictionary = {
+	Tiles.COAL_ORE_ATLAS: "coal",
+	Tiles.IRON_ORE_ATLAS: "ironOre",
+	Tiles.COPPER_ORE_ATLAS: "copperOre",
+	Tiles.GOLD_ORE_ATLAS: "goldOre"
+}
+
+const TERRAIN_RESOURCE_BY_ATLAS: Dictionary = {
+	Tiles.MOUNTAIN_ATLAS: "gravel",
+	Tiles.SAND_ATLAS: "sand",
+	Tiles.COLD_SAND_ATLAS: "sand",
+}
+
+func scan_area_for_ores(rect: Rect2i) -> Dictionary:
+	var found: Dictionary = {}
+	for x in range(rect.position.x, rect.end.x):
+		for y in range(rect.position.y, rect.end.y):
+			var cell := Vector2i(x,y)
+			var resource: String = ""
+			if ore_layer:
+				resource = ORE_RESOURCE_BY_ATLAS.get(ore_layer.get_cell_atlas_coords(cell), "")
+			if resource == "" and terrain_layer:
+				resource = TERRAIN_RESOURCE_BY_ATLAS.get(terrain_layer.get_cell_atlas_coords(cell), "")
+			if resource != "":
+				found[resource] = found.get(resource, 0) + 1
+	return found
+
+func create_mine_factory(grid_pos: Vector2i, size: Vector2i, resources: Dictionary) -> FactoryInstance:
+	var mine := create_factory("mine", grid_pos, size)
+	if mine == null:
+		return null
+	mine.mine_resources = resources.duplicate()
+	for res in resources:
+		mine.outputResources[res] = 0
+	if construction_layer:
+		construction_layer.set_cells_terrain_connect(GridManager.get_footprint_cells(grid_pos, size), Tiles.ROAD_TERRAIN_SET, Tiles.CONSTRUCTION_MARKER)
+	return mine
+
+func is_excavator(vehicle_type: String) -> bool:
+	return vehicle_type in EXCAVATOR_TYPES

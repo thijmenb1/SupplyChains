@@ -14,6 +14,8 @@ var recipeIndex: int = 0
 
 var paths: Dictionary = {}
 
+var mine_resources: Dictionary = {}
+
 func _init(name: String, pos: Vector2i, sz: Vector2i) -> void:
 	var name_split = name.split("*")
 	var type = name_split[0]
@@ -24,6 +26,8 @@ func _init(name: String, pos: Vector2i, sz: Vector2i) -> void:
 	print(factory_type + " " + factory_name)
 	
 func update(delta: float) -> void:
+	if factory_type == "mine":
+		return
 	if not is_crafting:
 		start_auto_craft()
 	if is_crafting and craft_time_left > 0:
@@ -149,6 +153,7 @@ func get_recipe(index: int, FactoryType: String = factory_type) -> Dictionary:
 					"electricity": -50,
 					"PCBPallet": 1
 					}
+		"mine": return {}
 		_:
 			return {}
 
@@ -163,6 +168,7 @@ func to_dict() -> Dictionary:
 		"craft_time_left": craft_time_left,
 		"craft_time": craft_time,
 		"recipeIndex": recipeIndex,
+		"mine_resources": mine_resources
 	}
 
 func apply_dict(d: Dictionary) -> void:
@@ -173,3 +179,18 @@ func apply_dict(d: Dictionary) -> void:
 	craft_time_left = d.get("craft_time_left", 0.0)
 	craft_time = d.get("craft_time", craft_time)
 	recipeIndex = d.get("recipeIndex", 0)
+	mine_resources = d.get("mine_resources", {}).duplicate()
+
+func mine_resource(amount: int, limit: int) -> void:
+	var total: int = 0
+	for r in mine_resources:
+		total += mine_resources[r]
+	if total <= 0:
+		return
+	var roll: int = randi() % total
+	for r in mine_resources:
+		roll -= mine_resources[r]
+		if roll < 0:
+			if outputResources.get(r, 0) < limit:
+				outputResources[r] = outputResources.get(r, 0) + amount
+			return

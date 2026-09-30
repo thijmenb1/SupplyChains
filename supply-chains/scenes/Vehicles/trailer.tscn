@@ -3,31 +3,136 @@
 [ext_resource type="Script" uid="uid://bi3bkcbt6aspu" path="res://scripts/Vehicles/trailer.gd" id="1_wwfi2"]
 [ext_resource type="Texture2D" uid="uid://bkvg1rjxqhurq" path="res://assets/Vehicles/trailers_topdown_spritesheet.png" id="2_g5uru"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_h23np"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_wwfi2"]
 atlas = ExtResource("2_g5uru")
-region = Rect2(0, 123, 11, 27)
+region = Rect2(0, 27, 11, 27)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_uprws"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_g5uru"]
 atlas = ExtResource("2_g5uru")
-region = Rect2(0, 69, 11, 27)
+region = Rect2(11, 27, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ttgjk"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(22, 27, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1jyvt"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(33, 27, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kt54s"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(44, 27, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rdwg0"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(55, 27, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_otemb"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(66, 27, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gxxs2"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(77, 27, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_khdbd"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(0, 0, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_drbqp"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(11, 0, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s3ao7"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(22, 0, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p52a6"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(33, 0, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7gwon"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(44, 0, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rfpwi"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(55, 0, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_638md"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(66, 0, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wc561"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(77, 0, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jv5y8"]
+atlas = ExtResource("2_g5uru")
+region = Rect2(88, 0, 11, 27)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_usyny"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_h23np")
+"texture": SubResource("AtlasTexture_wwfi2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g5uru")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ttgjk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1jyvt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kt54s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rdwg0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_otemb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gxxs2")
 }],
 "loop": true,
 "name": &"bulkTrailer",
-"speed": 5.0
+"speed": 0.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_uprws")
+"texture": SubResource("AtlasTexture_khdbd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_drbqp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s3ao7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p52a6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7gwon")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rfpwi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_638md")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wc561")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jv5y8")
 }],
 "loop": true,
 "name": &"flatbedTrailer",
-"speed": 5.0
+"speed": 0.0
 }]
 
 [node name="Trailer" type="CharacterBody2D" unique_id=735797755]
@@ -37,7 +142,7 @@ script = ExtResource("1_wwfi2")
 position = Vector2(7.6737022, 0)
 rotation = 1.5707964
 sprite_frames = SubResource("SpriteFrames_usyny")
-animation = &"bulkTrailer"
+animation = &"flatbedTrailer"
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=1888943489]
 position = Vector2(7.6737022, -0.10000023)

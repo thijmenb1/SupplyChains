@@ -26,6 +26,7 @@ var current_steer_angle: float = 0.0
 var current_speed: float = 0.0
 var desired_reversing := false
 var is_reversing := false
+var _pivoting: bool = false
 var is_shifting := false
 var shift_timer: float = 0.0
 var prev_articulation: float = 0.0
@@ -39,12 +40,21 @@ var assigned_route_index: int = -1
 var targetTile: Vector2i
 var firstLocationTile: Vector2i
 var secondLocationTile: Vector2i
+var target_deploy_cell: Vector2i = Vector2i(-9999, -9999)
+var target_deploy_factory_type: String = ""
 
 enum ROUTE_STAGE {NONE, TO_SOURCE, AT_SOURCE, TO_DEST, AT_DEST}
 var route_stage: ROUTE_STAGE = ROUTE_STAGE.NONE
 var route_waiting: bool = false
 var route_wait_timer: float = 0.0
 const ROUTE_DOCK_WAIT_DURATION: float = 5.0
+
+enum MINING_STATE {NONE, TO_MINE, DIGGING}
+var mining_state: MINING_STATE = MINING_STATE.NONE
+var assigned_mine: FactoryInstance = null
+var dig_timer: float = 0.0
+const DIG_CYCLE_SECONDS: float = 10.0
+const MINE_OUTPUT_LIMIT: int = 500
 
 enum PATHPHASE {NONE, TO_CORRIDOR, TO_STAGING}
 var path_phase: PATHPHASE = PATHPHASE.NONE
@@ -174,7 +184,10 @@ func tick(delta: float) -> void:
 	if docking_active:
 		_tick_docking(delta)
 		return
-	if assigned_route_index == -1 and not returning_to_base and current_path.is_empty() and path_phase == PATHPHASE.NONE and has_home_tile:
+	if mining_state == MINING_STATE.DIGGING:
+		_tick_digging(delta)
+		return
+	if assigned_route_index == -1 and assigned_mine == null and not returning_to_base and current_path.is_empty() and path_phase == PATHPHASE.NONE and has_home_tile:
 		_maybe_start_return_to_base()
 	if path_phase == PATHPHASE.TO_STAGING:
 		if _ready_for_dock_handoff():
@@ -211,17 +224,37 @@ func tick(delta: float) -> void:
 	var local_target: Vector2 = vehicle.to_local(target_pos)
 	var desired_angle: float = local_target.angle()
 	var max_steer_rad: float = deg_to_rad(max_steer_angle_deg)
+	
+	var can_reverse: bool = not Global.is_excavator(vehicle.vehicleType)
+	if not can_reverse:
+		desired_reversing = false
+		is_reversing = false
+		is_shifting = false
 
+		if local_target.length() > 2.0:
+			var max_turn: float = deg_to_rad(90.0) * delta
+			vehicle.rotation += clampf(desired_angle, -max_turn, max_turn)
+
+		var align: float = clampf(1.0 - abs(desired_angle) / deg_to_rad(60.0), 0.0, 1.0)
+		var target_speed: float = drivetrain.get_calculated_speed() * align
+		var rate: float = drivetrain.get_acceleration_rate() if target_speed > current_speed else drivetrain.get_braking_rate()
+		current_speed = move_toward(current_speed, target_speed, rate * delta)
+
+		vehicle.velocity = Vector2.RIGHT.rotated(vehicle.rotation) * current_speed * Global.speed_tier
+		vehicle.move_and_slide()
+		return
+	
 	var reverse_threshold_high: float = deg_to_rad(105.0)
 	var reverse_threshold_low: float = deg_to_rad(75.0)
 
 	if path_phase == PATHPHASE.TO_STAGING:
 		desired_reversing = _pending_path_data.get("reverse_in", false)
 	else:
-		if not desired_reversing and abs(desired_angle) > reverse_threshold_high:
-			desired_reversing = true
-		elif desired_reversing and abs(desired_angle) < reverse_threshold_low:
-			desired_reversing = false
+		if can_reverse:
+			if not desired_reversing and abs(desired_angle) > reverse_threshold_high:
+				desired_reversing = true
+			elif desired_reversing and abs(desired_angle) < reverse_threshold_low:
+				desired_reversing = false
 
 	var shifting_gears: bool = is_shifting or (desired_reversing != is_reversing)
 
@@ -338,7 +371,6 @@ func tick(delta: float) -> void:
 		if path_phase == PATHPHASE.TO_STAGING and not current_path.is_empty():
 			var stage_target: Vector2 = current_path[current_path.size() - 1]
 			var dist_to_stage: float = vehicle.global_position.distance_to(stage_target)
-			const STAGE_BRAKING_SAFETY_MARGIN: float = 1.2
 			var stage_braking_distance: float = ((current_speed * current_speed) / (2.0 * drivetrain.get_braking_rate())) * 1.05
 			var crossed_stage: bool = _has_crossed_waypoint(current_path.size() - 1)
 			if not _stage_brake_latched and (dist_to_stage <= stage_braking_distance or crossed_stage):
@@ -368,6 +400,15 @@ func tick(delta: float) -> void:
 		vehicle.rotation += angular_velocity * delta
 
 func handelArival() -> void:
+	if target_deploy_cell != Vector2i(-9999, -9999) and target_deploy_factory_type != "":
+		_transform_into_factory(target_deploy_factory_type, target_deploy_cell)
+		target_deploy_cell = Vector2i(-9999, -9999)
+		target_deploy_factory_type = ""
+		return
+	if mining_state == MINING_STATE.TO_MINE:
+		mining_state = MINING_STATE.DIGGING
+		dig_timer = 0.0
+		return
 	if path_phase == PATHPHASE.TO_CORRIDOR:
 		path_phase = PATHPHASE.TO_STAGING
 		var stage_point: Vector2 = _pending_path_data["points"][0]
@@ -486,6 +527,7 @@ func assign_route(route_index: int) -> void:
 	returning_to_base = false
 	if route_index == -1:
 		return
+	clear_mine()
 	var route_data: Dictionary = Global.routes[route_index]
 	var dock_data: Dictionary = route_data.get("load_dock", {})
 	if dock_data.is_empty():
@@ -687,3 +729,92 @@ func _tangent_along(pts: Array[Vector2], dist: float) -> Vector2:
 	var a: Vector2 = _sample_along(pts, max(dist - eps, 0.0))
 	var b: Vector2 = _sample_along(pts, min(dist + eps, _path_length(pts)))
 	return (b - a).normalized() if a != b else Vector2.RIGHT
+
+func assign_mine(mine: FactoryInstance) -> void:
+	clear_route()
+	assigned_mine = mine
+	returning_to_base = false
+	var work_tile := _find_work_tile(mine)
+	if work_tile == Vector2i(-9999, -9999):
+		print("No reachable tile next to the mining area")
+		clear_mine()
+		return
+	mining_state = MINING_STATE.TO_MINE
+	navigate_to_tile(work_tile)
+	if current_path.is_empty():
+		print("Excavator can't path to the mining area")
+		clear_mine()
+
+func clear_mine() -> void:
+	assigned_mine = null
+	mining_state = MINING_STATE.NONE
+	dig_timer = 0.0
+
+func is_digging() -> bool:
+	return mining_state == MINING_STATE.DIGGING
+
+func _find_work_tile(mine: FactoryInstance) -> Vector2i:
+	var here := Vector2i((vehicle.global_position / Global.TILE_SIZE).floor())
+	var mine_cells: Array[Vector2i] = GridManager.get_footprint_cells(mine.grid_pos, mine.size)
+	var best := _nearest_walkable(mine_cells, here)
+	if best != Vector2i(-9999, -9999):
+		return best
+	
+	# Whole mine is solid (e.g. on a mountain): fall back to the ring around it
+	var search := Rect2i(mine.grid_pos - Vector2i.ONE, mine.size + Vector2i(2, 2))
+	var ring: Array[Vector2i] = []
+	for cell in GridManager.get_footprint_cells(search.position, search.size):
+		if not cell in mine_cells:
+			ring.append(cell)
+	return _nearest_walkable(ring, here)
+
+func _nearest_walkable(cells: Array[Vector2i], from: Vector2i) -> Vector2i:
+	var best := Vector2i(-9999, -9999)
+	var best_dist: int = 1 << 60
+	for cell in cells:
+		if GridManager.astar.is_in_boundsv(cell) and GridManager.astar.is_point_solid(cell):
+			continue
+		var d: int = (cell - from).length_squared()
+		if d < best_dist:
+			best_dist = d
+			best = cell
+	return best
+
+func _tick_digging(delta: float) -> void:
+	current_speed = move_toward(current_speed, 0.0, drivetrain.get_braking_rate() * delta)
+	vehicle.velocity = Vector2.RIGHT.rotated(vehicle.rotation) * current_speed * Global.speed_tier
+	vehicle.move_and_slide()
+	
+	if assigned_mine == null or not Global.factorys.has(assigned_mine):
+		clear_mine()
+		return
+	if drivetrain.fuel <= 0.0 or vehicle.parked:
+		return
+	dig_timer += delta
+	while dig_timer >= DIG_CYCLE_SECONDS:
+		dig_timer -= DIG_CYCLE_SECONDS
+		var bucket: int = int(vehicle.vehicleSpecs.equipment.capacity)
+		assigned_mine.mine_resource(bucket, MINE_OUTPUT_LIMIT)
+
+func _transform_into_factory(factory_type: String, grid_pos: Vector2i) -> void:
+	var def: Dictionary = Global.BUILDING_DEFS.get(factory_type, {})
+	var size: Vector2i = def.get("size", Vector2i.ONE)
+
+	if not GridManager.can_place_building(grid_pos, size):
+		print("Cannot deploy factory: Position %s is blocked!" % grid_pos)
+		return
+
+	var new_factory = Global.create_factory(factory_type, grid_pos)
+
+	if Global.road_layer and Global.has_method("get_building_stamp"):
+		for cell in Global.get_building_stamp(factory_type):
+			Global.road_layer.set_cell(grid_pos + cell["offset"], Tiles.ROAD_SOURCE, cell["atlas"])
+
+	if vehicle:
+		var list: Array = Global.garage.get(vehicle.vehicleType, [])
+		list.erase(vehicle)
+		
+		if VehicleManager.has_method("unregister_vehicle"):
+			VehicleManager.unregister_vehicle(vehicle.vehicleID)
+			
+		vehicle.queue_free()

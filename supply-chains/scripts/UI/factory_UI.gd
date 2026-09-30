@@ -9,7 +9,7 @@ extends Panel
 @onready var storedResourceUI: Panel = $StoredResourceUI
 @onready var RecipeUI: Panel = $RecipeUI
 
-const RESOUCE_ATLAS: Texture2D = preload("res://assets/resources_atlas.tres")
+const RESOUCE_ATLAS: Texture2D = preload("res://assets/resources.png")
 const RECIPE_ROW: PackedScene = preload("res://scenes/UI/recipeRow.tscn")
 
 const ATLAS_VAL_IMG: Dictionary = {
@@ -90,31 +90,29 @@ const ALL_RECIPES = {
 	"cementmixing": CEMENTMIXING_RECIPES
 }
 func _process(_delta: float) -> void:
-	if Global.factory_ui_selected == "":
+	visible = Global.factory_ui_open
+	if not Global.factory_ui_open or Global.factory_ui_selected == "":
 		return
 	
-	self.visible = Global.factory_ui_open
-	
-	var factory_split = Global.factory_ui_selected.split("*")
-	var factory_type = factory_split[0]
-	var _factory_number = factory_split[1]
-	var factoryInstance: FactoryInstance
+	var factoryInstance: FactoryInstance = null
 	for factory in Global.factorys:
 		if factory.factory_name == Global.factory_ui_selected:
 			factoryInstance = factory
 			break
+	if factoryInstance == null:
+		Global.factory_ui_open = false
+		return
 	
-	NameLabel.text = factory_type + " " + _factory_number
+	
+	var factory_split = Global.factory_ui_selected.split("*")
+	NameLabel.text = factory_split[0] + " " + factory_split[1]
 	
 	var total_input: int = 0
-	for item in factoryInstance.inputResources:
-		for amount in item.values():
-			total_input += int(amount)
-	
+	for amount in factoryInstance.inputResources.values():
+		total_input += int(amount)
 	var total_output: int = 0
-	for item in factoryInstance.outputResources:
-		for amount in item.values():
-			total_input += int(amount)
+	for amount in factoryInstance.outputResources.values():
+		total_output += int(amount)
 	
 	progressText1.text = str(total_input) + "/30"
 	progressText2.text = str(total_output) + "/30"
@@ -140,16 +138,18 @@ func update_resource_display(factory_instance: FactoryInstance) -> void:
 		resources_to_display.append({
 			"name": resource_name,
 			"amount": factory_instance.outputResources[resource_name],
-			"type": "input"
+			"type": "output"
 		})
 
 	for i in range(resource_textures.size()):
-		resource_textures[i].visble = false
+		resource_textures[i].visible = false
 		resource_labels[i].text = ""
 		resource_textures[i].texture = null
 	
 	for i in range(min(resources_to_display.size(), resource_textures.size())):
 		var resource_data = resources_to_display[i]
+		if not ATLAS_VAL_IMG.has(resource_data.name):
+			continue
 		
 		resource_textures[i].visible = true
 		resource_labels[i].text = str(resource_data.amount)
@@ -167,7 +167,7 @@ func update_recipe_ui(factory_instance: FactoryInstance) -> void:
 	for child in RecipeUI.get_children():
 		child.queue_free()
 	
-	var recipes = ALL_RECIPES[factory_instance.factory_type]
+	var recipes: Dictionary = ALL_RECIPES.get(factory_instance.factory_type, {})
 	
 	for i in recipes.size():
 		var recipe = recipes[i]

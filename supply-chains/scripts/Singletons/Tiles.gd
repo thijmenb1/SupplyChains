@@ -63,6 +63,8 @@ const BLAST_FURANCE			:= Vector2i(1,2)
 const CONCRETE_PLANT_ICON	:= Vector2i(5,2)
 const CONCRETE_PLANT		:= Vector2i(6,2)
 const CARGO_TERMINAL 		:= Vector2i(9,11)
+const PUMPJACK_ICON			:= Vector2i(8,2)
+const PUMPJACK				:= Vector2i(9,2)
 
 const factories = [
 	{"tile": DIESEL_GENERATOR,	"size": Vector2i(2,2),	"name": "gaspower",		"icon": DIESEL_GENERATOR_ICON},
@@ -73,4 +75,5 @@ const factories = [
 	{"tile": WIRE_MILL, 		"size": Vector2i(2,2),	"name": "wiremill",		"icon": WIRE_MILL_ICON},
 	{"tile": BLAST_FURANCE, 	"size": Vector2i(2,4),	"name": "blast",		"icon": BLAST_FURNACE_ICON},
 	{"tile": CONCRETE_PLANT, 	"size": Vector2i(2,2),	"name": "cementMixing",	"icon": CONCRETE_PLANT_ICON},
+	{"tile": PUMPJACK, 			"size": Vector2i(1,2),	"name": "pumpjack",		"icon": PUMPJACK_ICON},
 ]

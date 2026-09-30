@@ -56,4 +56,5 @@ Things that dont work (yet):
 - the articulated dumptruck. just didn't have time to make the articulation work
 - there is currently only one hard coded plane did not have time for the rest
 - helicopters are not used jet
+- electricity is not used
 

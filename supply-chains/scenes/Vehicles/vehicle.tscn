@@ -355,7 +355,7 @@ shape = SubResource("RectangleShape2D_pu4i8")
 [node name="VehicleSprite" type="AnimatedSprite2D" parent="." unique_id=196292407]
 rotation = 1.5707964
 sprite_frames = SubResource("SpriteFrames_rgx34")
-animation = &"Komatsu_D65PXI"
+animation = &"valtra_s416"
 
 [node name="frontLeftTireSprite" type="Sprite2D" parent="VehicleSprite" unique_id=1437522137]
 position = Vector2(-5, -7.5)

@@ -39,6 +39,10 @@ var is_dragging_left: bool = false
 var is_dragging_right: bool = false
 var last_drag_cell: Vector2i = Vector2i(-9999, -9999)
 
+var drag_start_cell: Vector2i = Vector2i.ZERO
+var is_dragging_mine: bool = false
+const MINE_MAX_SIDE: int = 20
+
 # Airstrip vars
 var airstrip_start: Vector2i = Vector2i(-9999, -9999)
 var airstrip_dragging: bool = false
@@ -78,6 +82,8 @@ func _ready():
 	Global.vehicle_layer = $VehicleLayer
 	Global.route_layer = $RouteLayer
 	Global.road_layer = $RoadLayer
+	Global.ore_layer = $OreLayer
+	Global.terrain_layer = $TerrainLayer
 	Global.construction_layer = $ConstructionLayer
 	
 	Save.apply_pending_load()
@@ -156,6 +162,8 @@ func _process(_delta):
 	if Input.is_action_just_pressed("esc"):
 		if Global.clickMode != "highlight":
 			Global.clickMode = "highlight"
+			Global.mining_select_vehicle = ""
+			is_dragging_mine = false
 		else:
 			pass
 	if Input.is_action_just_pressed("speedUpTime"):
@@ -167,9 +175,23 @@ func _process(_delta):
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	selectedCell = RoadLayer.local_to_map(RoadLayer.get_global_mouse_position())
-
+	selectedCell = RoadLayer.local_to_map(RoadLayer.get_global_mouse_position())	
+	
+	if Global.clickMode == "select_mining_area":
+		_handle_mining_area_input(event)
+		return
+	
 	if event is InputEventMouseButton:
+		if event.pressed and event.button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
+			Global.factory_ui_open = false
+			Global.vehicle_ui_open = false
+			
+			if event.button_index == MOUSE_BUTTON_LEFT and Global.clickMode != "place_factory":
+				var building = GridManager.get_building_at(selectedCell)
+				if building is FactoryInstance:
+					Global.factory_ui_selected = building.factory_name
+					Global.factory_ui_open = true
+		
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if Global.clickMode == "place_airstrip":
 				if event.pressed:
@@ -202,9 +224,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if selectedCell != last_drag_cell:
 			last_drag_cell = selectedCell
 			
-			if is_dragging_left and Global.clickMode != "place_upgrade":
+			if is_dragging_left:
 				paint_road()
-			elif is_dragging_right and Global.clickMode != "place_upgrade":
+			elif is_dragging_right:
 				erase_road()
 
 	elif event is InputEventMouseMotion:
@@ -213,9 +235,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if current_cell != last_drag_cell:
 			last_drag_cell = current_cell
 			
-			if is_dragging_left and Global.clickMode != "place_upgrade":
+			if is_dragging_left:
 				paint_road()
-			elif is_dragging_right and Global.clickMode != "place_upgrade":
+			elif is_dragging_right:
 				erase_road()
 	
 	
@@ -261,7 +283,7 @@ func paint_road():
 	Global.mark_routes_dirty()
 
 func erase_road():
-	var site := Global.get_construction_site_at(selectedCell)
+	var site = Global.get_construction_site_at(selectedCell)
 	if site != null:
 		Global.cancel_construction(site)
 		return
@@ -330,7 +352,7 @@ func commit_airstrip_drag():
 			"terrain": Global.selected_terrain,
 			"footprint": footprint,
 		}
-		var site := Global.start_construction("airstrip", footprint["cells"], cost, result)
+		var site = Global.start_construction("airstrip", footprint["cells"], cost, result)
 		if site != null and Global.build_stage == Global.BuildStage.PLACE_RUNWAY:
 			Global.advance_build_stage()
 		print("Airstrip construction started: ", footprint["length"], " tiles")
@@ -450,7 +472,7 @@ func place_factory() -> void:
 	var cells: Array[Vector2i] = GridManager.get_footprint_cells(selectedCell, def["size"])
 	var cost: Dictionary = Global.BUILDING_CONSTRUCTION_COST.get(Global.selected_factory_type, {})
 	var result: Dictionary = {"factory_type": Global.selected_factory_type}
-	var site := Global.start_construction("factory", cells, cost, result)
+	var site = Global.start_construction("factory", cells, cost, result)
 	if site == null:
 		return
 	
@@ -463,12 +485,12 @@ func place_factory() -> void:
 func demolish_factory() -> void:
 	if Global.mouseIsOVerUI: return
 	
-	var site := Global.get_construction_site_at(selectedCell)
+	var site = Global.get_construction_site_at(selectedCell)
 	if site != null:
 		Global.cancel_construction(site)
 		return
 	
-	var factory := Global.get_factory_at(selectedCell)
+	var factory = Global.get_factory_at(selectedCell)
 	if factory == null or not (factory is FactoryInstance): return
 
 	for cell in Global.get_building_stamp(factory.factory_type):
@@ -602,6 +624,10 @@ func previewTile():
 	elif Global.clickMode == "place_factory":
 		for cell in Global.get_building_stamp(Global.selected_factory_type):
 			PreviewLayer.set_cell(selectedCell + cell["offset"], Tiles.ROAD_SOURCE, cell["atlas"])
+	elif Global.clickMode == "select_mining_area":
+		var start: Vector2i = drag_start_cell if is_dragging_mine else selectedCell
+		var rect := _get_mine_rect(start, selectedCell)
+		PreviewLayer.set_cells_terrain_connect(GridManager.get_footprint_cells(rect.position, rect.size), Tiles.ROAD_TERRAIN_SET, Tiles.CONSTRUCTION_MARKER, false)
 	elif Global.clickMode == "highlight":
 		PreviewLayer.set_cell(selectedCell, Tiles.TERAIN_SOURCE, Tiles.WATER_ATLAS)
 
@@ -616,3 +642,57 @@ func update_astar_cell_from_biome(coords: Vector2i, altitude: float):
 
 func _cell_rand(x: int, y: int, salt: int) -> float:
 	return float(posmod(hash(Vector3i(x, y, Global.world_seed + salt)), 10000)) / 10000.0
+
+func _get_mine_rect(a: Vector2i, b: Vector2i) -> Rect2i:
+	var max_offset := Vector2i(MINE_MAX_SIDE - 1, MINE_MAX_SIDE -1)
+	var clamped_b := a + (b - a).clamp(-max_offset, max_offset)
+	var top_left := Vector2i(mini(a.x, clamped_b.x), mini(a.y, clamped_b.y))
+	var bottom_right := Vector2i(maxi(a.x, clamped_b.x), maxi(a.y, clamped_b.y))
+	return Rect2i(top_left, bottom_right - top_left + Vector2i.ONE)
+
+func _handle_mining_area_input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton:
+		return
+	
+	if event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			if Global.mouseIsOVerUI: return
+			drag_start_cell = selectedCell
+			is_dragging_mine = true
+		elif is_dragging_mine:
+			is_dragging_mine = false
+			_finalize_mining_area(drag_start_cell, selectedCell)
+	elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		_cancel_mining_area_selection()
+
+func _cancel_mining_area_selection() -> void:
+	is_dragging_mine = false
+	Global.mining_select_vehicle = ""
+	Global.clickMode = "highlight"
+
+func _finalize_mining_area(start_cell: Vector2i, end_cell: Vector2i) -> void:
+	var vehicle: VehicleBody = VehicleManager.vehicles.get(Global.mining_select_vehicle)
+	if vehicle == null or vehicle.movement == null:
+		_cancel_mining_area_selection()
+		return
+	
+	var existing = GridManager.get_building_at(start_cell)
+	if start_cell == end_cell and existing is FactoryInstance and existing.factory_type == "mine":
+		vehicle.movement.assign_mine(existing)
+		_cancel_mining_area_selection()
+		return
+	
+	var rect := _get_mine_rect(start_cell, end_cell)
+	if not GridManager.can_place_building(rect.position, rect.size):
+		print("Cannot place mine: area is obstructed")
+		return
+	var resources: Dictionary = Global.scan_area_for_ores(rect)
+	if resources.is_empty():
+		print("Cannot place mine: no ores, sand or gravel in selected area")
+		return
+	
+	var mine = Global.create_mine_factory(rect.position, rect.size, resources)
+	if mine == null:
+		return
+	vehicle.movement.assign_mine(mine)
+	_cancel_mining_area_selection()

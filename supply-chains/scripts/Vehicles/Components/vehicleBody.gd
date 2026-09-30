@@ -94,5 +94,5 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var clickable_rect = Rect2(Vector2(-12, -6.5), Vector2(24, 13))
 		if clickable_rect.has_point(get_local_mouse_position()):
-			Global.vehicle_ui_open = true
 			Global.vehicle_ui_selected = vehicleID
+			Global.set_deferred("vehicle_ui_open", true)

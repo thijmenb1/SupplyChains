@@ -28,7 +28,8 @@ const ATLAS_VAL_IMG: Dictionary = {
 	"goldBars": Vector2i(24,0),
 	"steelBeam": Vector2i(48,0),
 	"copperWire": Vector2i(36,0),
-	"goldWire": Vector2i(42,0),
+	"goldWire": Vector2i(18,0),
+	"fuel": Vector2i(36,0),
 	"PCBPallet": Vector2i(54, 0),
 }
 

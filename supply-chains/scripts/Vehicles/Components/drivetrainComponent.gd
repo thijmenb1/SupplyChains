@@ -56,6 +56,9 @@ func update_engine_load() -> void:
 	engineLoad = int(clamp(required_hp, totalHorsePower * 0.1, totalHorsePower))
 
 func tick_fuel() -> void:
+	var digging: bool = vehicle.movement != null and vehicle.movement.is_digging()
+	if (vehicle.velocity.length() < 1.0 and not digging) or engine.is_empty():
+		return
 	if vehicle.velocity.length() < 1.0 or engine.is_empty():
 		return
 	

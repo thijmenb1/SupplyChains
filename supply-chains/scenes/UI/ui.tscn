@@ -811,7 +811,6 @@ grow_horizontal = 0
 grow_vertical = 2
 
 [node name="Factory" type="Panel" parent="Control/extendedTileUI" unique_id=948814041]
-visible = false
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -1413,7 +1412,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="FactoryUI" type="Panel" parent="Control" unique_id=549559547]
-visible = false
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -1533,7 +1531,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="StoredResourceUI" type="Panel" parent="Control/FactoryUI" unique_id=657333944]
-visible = false
 layout_mode = 0
 offset_left = 250.0
 offset_top = -200.0
@@ -1646,6 +1643,7 @@ offset_bottom = 20.0
 text = "1000"
 
 [node name="RecipeUI" type="Panel" parent="Control/FactoryUI" unique_id=1901226384]
+visible = false
 layout_mode = 0
 offset_left = 240.0
 offset_top = -200.0

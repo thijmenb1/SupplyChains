@@ -103,6 +103,13 @@ func parse_capacity(value) -> float:
 
 func _on_route_gui_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var vehicle_type: String = Global.vehicle_ui_selected.split("*")[0]
+		if Global.is_excavator(vehicle_type):
+			RouteUI.visible = false
+			Global.mining_select_vehicle = Global.vehicle_ui_selected
+			Global.clickMode = "select_mining_area"
+			Global.vehicle_ui_open = false
+			return
 		RouteUI.visible = !RouteUI.visible
 			
 func _on_cople_trailer_gui_input(event):
