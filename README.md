@@ -12,11 +12,9 @@ Supply Chains is a strategic logistics and resource-management game built in God
 - Creating efficient delivery routes
 - Optimizing profits while balancing costs and logistics
 
-The project focuses on simulation, route planning, vehicle management, and resource flow rather than a traditional Java/legacy web app stack.
-
 ## Built With
 
-- Godot 4
+- Godot 4.6.3
 - GDScript
 - AStar pathfinding for route and grid logic
 
