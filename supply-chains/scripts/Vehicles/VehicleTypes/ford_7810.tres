@@ -19,6 +19,7 @@ rear_attachment_point_coords = Vector2(-9.5, 0)
 rear_pto = true
 rear_pto_power = 90
 hydraulic_flow = 69
+hitch_type = 1
 max_tow_weight = 12000
 connection_count = 3
 metadata/_custom_type_script = "uid://pryfvbqwggha"

@@ -5,6 +5,11 @@ const VEHICLE_TILE_SCENE = preload("res://scenes/UI/vehicleTile.tscn")
 
 @export var TowingVehicle: VehicleBody
 
+var first_refresh: bool = false
+
+func _ready():
+	refresh_trailer_ui()
+
 func refresh_trailer_ui():
 	for child in vbox.get_children():
 		child.queue_free()

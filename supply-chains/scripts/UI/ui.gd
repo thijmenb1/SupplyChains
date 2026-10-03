@@ -1,18 +1,5 @@
 extends CanvasLayer
 
-"""
-@onready var recourceBar: Panel = $Control/ResourceBar
-@onready var ironBarLab: Label = $Control/ResourceBar/TextureRect/Label
-@onready var gravelLab: Label = $Control/ResourceBar/TextureRect2/Label
-@onready var sandLab: Label = $Control/ResourceBar/TextureRect3/Label
-@onready var fuleLab: Label = $Control/ResourceBar/TextureRect4/Label
-@onready var coalLab: Label = $Control/ResourceBar/TextureRect5/Label
-@onready var steelBarLab: Label = $Control/ResourceBar/TextureRect6/Label
-@onready var PCBCrateLab: Label = $Control/ResourceBar/TextureRect7/Label
-@onready var Lab1: Label = $Control/ResourceBar/TextureRect8/Label
-@onready var lab2: Label = $Control/ResourceBar/TextureRect9/Label
-"""
-
 @onready var selectedTileUI: Control = $Control/selectedTileUI
 @onready var selectedTileImg: TextureRect = $Control/selectedTileUI/TextureRect
 @onready var selectedTilePanel: Panel = $Control/selectedTileUI/SelcetedTile
@@ -55,7 +42,10 @@ var selectedVehicle: String
 var currentShopMode: shopMode = shopMode.General
 enum shopMode {None, General, Viewing}
 
+var popup_time_left: float = 0.0
+
 func _ready() -> void:
+	Global.popup_requested.connect(_on_popup_requested)
 	for i in extendedTileUI_factory.get_child_count():
 		var texture_rect = extendedTileUI_factory.get_child(i)
 		
@@ -119,12 +109,21 @@ func _process(_delta):
 		shop.visible = false
 	setTime()
 	
-	if Global.baseTiles.size() == 0:
-		popUpText.text = "You first have to place a base"
-	elif Global.baseTiles.size() < 4:
-		popUpText.text = "Your base must be atleast 4 tiles"
-	else:
-		popUpText.text = ""
+	if popup_time_left > 0.0:
+		popup_time_left -= _delta
+		if popup_time_left <= 0.0:
+			popUpText.text = ""
+	if popup_time_left <= 0.0:
+		if Global.baseTiles.size() == 0:
+			popUpText.text = "You first have to place a base"
+		elif Global.baseTiles.size() < 4:
+			popUpText.text = "Your base must be atleast 4 tiles"
+		else:
+			popUpText.text = ""
+
+func _on_popup_requested(message: String, duration: float) -> void:
+	popUpText.text = message
+	popup_time_left = duration
 
 func _on_texture_rect_mouse_entered():
 	selectedTileExstendedPanel.visible = true
@@ -138,6 +137,7 @@ func _on_texture_rect_gui_input_factory(event: InputEvent, index: int) -> void:
 		var selectedY: float
 		Global.selcted_tile = Tiles.factories[index]["tile"]
 		Global.selected_factory_type = Tiles.factories[index]["name"]
+		Global.show_factory_cost(Global.selected_factory_type)
 		selectedY = 5.5 + (32 * index) + (4 * index)
 		selectedX = 5.5
 		extendedTileUISelcter_factory.position = Vector2(selectedX, selectedY)
@@ -154,6 +154,7 @@ func _on_texture_rect_gui_input_base(event: InputEvent, index: int) -> void:
 			1:
 				Global.selcted_tile = Vector2i(9,11)
 				Global.selected_factory_type = "cargoTerminal"
+				Global.show_factory_cost("cargoTerminal")
 				Global.clickMode = "place_factory"
 			2:
 				Global.selcted_tile = Vector2i(0,12)

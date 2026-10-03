@@ -14,6 +14,7 @@ extends Panel
 @onready var EngineText: Label = $EngineLoadIcon/Label
 
 @onready var TrailerUI: Panel = $TrailerUI
+@onready var TrailerUIButton: Panel = $CopleTrailer
 @onready var RouteUI: Panel = $RouteUI
 
 func _process(_delta: float) -> void:
@@ -30,41 +31,27 @@ func _process(_delta: float) -> void:
 		
 	NameLabel.text = vehicle_specs.general.vehicle_name
 		
-	var has_front3Point 
-	var has_rear3Point
-	var has_hitch
-	var has_attachments: bool
-		
-	if vehicle_values.get("attachmentPoints") != null:
-		has_front3Point = vehicle_values.get("attachmentPoints").get("front3Point", null) != null
-		has_rear3Point = vehicle_values.get("attachmentPoints").get("rear3Point", null) != null
-		has_hitch = vehicle_values.get("attachmentPoints").get("hitch", null) != null 
-		has_attachments = has_front3Point or has_rear3Point or has_hitch
-		
-	if has_attachments == true:
-		var attatchment : Node2D
-			
-		if has_hitch:
-			attatchment = vehicle_values.get("attachmentPoints").get("hitch", null)
-		elif has_front3Point:
-			attatchment = vehicle_values.get("attachmentPoints").get("front3Point", null)
-		elif has_rear3Point:
-			attatchment = vehicle_values.get("attachmentPoints").get("rear3Point", null)
-		
-		if attatchment != null:
-			progressbar2.visible = true
-			progressbar2.max_value = Global.getVehicleProperties(attatchment.vehicleType).transport.cargo_volume_capacity
-			progressbar2.value = attatchment.cargo.cargoVolume
-			progressText2.text = str(int(attatchment.cargo.cargoVolume))
-		
-			if attatchment.cargo.cargoWeight >= Global.getVehicleProperties(attatchment.vehicleType).transport.cargo_weight_capacity:
-				progressWeigth2.visible = true
-			else:
-				progressWeigth2.visible = false
-			
+	var points: Dictionary = vehicle_values.get("attachmentPoints", {})
+
+	var can_have_trailer: bool = points.has("hitch")
+	TrailerUIButton.visible = can_have_trailer
+
+	var attatchment = null
+	for key in ["hitch", "front3Point", "rear3Point"]:
+		if points.get(key, null) != null:
+			attatchment = points[key]
+			break
+
+	if attatchment != null:
+		progressbar2.visible = true
+		var att_specs: VehicleData = Global.getVehicleProperties(attatchment.vehicleType)
+		progressbar2.max_value = att_specs.transport.cargo_volume_capacity
+		progressbar2.value = attatchment.cargo.cargoVolume
+		progressText2.text = str(int(attatchment.cargo.cargoVolume))
+		progressWeigth2.visible = attatchment.cargo.cargoWeight >= att_specs.transport.cargo_weight_capacity
 	else:
 		progressbar2.visible = false
-		progressbar1.position = Vector2(427, 35)
+		progressWeigth2.visible = false
 	
 	progressbar1.position = Vector2(427, 15)
 	
@@ -114,6 +101,7 @@ func _on_route_gui_input(event):
 			
 func _on_cople_trailer_gui_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		TrailerUI.refresh_trailer_ui()
 		var target_vehicle = VehicleManager.get_vehicle(Global.vehicle_ui_selected)
 		var hitched_trailer = target_vehicle.attachments.points.get("hitch", null) if target_vehicle else null
 		

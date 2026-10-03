@@ -11,11 +11,9 @@ func _process(_delta):
 		return
 	if Global.routes[route_index].get("Offroad_route", null) != null && road_mode == "offroad":
 		path_points = Global.routes[route_index]["Offroad_route"]
-		color = Global.route_color[route_index]
 		queue_redraw()
 	elif Global.routes[route_index].get("Onroad_route", null) != null && road_mode == "onroad":
 		path_points = Global.routes[route_index]["Onroad_route"]
-		color = Global.route_color[route_index]
 		queue_redraw()
 
 func _draw():

@@ -39,7 +39,7 @@ script = ExtResource("2_ypkal")
 vehicle_name = "Cement truck"
 vehicle_class = "Cement truck"
 manufacturer = "Power"
-atlas_region = Rect2(88, 80, 11, 27)
+atlas_region = Rect2(99, 80, 11, 27)
 vehicle_description = "A truck specialy disgned to transport liquit concrete"
 metadata/_custom_type_script = "uid://f7y38bail327"
 

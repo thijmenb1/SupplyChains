@@ -17,7 +17,7 @@ func _process(delta) -> void:
 	if _autosave_timer >= AUTOSAVE_INTERVAL:
 		_autosave_timer = 0.0
 		save()
-		print("Autosaved slot %d" % Global.loaded_save_index)
+		Global.show_popup("Autosaved slot %d" % Global.loaded_save_index, 1.5)
 
 func _slot_path(slot: int) -> String:
 	return "%s/slot_%d.save" % [SAVE_DIR, slot]
@@ -57,7 +57,7 @@ func load_game(slot: int = 0) -> void:
 	var data = recover(slot)
 	
 	if data.is_empty():
-		print("No save file found in slot %d" % slot)
+		Global.show_popup("No save file found in slot %d" % slot)
 		return
 	Global.loaded_save_index = slot
 	autosave_enabled = true
@@ -184,6 +184,7 @@ func _vehicle_to_dict(v) -> Dictionary:
 			d["home_tile"] = v.movement.home_tile
 			d["has_home_tile"] = v.movement.has_home_tile
 			d["route_index"] = v.movement.assigned_route_index
+			d["mining"] = v.movement.mining_to_dict()
 	elif v is Trailer and v.is_coupled and v.towing_vehicle != null:
 		d["towing"] = v.towing_vehicle.vehicleID
 		d["hitch_front"] = v.hitch_marker == v.towing_vehicle.frontAttatchmentPoint
@@ -235,7 +236,17 @@ func apply_pending_load() -> void:
 		GridManager.astar.set_point_weight_scale(e[0], 1.0)
 	
 	for d in s.get("factorys", []):
-		var f := Global.create_factory(d["factory_type"], d["grid_pos"])
+		var f: FactoryInstance
+		if d["factory_type"] == "mine":
+			f = Global.create_mine_factory(
+				d["grid_pos"],
+				d.get("size", Vector2i.ONE),
+				d.get("mine_resources", {}))
+		else:
+			f = Global.create_factory(
+				d["factory_type"],
+				d["grid_pos"],
+				d.get("size", Vector2i.ZERO))   # ZERO = use the def's size
 		if f != null:
 			f.apply_dict(d)
 			if Global.road_layer:
@@ -312,6 +323,8 @@ func _restore_vehicles(list: Array) -> void:
 			var idx: int = d.get("route_index", -1)
 			if idx >= 0 and idx < Global.routes.size() and not Global.routes[idx].is_empty():
 				v.movement.assign_route(idx)
+			elif d.has("mining"):
+				v.movement.mining_from_dict(d["mining"])
 	
 func start_new_game(slot: int) -> void:
 	Global.loaded_save_index = slot

@@ -9,37 +9,38 @@ const FONT_SIZE = 12
 func setup(recipe: Dictionary, atlas_positions: Dictionary, atlas: Texture2D) -> void:
 	var inputs = {}
 	var outputs = {}
-	
-	for resource_key in  recipe.keys():
+	for resource_key in recipe.keys():
 		if recipe[resource_key] < 0:
 			inputs[resource_key] = abs(recipe[resource_key])
 		else:
 			outputs[resource_key] = recipe[resource_key]
-	
-	for resource_name in inputs.keys():
-		_add_resource(resource_name, inputs[resource_name], atlas_positions, atlas)
-		var label = Label.new()
-		label.text = " +"
-		label.add_theme_font_size_override("font_size", FONT_SIZE)
-		add_child(label)
-	
-	if inputs.size() > 0:
-		remove_child(get_child(get_child_count( - 1)))
-	
+
 	var arrow = $Arrow
-	move_child(arrow, get_child_count())
-	
+	var first := true
+	for resource_name in inputs.keys():
+		if not first:
+			_add_plus()
+		first = false
+		_add_resource(resource_name, inputs[resource_name], atlas_positions, atlas)
+	move_child(arrow, -1)
+
+	first = true
 	for resource_name in outputs.keys():
+		if not first:
+			_add_plus()
+		first = false
 		_add_resource(resource_name, outputs[resource_name], atlas_positions, atlas)
-		var label = Label.new()
-		label.text = " +"
-		label.add_theme_font_size_override("font_size", FONT_SIZE)
-		add_child(label)
-	
-	if outputs.size() > 0:
-		remove_child(get_child(get_child_count() -1))
+
+func _add_plus() -> void:
+	var label = Label.new()
+	label.text = "+"
+	label.add_theme_font_size_override("font_size", FONT_SIZE)
+	add_child(label)
 
 func _add_resource(resource_name: String, amount: int, atlas_positions: Dictionary, atlas: Texture2D) -> void:
+	if not atlas_positions.has(resource_name):
+		push_warning("No icon for " + resource_name)
+		return
 	var container = HBoxContainer.new()
 	
 	var texture_rect = TextureRect.new()

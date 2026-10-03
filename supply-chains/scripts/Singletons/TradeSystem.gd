@@ -34,8 +34,8 @@ const TRADE_BASE_PRICES: Dictionary = {
 const MAX_ORDERS := 10
 const MIN_ORDERS := 2
 const ORDER_GENERATION_PROBEBILITY := 0.05
-const MIN_ORDER_LIFETIME := 3600 #in game sec (1h)
-const MAX_ORDER_LIFETIME := 86400 #in game sec (1d)
+const MIN_ORDER_LIFETIME := 240 #in game sec (4m)
+const MAX_ORDER_LIFETIME := 3600 #in game sec (1h)
 const MIN_QUANTITY := 1
 const MAX_QUANTITY := 15
 

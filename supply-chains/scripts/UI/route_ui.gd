@@ -92,7 +92,7 @@ func _populate_resource_dropdown():
 func _on_create_route_gui_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if source.get_selected_id() == -1 or destination.get_selected_id() == -1:
-			print("Can't create route: select a source and destination first")
+			Global.show_popup("Can't create route: select a source and destination first")
 			return
 		print("creating route")
 		Global.routes.append(

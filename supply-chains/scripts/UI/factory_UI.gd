@@ -89,6 +89,25 @@ const ALL_RECIPES = {
 	"coalpower": COALPOWER_RECIPES,
 	"cementmixing": CEMENTMIXING_RECIPES
 }
+
+@onready var _recipe_list: VBoxContainer = $RecipeUI/VBoxContainer
+var _built_for: String
+
+func update_recipe_ui(factory_instance: FactoryInstance) -> void:
+	var key = factory_instance.factory_name + "|" + factory_instance.factory_type
+	if key == _built_for:
+		return
+	_built_for = key
+
+	for child in _recipe_list.get_children():
+		child.queue_free()
+
+	var recipes: Dictionary = ALL_RECIPES.get(factory_instance.factory_type, {})
+	for i in recipes.keys():
+		var row = RECIPE_ROW.instantiate()
+		_recipe_list.add_child(row)
+		row.setup(recipes[i], ATLAS_VAL_IMG, RESOUCE_ATLAS)
+
 func _process(_delta: float) -> void:
 	visible = Global.factory_ui_open
 	if not Global.factory_ui_open or Global.factory_ui_selected == "":
@@ -158,19 +177,6 @@ func update_resource_display(factory_instance: FactoryInstance) -> void:
 		texture.region = Rect2(ATLAS_VAL_IMG[resource_data.name], Vector2(6,6))
 		resource_textures[i].texture = texture
 
-
 func _on_change_recipe_gui_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		RecipeUI.visible = !RecipeUI.visible
-
-func update_recipe_ui(factory_instance: FactoryInstance) -> void:
-	for child in RecipeUI.get_children():
-		child.queue_free()
-	
-	var recipes: Dictionary = ALL_RECIPES.get(factory_instance.factory_type, {})
-	
-	for i in recipes.size():
-		var recipe = recipes[i]
-		var row = RECIPE_ROW.instantiate()
-		row.setup(recipe, ATLAS_VAL_IMG, RESOUCE_ATLAS)
-		RecipeUI.add_child(row)

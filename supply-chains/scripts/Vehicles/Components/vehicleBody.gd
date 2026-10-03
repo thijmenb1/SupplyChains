@@ -30,6 +30,7 @@ func _ready():
 		
 	_setup_sprite()
 	_build_components()
+	update_cargo_sprite()
 	
 	if pathDebugLine:
 		pathDebugLine.top_level = true
@@ -45,6 +46,14 @@ func _setup_sprite() -> void:
 		front_right_wheel.visible = false
 	if animatedSprite.sprite_frames.has_animation(vehicleType):
 		animatedSprite.play(vehicleType)
+
+func update_cargo_sprite() -> void:
+	if cargo == null or not animatedSprite.sprite_frames.has_animation(vehicleType):
+		return
+	var frame_count: int = animatedSprite.sprite_frames.get_frame_count(vehicleType)
+	if frame_count <= 1:
+		return
+	animatedSprite.frame = clampi(cargo.get_sprite_frame(vehicleType), 0, frame_count - 1)
 
 func _build_components() -> void:
 	if vehicleSpecs.attachments != null:
@@ -62,6 +71,7 @@ func _build_components() -> void:
 		cargo = CargoComponent.new()
 		add_child(cargo)
 		cargo.setup(self, vehicleSpecs.transport)
+		cargo.cargo_changed.connect(update_cargo_sprite)
 	
 	if vehicleSpecs.dimensions != null and drivetrain != null:
 		movement = PathMovementComponent.new()
@@ -88,7 +98,7 @@ func _on_out_of_fuel() -> void:
 	velocity = Vector2.ZERO
 	if movement:
 		movement.current_speed = 0.0
-	print(vehicleType + "_", vehicleNumber, " is out of fuel!")
+	Global.show_popup("%s_%s is out of fuel!" % [vehicleType, vehicleNumber])
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:

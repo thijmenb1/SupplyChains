@@ -3,9 +3,17 @@ extends Panel
 const VEHICLE_TILE_SCENE = preload("res://scenes/UI/vehicleTile.tscn")
 @onready var vehicle_container: VBoxContainer = $ScrollContainer/VBoxContainer
 
+var first_refresh: bool = false
+
+func _ready():
+	refresh_garage_ui()
+
 func _process(_delta):
 	if not Global.baseBuild:
 		visible = false
+	elif !first_refresh:
+		refresh_garage_ui()
+		first_refresh = true
 
 func refresh_garage_ui() -> void:
 	for child in vehicle_container.get_children():

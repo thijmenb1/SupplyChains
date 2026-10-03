@@ -1,10 +1,12 @@
 extends Node
 
 var occupied_cells: Dictionary = {}
+var building_solid_cells: Dictionary = {}
 var road_colors: Dictionary = {}
 
 const ROAD_WEIGHT_THRESHOLD: float = 3.0
 var astar := AStarGrid2D.new()
+
 
 func setup_astar_grid(width_tiles: int, heigth_tiles: int) -> void:
 	astar.region = Rect2i(-width_tiles / 2, -heigth_tiles / 2, width_tiles, heigth_tiles)
@@ -74,11 +76,74 @@ func set_cells_astar_weight(cells: Array[Vector2i], weight: float) -> void:
 func set_footprint_astar_weight(grid_pos: Vector2i, size: Vector2i, weight: float) -> void:
 	set_cells_astar_weight(get_footprint_cells(grid_pos, size), weight)
 
+func set_cells_astar_solid(cells: Array[Vector2i], solid: bool) -> void:
+	for cell in cells:
+		if not astar.is_in_boundsv(cell):
+			continue
+		if solid:
+			if not building_solid_cells.has(cell):
+				building_solid_cells[cell] = astar.is_point_solid(cell)
+			astar.set_point_solid(cell, true)
+		elif building_solid_cells.has(cell):
+			astar.set_point_solid(cell, building_solid_cells[cell])
+			building_solid_cells.erase(cell)
+
+func set_footprint_astar_solid(grid_pos: Vector2i, size: Vector2i, solid: bool) -> void:
+	set_cells_astar_solid(get_footprint_cells(grid_pos, size), solid)
+
+func _open_ends(start: Vector2i, end: Vector2i) -> Array[Vector2i]:
+	var opened: Array[Vector2i] = []
+	for cell in [start, end]:
+		if building_solid_cells.has(cell) and astar.is_in_boundsv(cell) and astar.is_point_solid(cell):
+			astar.set_point_solid(cell, false)
+			opened.append(cell)
+	return opened
+
+func _close_ends(opened: Array[Vector2i]) -> void:
+	for cell in opened:
+		astar.set_point_solid(cell, true)
+
+func get_id_path_open_ends(start: Vector2i, end: Vector2i) -> Array[Vector2i]:
+	var opened := _open_ends(start, end)
+	var result: Array[Vector2i] = astar.get_id_path(start, end)
+	_close_ends(opened)
+	return result
+
+func get_point_path_open_ends(start: Vector2i, end: Vector2i) -> PackedVector2Array:
+	var opened := _open_ends(start, end)
+	var result: PackedVector2Array = astar.get_point_path(start, end)
+	_close_ends(opened)
+	return result
+
 func _has_fully_paved_path(start: Vector2i, end: Vector2i) -> bool:
-	var raw_points = astar.get_id_path(start, end)
+	var raw_points = get_id_path_open_ends(start, end)
 	if raw_points.is_empty():
 		return false
 	for id in raw_points:
 		if astar.get_point_weight_scale(id) > ROAD_WEIGHT_THRESHOLD:
 			return false
 	return true
+
+func paved_connected(from_cells: Array[Vector2i], to_cells: Dictionary) -> bool:
+	var visited: Dictionary = {}
+	var queue: Array[Vector2i] = []
+	for c in from_cells:
+		visited[c] = true
+		queue.append(c)
+	var head: int = 0
+	while head < queue.size():
+		var cell: Vector2i = queue[head]
+		head += 1
+		for d in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+			var n: Vector2i = cell + d
+			if visited.has(n):
+				continue
+			if to_cells.has(n):
+				return true
+			if not astar.is_in_boundsv(n) or astar.is_point_solid(n):
+				continue
+			if astar.get_point_weight_scale(n) > ROAD_WEIGHT_THRESHOLD:
+				continue
+			visited[n] = true
+			queue.append(n)
+	return false

@@ -26,13 +26,14 @@ var current_steer_angle: float = 0.0
 var current_speed: float = 0.0
 var desired_reversing := false
 var is_reversing := false
-var _pivoting: bool = false
 var is_shifting := false
 var shift_timer: float = 0.0
 var prev_articulation: float = 0.0
 var lookahead_distance: float = 48.0
 var on_road_lookahead_distance: float = 14.0
 var trailer_reverse_baseline: float = 0.0
+
+const APPROACH_CREEP_SPEED: float = 15.0
 
 var current_path: Array[Vector2] = []
 var path_index: int = 0
@@ -48,6 +49,7 @@ var route_stage: ROUTE_STAGE = ROUTE_STAGE.NONE
 var route_waiting: bool = false
 var route_wait_timer: float = 0.0
 const ROUTE_DOCK_WAIT_DURATION: float = 5.0
+
 
 enum MINING_STATE {NONE, TO_MINE, DIGGING}
 var mining_state: MINING_STATE = MINING_STATE.NONE
@@ -68,6 +70,7 @@ var dock_distance: float = 0.0
 var docking_direction: int = 1  
 const DOCK_SPEED: float = 20
 const HITCH_OFFSET: float = 24
+var dock_hitch_gap: float = HITCH_OFFSET
 
 const DOCK_POS_TOLETANCE: float = 6.0
 const DOCK_ANGLE_TOLERANCE: float = deg_to_rad(8.0)
@@ -127,7 +130,7 @@ func start_docking_job(factory: FactoryInstance, purpose: String) -> bool:
 	print(best_key)
 	
 	if best_key == "":
-		print("Cannot reach destination")
+		Global.show_popup("Cannot reach destination")
 		return false
 
 	_pending_path_key = best_key
@@ -199,7 +202,8 @@ func tick(delta: float) -> void:
 			_stage_brake_latched = false
 			var dock_hitch = attachments.get_hitch() if attachments else null
 			if dock_hitch != null and dock_hitch.is_coupled:
-				dock_hitch.set_physics_process(false)          # <-- add
+				dock_hitch_gap = vehicle.global_position.distance_to((dock_hitch as Node2D).global_position)
+				dock_hitch.set_physics_process(false)
 			return
 		elif _stage_brake_latched and abs(current_speed) <= DOCK_HANDOFF_SPEED_THRESHOLD:
 			var target_pos: Vector2 = _pending_path_data["points"][0]
@@ -291,12 +295,14 @@ func tick(delta: float) -> void:
 	var has_coupled_trailer: bool = hitched_trailer != null and hitched_trailer.is_coupled
 
 
-	if path_phase == PATHPHASE.TO_STAGING and not has_coupled_trailer:
+	if path_phase == PATHPHASE.TO_STAGING:
 		target_steer = 0.0
 	elif is_reversing and has_coupled_trailer:
 		var trailer_node: CharacterBody2D = hitched_trailer as CharacterBody2D
 		var trailer_local_target: Vector2 = trailer_node.to_local(target_pos)
-		var trailer_heading_error: float = wrapf(trailer_local_target.angle() + PI, -PI, PI)
+		var trailer_heading_error: float = 0.0
+		if trailer_local_target.x < 0.0:
+			trailer_heading_error = wrapf(trailer_local_target.angle() + PI, -PI, PI)
 		var max_articulation_cmd: float = deg_to_rad(40.0)
 		var target_articulation: float = clamp(-trailer_heading_error * 0.6, -max_articulation_cmd, max_articulation_cmd)
 		var current_articulation: float = wrapf(vehicle.rotation - trailer_node.rotation - trailer_reverse_baseline, -PI, PI)
@@ -385,7 +391,10 @@ func tick(delta: float) -> void:
 			var final_arrival_radius: float = _arrival_radius_for(final_wp)
 			var approach_braking_distance: float = (current_speed * current_speed) / (2.0 * drivetrain.get_braking_rate()) + final_arrival_radius
 			if dist_to_final <= approach_braking_distance:
-				target_max_speed = 0.0
+				if path_index >= current_path.size() - 1:
+					target_max_speed = 0.0
+				else:
+					target_max_speed = minf(target_max_speed, APPROACH_CREEP_SPEED)
 
 		var rate: float = drivetrain.get_acceleration_rate() if target_max_speed > current_speed else drivetrain.get_braking_rate() * corner_braking_mult
 		current_speed = move_toward(current_speed, target_max_speed, rate * delta)
@@ -410,31 +419,7 @@ func handelArival() -> void:
 		dig_timer = 0.0
 		return
 	if path_phase == PATHPHASE.TO_CORRIDOR:
-		path_phase = PATHPHASE.TO_STAGING
-		var stage_point: Vector2 = _pending_path_data["points"][0]
-		var tangent: Vector2 = _pending_path_data["start_tangent"]
-		var reverse_in: bool = _pending_path_data.get("reverse_in", false)
-		current_path = [stage_point - tangent * 40.0, stage_point]
-		path_index = 0
-		vehicle.rotation = tangent.angle() + (PI if reverse_in else 0.0)
-		is_reversing = reverse_in
-		desired_reversing = reverse_in
-		is_shifting = false
-		shift_timer = 0.0
-		current_steer_angle = 0.0
-		_stage_brake_latched = false
-		current_speed = 0.0
-		var flip_hitch = attachments.get_hitch() if attachments else null
-		if flip_hitch != null and flip_hitch.is_coupled:
-			var tow_point_node = flip_hitch.get_node_or_null("TowPoint")
-			var tow_offset: Vector2 = tow_point_node.position if tow_point_node else Vector2(-20, 0)
-			var trailer_rot: float = wrapf(vehicle.rotation + (PI if reverse_in else 0.0), -PI, PI)
-			flip_hitch.rotation = trailer_rot
-			flip_hitch.global_position = flip_hitch.hitch_marker.global_position - tow_offset.rotated(trailer_rot)
-			trailer_reverse_baseline = PI if reverse_in else 0.0
-			prev_articulation = 0.0
-		_stage_brake_latched = false
-		update_debug_path_line()
+		_begin_staging(_pending_path_data)
 		return
 	if assigned_route_index != -1:
 		_handel_route_arrival()
@@ -478,11 +463,18 @@ func _route_dock_at(dock_data: Dictionary) -> void:
 		push_error("Route " + str(assigned_route_index) + " has no dock data for stage " + str(route_stage))
 		path_phase = PATHPHASE.NONE
 		return
+	_begin_staging(dock_data)
+
+func _begin_staging(dock_data: Dictionary) -> void:
 	_pending_path_data = dock_data
 	path_phase = PATHPHASE.TO_STAGING
 	var stage_point: Vector2 = dock_data["points"][0]
 	var tangent: Vector2 = dock_data["start_tangent"]
 	var reverse_in: bool = dock_data.get("reverse_in", false)
+
+	var along: float = minf((vehicle.global_position - stage_point).dot(tangent), 0.0)
+	vehicle.global_position = stage_point + tangent * along
+
 	current_path = [stage_point - tangent * 40.0, stage_point]
 	path_index = 0
 	vehicle.rotation = tangent.angle() + (PI if reverse_in else 0.0)
@@ -493,16 +485,15 @@ func _route_dock_at(dock_data: Dictionary) -> void:
 	current_steer_angle = 0.0
 	_stage_brake_latched = false
 	current_speed = 0.0
-	var flip_hitch = attachments.get_hitch() if attachments else null
-	if flip_hitch != null and flip_hitch.is_coupled:
-		var tow_point_node = flip_hitch.get_node_or_null("TowPoint")
+
+	var hitch = attachments.get_hitch() if attachments else null
+	if hitch != null and hitch.is_coupled:
+		var tow_point_node = hitch.get_node_or_null("TowPoint")
 		var tow_offset: Vector2 = tow_point_node.position if tow_point_node else Vector2(-20, 0)
-		var trailer_rot: float = wrapf(vehicle.rotation + (PI if reverse_in else 0.0), -PI, PI)
-		flip_hitch.rotation = trailer_rot
-		flip_hitch.global_position = flip_hitch.hitch_marker.global_position - tow_offset.rotated(trailer_rot)
-		trailer_reverse_baseline = PI if reverse_in else 0.0
+		hitch.rotation = vehicle.rotation   # same heading as the tractor, no +PI
+		hitch.global_position = hitch.hitch_marker.global_position - tow_offset.rotated(vehicle.rotation)
+		trailer_reverse_baseline = 0.0
 		prev_articulation = 0.0
-	_stage_brake_latched = false
 	update_debug_path_line()
 
 func _start_middle_leg(forward: bool) -> void:
@@ -523,6 +514,9 @@ func _start_middle_leg(forward: bool) -> void:
 	update_debug_path_line()
 
 func assign_route(route_index: int) -> void:
+	clear_route()
+	is_shifting = false
+	shift_timer = 0.0
 	assigned_route_index = route_index
 	returning_to_base = false
 	if route_index == -1:
@@ -573,25 +567,25 @@ func navigate_to_tile(destination_tile: Vector2i) -> void:
 	var offroad_capability: float = float(mobility.offroad_capability)
 	var can_go_offroad: bool = offroad_capability > 0.6
 	if can_go_offroad:
-		current_path.assign(GridManager.astar.get_point_path(current_tile, destination_tile))
+		current_path.assign(GridManager.get_point_path_open_ends(current_tile, destination_tile))
 	else:
 		current_path = _get_road_only_path(current_tile, destination_tile)
 		if current_path.is_empty():
-			current_path.assign(GridManager.astar.get_point_path(current_tile, destination_tile))
+			current_path.assign(GridManager.get_point_path_open_ends(current_tile, destination_tile))
 	current_path = Global.chamfer_path_corners(current_path, Global.ON_ROAD_CHAMFER_DISTANCE)
 	path_index = 0
 	update_debug_path_line()
 
 func _get_road_only_path(start: Vector2i, end: Vector2i) -> Array[Vector2]:
 	var temp_path: Array[Vector2] = []
-	var raw_points = GridManager.astar.get_id_path(start, end)
+	var raw_points = GridManager.get_id_path_open_ends(start, end)
 	if raw_points.is_empty():
 		return temp_path
 	for id in raw_points:
 		if GridManager.astar.get_point_weight_scale(id) <= GridManager.ROAD_WEIGHT_THRESHOLD:
 			temp_path.append(GridManager.astar.get_point_position(id))
 		else:
-			print("no road path availible")
+			Global.show_popup("No road path available")
 			return []
 	return temp_path
 
@@ -626,11 +620,10 @@ func _tick_docking(delta: float) -> void:
 	
 	var hitched = attachments.get_hitch() if attachments else null
 	if hitched != null and hitched.is_coupled:
-		var trailer_dist: float = clamp(dock_distance + (HITCH_OFFSET if reverse_in else -HITCH_OFFSET), 0.0, path_len)
-		var trailer_pos: Vector2 = _sample_along(docking_points, trailer_dist)
-		var trailer_tangent: Vector2 = _tangent_along(docking_points, trailer_dist)
-		(hitched as Node2D).global_position = trailer_pos
-		(hitched as Node2D).rotation = trailer_tangent.angle()
+		var trailer_dist: float = dock_distance + (dock_hitch_gap if reverse_in else -dock_hitch_gap)
+		var trailer_tangent: Vector2 = _tangent_along(docking_points, clampf(trailer_dist, 0.0, path_len))
+		(hitched as Node2D).global_position = _sample_along_extended(docking_points, trailer_dist)
+		(hitched as Node2D).rotation = trailer_tangent.angle() + (PI if reverse_in else 0.0)
 	
 	var finished: bool = (docking_direction > 0 and dock_distance >= path_len) or (docking_direction < 0 and dock_distance <= 0.0)
 	if finished:
@@ -698,11 +691,16 @@ func _handle_route_transfer() -> void:
 	
 	if route_stage == ROUTE_STAGE.AT_SOURCE:
 		var source = route_data["source"]
+		if cargo_component == null:
+			print("No cargo")
+			return
 		var free_volume: float = cargo_component.transport.cargo_volume_capacity - cargo_component.cargoVolume
 		var amount: int = source.withdraw_resource(resource, int(free_volume))
 		if amount > 0:
 			cargo_component.load_vehicle(resource, amount)
 	elif route_stage == ROUTE_STAGE.AT_DEST:
+		if cargo_component == null:
+			return
 		var destination = route_data["destination"]
 		var amount: float = cargo_component.cargo.get(resource, 0.0)
 		if amount > 0:
@@ -730,20 +728,44 @@ func _tangent_along(pts: Array[Vector2], dist: float) -> Vector2:
 	var b: Vector2 = _sample_along(pts, min(dist + eps, _path_length(pts)))
 	return (b - a).normalized() if a != b else Vector2.RIGHT
 
-func assign_mine(mine: FactoryInstance) -> void:
+func _sample_along_extended(pts: Array[Vector2], dist: float) -> Vector2:
+	var path_len: float = _path_length(pts)
+	if dist < 0.0:
+		return pts[0] + _tangent_along(pts, 0.0) * dist
+	if dist > path_len:
+		return pts[pts.size() - 1] + _tangent_along(pts, path_len) * (dist - path_len)
+	return _sample_along(pts, dist)
+
+func assign_mine(mine: FactoryInstance, discard_on_fail: bool = false) -> bool:
+	var previos_mine: FactoryInstance = assigned_mine
+	
+	if not _start_mining(mine):
+		if discard_on_fail:
+			Global.remove_factory(mine)
+		if previos_mine != null and previos_mine != mine and Global.factorys.has(previos_mine):
+			_start_mining(previos_mine)
+		return false
+	
+	if previos_mine != null and previos_mine != mine and Global.factorys.has(previos_mine) and not Global.is_mine_in_use(previos_mine, vehicle):
+		Global.remove_factory(previos_mine)
+	return true
+
+func _start_mining(mine: FactoryInstance) -> bool:
 	clear_route()
 	assigned_mine = mine
 	returning_to_base = false
 	var work_tile := _find_work_tile(mine)
 	if work_tile == Vector2i(-9999, -9999):
-		print("No reachable tile next to the mining area")
+		Global.show_popup("No reachable tile next to mine")
 		clear_mine()
-		return
+		return false
 	mining_state = MINING_STATE.TO_MINE
 	navigate_to_tile(work_tile)
 	if current_path.is_empty():
-		print("Excavator can't path to the mining area")
+		Global.show_popup("No path to mine")
 		clear_mine()
+		return false
+	return true
 
 func clear_mine() -> void:
 	assigned_mine = null
@@ -801,7 +823,7 @@ func _transform_into_factory(factory_type: String, grid_pos: Vector2i) -> void:
 	var size: Vector2i = def.get("size", Vector2i.ONE)
 
 	if not GridManager.can_place_building(grid_pos, size):
-		print("Cannot deploy factory: Position %s is blocked!" % grid_pos)
+		Global.show_popup("Cannot deploy factory: Position %s is blocked!" % grid_pos)
 		return
 
 	var new_factory = Global.create_factory(factory_type, grid_pos)
@@ -818,3 +840,26 @@ func _transform_into_factory(factory_type: String, grid_pos: Vector2i) -> void:
 			VehicleManager.unregister_vehicle(vehicle.vehicleID)
 			
 		vehicle.queue_free()
+
+func mining_to_dict() -> Dictionary:
+	if assigned_mine == null:
+		return {}
+	return {
+		"mine_pos": assigned_mine.grid_pos,
+		"state": mining_state,
+		"dig_timer": dig_timer,
+	}
+
+func mining_from_dict(d: Dictionary) -> void:
+	if d.is_empty():
+		return
+	var mine := Global.get_factory_at(d["mine_pos"])
+	if mine == null or mine.factory_type != "mine":
+		return
+	if d["state"] == MINING_STATE.DIGGING:
+		assigned_mine = mine
+		mining_state = MINING_STATE.DIGGING
+		dig_timer = d.get("dig_timer", 0.0)
+		returning_to_base = false
+	else:
+		_start_mining(mine)

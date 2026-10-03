@@ -1,0 +1,55 @@
+[gd_scene format=4 uid="uid://budp1qwos5by1"]
+
+[ext_resource type="TileSet" uid="uid://x2kxi7jmy2f8" path="res://assets/Tilemaps/tileset.tres" id="1_nijkn"]
+[ext_resource type="Texture2D" uid="uid://bmnek10if6uwh" path="res://assets/Vehicles/Vehicle_atlas.tres" id="2_26jqr"]
+
+[sub_resource type="Curve2D" id="Curve2D_pcul1"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 61, 80, 0, 0, 0, 0, 31, 80, 0, 0, 0, 0, 16, 64, 0, 0, 0, 0, 16, 24)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_jay1y"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -29, 80, 0, 0, 0, 0, 1, 80, 0, 0, 0, 0, 16, 64, 0, 0, 0, 0, 16, 24)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_blgbl"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 16, 110, 0, 0, 0, 0, 16, 80, 0, 0, 0, 0, 16, 64, 0, 0, 0, 0, 16, 24)
+}
+point_count = 4
+
+[node name="pumpjack" type="Node2D" unique_id=1179128250]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1346286452]
+tile_map_data = PackedByteArray("AAABAAIAAQACAAUAAAAAAAIAAQADAAUAAAACAAIAAQACAAUAAAAAAAAAAQAJAAIAAAAAAAEAAQAJAAMAAAD//wIAAQACAAUAAAAAAAMAAQABAAUAAAA=")
+tile_set = ExtResource("1_nijkn")
+
+[node name="pumpjackPath_load_right" type="Path2D" parent="." unique_id=1682013624]
+curve = SubResource("Curve2D_pcul1")
+
+[node name="pumpjackPath_load_left" type="Path2D" parent="." unique_id=866851541]
+curve = SubResource("Curve2D_jay1y")
+
+[node name="pumpjackPath_load_straight" type="Path2D" parent="." unique_id=1682184879]
+curve = SubResource("Curve2D_blgbl")
+
+[node name="pumpjackPath_unload_left" type="Path2D" parent="." unique_id=642498775]
+curve = SubResource("Curve2D_jay1y")
+
+[node name="pumpjackPath_unload_right" type="Path2D" parent="." unique_id=599757466]
+curve = SubResource("Curve2D_pcul1")
+
+[node name="pumpjackPath_unload_straight" type="Path2D" parent="." unique_id=1678412191]
+curve = SubResource("Curve2D_blgbl")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="." unique_id=313130516]
+position = Vector2(48, 110)
+rotation = -1.5707964
+
+[node name="Sprite2D" type="Sprite2D" parent="PathFollow2D" unique_id=314309311]
+position = Vector2(-6.5034857, -1.1920929e-06)
+rotation = -1.5707964
+texture = ExtResource("2_26jqr")

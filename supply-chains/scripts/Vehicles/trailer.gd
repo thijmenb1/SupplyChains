@@ -15,6 +15,9 @@ var is_coupled: bool = false
 var towing_vehicle: CharacterBody2D = null
 var hitch_marker: Marker2D = null
 
+var base_position: Vector2
+var has_base_position: bool = false
+
 func _ready():
 	animatedSprite.animation = vehicleType
 	vehicleID = vehicleType + "*" + str(vehicleNumber)
@@ -25,6 +28,16 @@ func _ready():
 		cargo = CargoComponent.new()
 		add_child(cargo)
 		cargo.setup(self, vehicleSpecs.transport)
+		cargo.cargo_changed.connect(update_cargo_sprite)
+		update_cargo_sprite()
+
+func update_cargo_sprite() -> void:
+	if cargo == null or not animatedSprite.sprite_frames.has_animation(vehicleType):
+		return
+	var frame_count: int = animatedSprite.sprite_frames.get_frame_count(vehicleType)
+	if frame_count <= 1:
+		return
+	animatedSprite.frame = clampi(cargo.get_sprite_frame(vehicleType), 0, frame_count -1)
 
 func couple_to(Vehicle: VehicleBody, target_hitch: Marker2D) -> bool:
 	towing_vehicle = Vehicle
@@ -69,6 +82,7 @@ func decouple(vehicleChildNode: Node2D) -> void:
 	is_coupled = false
 	towing_vehicle = null
 	hitch_marker = null
+	return_to_base()
 
 func _physics_process(delta: float) -> void:
 	if not is_coupled or not hitch_marker:
@@ -91,7 +105,7 @@ func follow_pivoted(delta: float) -> void:
 	
 	var tow_speed: float = 0.0
 	if "movement" in towing_vehicle and towing_vehicle.movement:
-		tow_speed = towing_vehicle.movement.current_speed
+		tow_speed = towing_vehicle.movement.current_speed * Global.speed_tier
 		if towing_vehicle.movement.is_reversing:
 			tow_speed = -tow_speed
 	
@@ -105,3 +119,15 @@ func follow_pivoted(delta: float) -> void:
 	rotation = towing_vehicle.rotation + clamped_articulation
 	
 	global_position = hitch_pos - tow_offset.rotated(rotation)
+	
+
+func set_base(pos: Vector2) -> void:
+	base_position = pos
+	has_base_position = true
+
+func return_to_base() -> void:
+	if not has_base_position:
+		return
+	global_position = base_position
+	global_rotation = 0.0
+	velocity = Vector2.ZERO

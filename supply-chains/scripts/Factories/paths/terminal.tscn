@@ -1,0 +1,55 @@
+[gd_scene format=4 uid="uid://bbftxrg6t0gee"]
+
+[ext_resource type="TileSet" uid="uid://x2kxi7jmy2f8" path="res://assets/Tilemaps/tileset.tres" id="1_ra7vd"]
+[ext_resource type="Texture2D" uid="uid://bmnek10if6uwh" path="res://assets/Vehicles/Vehicle_atlas.tres" id="2_rgkxj"]
+
+[sub_resource type="Curve2D" id="Curve2D_pcul1"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 157, 112, 0, 0, 0, 0, 127, 112, 0, 0, 0, 0, 112, 96, 0, 0, 0, 0, 112, 66)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_jay1y"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 67, 112, 0, 0, 0, 0, 97, 112, 0, 0, 0, 0, 112, 96, 0, 0, 0, 0, 112, 66)
+}
+point_count = 4
+
+[sub_resource type="Curve2D" id="Curve2D_blgbl"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 112, 142, 0, 0, 0, 0, 112, 112, 0, 0, 0, 0, 112, 96, 0, 0, 0, 0, 112, 66)
+}
+point_count = 4
+
+[node name="TerminalPath" type="Node2D" unique_id=1179128250]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1346286452]
+tile_map_data = PackedByteArray("AAABAAIAAQAKAA0AAAAAAAIAAQAJAA0AAAACAAIAAQALAA0AAAADAAIAAQAMAA0AAAAAAAAAAQAJAAsAAAAAAAEAAQAJAAwAAAABAAAAAQAKAAsAAAABAAEAAQAKAAwAAAACAAAAAQALAAsAAAACAAEAAQALAAwAAAADAAAAAQAMAAsAAAADAAEAAQAMAAwAAAADAAMAAQADAAUAAAADAAQAAQABAAUAAAACAAMAAQACAAUAAAAEAAMAAQACAAUAAAABAAMAAQACAAUAAAAFAAMAAQACAAUAAAA=")
+tile_set = ExtResource("1_ra7vd")
+
+[node name="TerminalPath_load_right" type="Path2D" parent="." unique_id=1682013624]
+curve = SubResource("Curve2D_pcul1")
+
+[node name="TerminalPath_load_left" type="Path2D" parent="." unique_id=866851541]
+curve = SubResource("Curve2D_jay1y")
+
+[node name="TerminalPath_load_straight" type="Path2D" parent="." unique_id=1682184879]
+curve = SubResource("Curve2D_blgbl")
+
+[node name="TerminalPath_unload_right" type="Path2D" parent="." unique_id=275157338]
+curve = SubResource("Curve2D_pcul1")
+
+[node name="TerminalPath_unload_left" type="Path2D" parent="." unique_id=464776017]
+curve = SubResource("Curve2D_jay1y")
+
+[node name="TerminalPath_unload_straight" type="Path2D" parent="." unique_id=790994100]
+curve = SubResource("Curve2D_blgbl")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="." unique_id=313130516]
+position = Vector2(112, 110)
+rotation = -1.5707964
+
+[node name="Sprite2D" type="Sprite2D" parent="PathFollow2D" unique_id=314309311]
+position = Vector2(-18.253265, 0)
+rotation = -1.5707964
+texture = ExtResource("2_rgkxj")

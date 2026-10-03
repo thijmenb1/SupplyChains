@@ -153,7 +153,10 @@ func get_recipe(index: int, FactoryType: String = factory_type) -> Dictionary:
 					"electricity": -50,
 					"PCBPallet": 1
 					}
-		"mine": return {}
+		"pumpjack":
+				return {
+					"crudeOil": 1 
+				}
 		_:
 			return {}
 
@@ -162,6 +165,7 @@ func to_dict() -> Dictionary:
 		"factory_name": factory_name,
 		"factory_type": factory_type,
 		"grid_pos": grid_pos,
+		"size": size,
 		"inputResources": inputResources,
 		"outputResources": outputResources,
 		"is_crafting": is_crafting,

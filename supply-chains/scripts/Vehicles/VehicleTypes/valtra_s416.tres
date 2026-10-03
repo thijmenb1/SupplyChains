@@ -21,6 +21,7 @@ front_pto_power = 120
 rear_pto = true
 rear_pto_power = 380
 hydraulic_flow = 200
+hitch_type = 1
 max_tow_weight = 50000
 connection_count = 3
 metadata/_custom_type_script = "uid://pryfvbqwggha"

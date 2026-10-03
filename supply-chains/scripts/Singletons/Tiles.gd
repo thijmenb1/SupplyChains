@@ -67,13 +67,13 @@ const PUMPJACK_ICON			:= Vector2i(8,2)
 const PUMPJACK				:= Vector2i(9,2)
 
 const factories = [
-	{"tile": DIESEL_GENERATOR,	"size": Vector2i(2,2),	"name": "gaspower",		"icon": DIESEL_GENERATOR_ICON},
-	{"tile": SOLAR_FARM,		"size": Vector2i(2,2),	"name": "solarpanels",	"icon": SOLAR_FARM_ICON},
 	{"tile": REFINARY,			"size": Vector2i(2,4),	"name": "refinary",		"icon": REFINARY_ICON},
-	{"tile": COAL_POWER,		"size": Vector2i(2,2),	"name": "coalpower",	"icon": COAL_POWER_ICON},
 	{"tile": STEEL_MILL,		"size": Vector2i(2,2),	"name": "steelmill",	"icon": STEEL_MILL_ICON},
 	{"tile": WIRE_MILL, 		"size": Vector2i(2,2),	"name": "wiremill",		"icon": WIRE_MILL_ICON},
 	{"tile": BLAST_FURANCE, 	"size": Vector2i(2,4),	"name": "blast",		"icon": BLAST_FURNACE_ICON},
 	{"tile": CONCRETE_PLANT, 	"size": Vector2i(2,2),	"name": "cementMixing",	"icon": CONCRETE_PLANT_ICON},
 	{"tile": PUMPJACK, 			"size": Vector2i(1,2),	"name": "pumpjack",		"icon": PUMPJACK_ICON},
+	{"tile": DIESEL_GENERATOR,	"size": Vector2i(2,2),	"name": "gaspower",		"icon": DIESEL_GENERATOR_ICON},
+	{"tile": SOLAR_FARM,		"size": Vector2i(2,2),	"name": "solarpanels",	"icon": SOLAR_FARM_ICON},
+	{"tile": COAL_POWER,		"size": Vector2i(2,2),	"name": "coalpower",	"icon": COAL_POWER_ICON},
 ]

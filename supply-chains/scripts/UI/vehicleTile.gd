@@ -56,9 +56,9 @@ func _on_gui_input(event):
 			if trailer_node and TowingVehicle.rearAttatchmentPoint:
 				trailer_node.couple_to(TowingVehicle, TowingVehicle.rearAttatchmentPoint)
 				trailerUI.visible = false
-				print("Successfully coupled ", trailer_id, " to ", TowingVehicle.vehicleID)
+				Global.show_popup("Successfully coupled %s to %s" % [trailer_id, TowingVehicle.vehicleID])
 			else:
-				push_error("Coupling failed: Missing trailer node or rearAttachmentPoint.")
+				Global.show_popup("Coupling failed")
 		else:
 			if VehicleInstance != null:
 				VehicleManager.focus_on_vehilce(VehicleType + "*" + str(VehicleNumber))

@@ -51,10 +51,13 @@ The project focuses on simulation, route planning, vehicle management, and resou
 
 ## Known Limitations & In-Progress Features ⚠️
 
-Since I am a solo dev a lot of features did not get polished or straight up dont work i have tried my best to make the game as fun as possible with these limitations but not everything is perfect.
-Things that dont work (yet):
+Since I am a solo dev a lot of features did not get polished or straight up don't work i have tried my best to make the game as fun as possible with these limitations but not everything is perfect.
+Things that don't work (yet):
 - the articulated dumptruck. just didn't have time to make the articulation work
 - there is currently only one hard coded plane did not have time for the rest
-- helicopters are not used jet
+- helicopters are not used yet
 - electricity is not used
+- vehicle load is not set so fuel usage is zero
+- no way to know how far construction is
+- no tutorial
 

@@ -3,6 +3,9 @@ extends Node
 # Consts
 const TILE_SIZE = 32
 
+signal popup_requested(message: String, duration: float)
+const POPUP_DEFAULT_DURATION: float = 3.0
+
 # General vars
 var mouseIsOVerUI : bool = false
 var vehicle_ui_selected: String
@@ -59,6 +62,7 @@ var build_stage: BuildStage = BuildStage.PLACE_RESOURCE_BOX
 var starter_vehicles_spawned: bool = false
 
 const RESOURCE_BOX_STOCK: Dictionary = {"ironBeam": 10}
+const STARTER_TERMINAL_STOCK: Dictionary = {"ironBeam": 4}
 const STARTER_TRACTOR: String = "ford_7810"
 const STARTER_TRAILER: String = "flatbedTrailer"
 
@@ -121,14 +125,23 @@ func get_terminal_place_axis() -> Vector2i:
 	return terminal_pos
 
 func has_taxiway_connection() -> bool:
-	var plane_axis := get_terminal_place_axis()
-	if plane_axis == Vector2i(-9999, -9999):
+	var terminal_cells: Array[Vector2i] = []
+	var terminal := get_warehouse()
+	if terminal != null:
+		terminal_cells = GridManager.get_footprint_cells(terminal.grid_pos, terminal.size)
+	else:
+		for site in construction_sites:
+			if site.result.get("factory_type", "") == "cargoTerminal":
+				terminal_cells = site.cells
+	if terminal_cells.is_empty() or airstrips.is_empty():
 		return false
+	
+	var runway_cells: Dictionary = {}
 	for strip in airstrips:
-		for runway_cell in strip["cells"]:
-			if GridManager._has_fully_paved_path(plane_axis, runway_cell):
-				return true
-	return false
+		for cell in strip["cells"]:
+			runway_cells[cell] = true
+	
+	return GridManager.paved_connected(terminal_cells, runway_cells)
 
 # Tile tracking vars
 var selcted_tile : Vector2i = Vector2i(1, 2)
@@ -150,7 +163,7 @@ const HOURS_PER_DAY = 24
 const MINUTES_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR
 const START_HOURS: int = 8
 
-const SPEED_TIERS: Array[float] = [0.0, 1.0, 4.0, 12.0, 10000.0]
+const SPEED_TIERS: Array[float] = [0.0, 1.0, 4.0, 12.0]
 
 var speed_index: int = 1
 var speed_tier: float = SPEED_TIERS[speed_index]
@@ -182,18 +195,18 @@ func toggle_pause() -> void:
 		set_speed_index(previous_speed)
 
 const BUILDING_DEFS: Dictionary = {
-	"blast":		{"display": "Blast furnace ",	"size": Vector2i(4,2),	"tile": Tiles.BLAST_FURANCE,	"paths": "res://scripts/Factories/paths/blast_path.tscn",		"dock_reverse": true},
-	"refinary":		{"display": "Refinery ",		"size": Vector2i(4,2),	"tile": Tiles.REFINARY,			"paths": "res://scripts/Factories/paths/refinary_path.tscn",	"dock_reverse": false},
-	"coalpower":	{"display": "Coal plant ",		"size": Vector2i(2,2),	"tile": Tiles.COAL_POWER,		"paths": "res://scripts/Factories/paths/coalpower_path.tscn",	"dock_reverse": true},
-	"solarpanels":	{"display": "Solar panels ",	"size": Vector2i(2,2),	"tile": Tiles.SOLAR_FARM,		"paths": null,													"dock_reverse": true},
-	"steelmill":	{"display": "Steel mill ",		"size": Vector2i(2,2),	"tile": Tiles.STEEL_MILL,		"paths": "res://scripts/Factories/paths/steelmill_path.tscn",	"dock_reverse": true},
-	"wiremill":		{"display": "Wire mill ",		"size": Vector2i(2,2),	"tile": Tiles.WIRE_MILL,		"paths": "res://scripts/Factories/paths/wiremill_path.tscn",	"dock_reverse": true},
-	"gaspower":		{"display": "Generators ",		"size": Vector2i(2,2),	"tile": Tiles.DIESEL_GENERATOR,	"paths": "res://scripts/Factories/paths/gaspower_path.tscn",	"dock_reverse": true},
-	"cementMixing":	{"display": "Cement mixer ",	"size": Vector2i(2,2),	"tile": Tiles.CONCRETE_PLANT,	"paths": null,													"dock_reverse": true},
-	"cargoTerminal":{"display": "Cargo terminal ",	"size": Vector2i(4,3),	"tile": Tiles.CARGO_TERMINAL,	"paths": null,													"dock_reverse": true},
-	"resourceBox":	{"display": "Resource box ",	"size": Vector2i(1,1),	"tile": Tiles.START_BOX,		"paths": null,													"dock_reverse": false},
-	"Pumpjack":		{"display": "Pumpjack ",		"size": Vector2i(1,2),	"tile": Tiles.PUMPJACK,			"paths": null,													"dock_reverse": true},
-	"mine":			{"display": "Mine ",			"size": Vector2i(1,1),	"tile": null,					"paths": null,													"dock_reverse": false},
+	"blast":		{"display": "Blast furnace ",	"size": Vector2i(4,2),	"tile": Tiles.BLAST_FURANCE,	"paths": "res://scripts/Factories/paths/blast_path.tscn",			"dock_reverse": true},
+	"refinary":		{"display": "Refinery ",		"size": Vector2i(4,2),	"tile": Tiles.REFINARY,			"paths": "res://scripts/Factories/paths/refinary_path.tscn",		"dock_reverse": false},
+	"coalpower":	{"display": "Coal plant ",		"size": Vector2i(2,2),	"tile": Tiles.COAL_POWER,		"paths": "res://scripts/Factories/paths/coalpower_path.tscn",		"dock_reverse": true},
+	"solarpanels":	{"display": "Solar panels ",	"size": Vector2i(2,2),	"tile": Tiles.SOLAR_FARM,		"paths": null,														"dock_reverse": true},
+	"steelmill":	{"display": "Steel mill ",		"size": Vector2i(2,2),	"tile": Tiles.STEEL_MILL,		"paths": "res://scripts/Factories/paths/steelmill_path.tscn",		"dock_reverse": true},
+	"wiremill":		{"display": "Wire mill ",		"size": Vector2i(2,2),	"tile": Tiles.WIRE_MILL,		"paths": "res://scripts/Factories/paths/wiremill_path.tscn",		"dock_reverse": true},
+	"gaspower":		{"display": "Generators ",		"size": Vector2i(2,2),	"tile": Tiles.DIESEL_GENERATOR,	"paths": "res://scripts/Factories/paths/gaspower_path.tscn",		"dock_reverse": true},
+	"cementMixing":	{"display": "Cement mixer ",	"size": Vector2i(2,2),	"tile": Tiles.CONCRETE_PLANT,	"paths": "res://scripts/Factories/paths/concreteplant_path.tscn",	"dock_reverse": true},
+	"cargoTerminal":{"display": "Cargo terminal ",	"size": Vector2i(4,3),	"tile": Tiles.CARGO_TERMINAL,	"paths": "res://scripts/Factories/paths/terminal.tscn",				"dock_reverse": true},
+	"resourceBox":	{"display": "Resource box ",	"size": Vector2i(1,1),	"tile": Tiles.START_BOX,		"paths": null,														"dock_reverse": false},
+	"pumpjack":		{"display": "Pumpjack ",		"size": Vector2i(1,2),	"tile": Tiles.PUMPJACK,			"paths": "res://scripts/Factories/paths/pumpjack.tscn",				"dock_reverse": true},
+	"mine":			{"display": "Mine ",			"size": Vector2i(1,1),	"tile": null,					"paths": null,														"dock_reverse": false},
 }
 
 const BUILDING_CONSTRUCTION_COST: Dictionary = {
@@ -206,8 +219,8 @@ const BUILDING_CONSTRUCTION_COST: Dictionary = {
 	"gaspower":		{"resources": {"ironBeam": 8},				"build_time": 12.0},
 	"cementMixing":	{"resources": {"ironBeam": 5, "gravel": 5},	"build_time": 15.0},
 	"cargoTerminal":{"resources": {"ironBeam": 10,},			"build_time": 30.0},
-	"base":			{"resources": {"gravel": 5},				"build_time": 10.0},
 	"resourceBox":	{"resources": {},							"build_time": 0.0},
+	"pumpjack":		{"resources": {"ironBeam": 8},				"build_time": 15.0}
 }
 
 const ROAD_CONSTRUCTION_COST: Dictionary = {
@@ -281,7 +294,7 @@ func create_factory(factory_type: String, grid_pos: Vector2i, size_override: Vec
 	
 	GridManager.register_building(new_factory, grid_pos, size)
 	if factory_type != "mine":
-		GridManager.set_footprint_astar_weight(grid_pos, size, 1.0)
+		GridManager.set_footprint_astar_solid(grid_pos, size, true)
 	factorys.append(new_factory)
 	update_path_reachability()
 	mark_routes_dirty()
@@ -307,7 +320,7 @@ func get_building_or_site_at(grid_pos: Vector2i):
 
 func start_construction(kind: String, cells: Array[Vector2i], cost_def: Dictionary, result: Dictionary) -> ConstructionSite:
 	if not GridManager.can_place_on_cells(cells):
-		print("Cannot build here, a cell is already occupied")
+		show_popup("Cannot build here, a cell is already occupied")
 		return null
 	
 	var site := ConstructionSite.new(kind, cells, cost_def, result)
@@ -386,6 +399,9 @@ func _apply_construction_result(site: ConstructionSite) -> void:
 			if new_factory and new_factory.factory_type == "resourceBox":
 				for resource in RESOURCE_BOX_STOCK:
 					new_factory.outputResources[resource] = RESOURCE_BOX_STOCK[resource]
+			if new_factory and new_factory.factory_type == "cargoTerminal" and site.result.get("starter_stock", false):
+				for resource in STARTER_TERMINAL_STOCK:
+					new_factory.outputResources[resource] = new_factory.outputResources.get(resource, 0) + STARTER_TERMINAL_STOCK[resource]
 			if new_factory and road_layer:
 				for cell in get_building_stamp(site.result["factory_type"]):
 					road_layer.set_cell(site.anchor + cell["offset"], Tiles.ROAD_SOURCE, cell["atlas"])
@@ -401,6 +417,7 @@ func _apply_construction_result(site: ConstructionSite) -> void:
 			if road_layer:
 				road_layer.set_cells_terrain_connect(site.cells, site.result["terrain_set"], site.result["terrain"], false)
 			GridManager.set_cells_astar_weight(site.cells, 1.0)
+			GridManager.set_cells_astar_solid(site.cells, true)
 		"taxiway":
 			taxiways.append(site.result["footprint"])
 			if road_layer:
@@ -437,19 +454,28 @@ func get_resource_source() -> FactoryInstance:
 		return warehouse
 	return get_resource_box()
 
+func _get_auto_route_source(site: ConstructionSite) -> FactoryInstance:
+	var warehouse := get_warehouse()
+	if warehouse != null:
+		return warehouse
+	if site.kind == "factory" and site.result.get("factory_type", "") == "cargoTerminal":
+		return get_resource_box()
+	return null
+
 func _auto_route_construction_site(site: ConstructionSite) -> void:
-	var source := get_resource_box()
+	var source := _get_auto_route_source(site)
 	if source == null:
-		print("No resource box or cargo terminal built yet, can't auto route")
 		return
-	
 	for resource in site.required_resources.keys():
+		var missing: int = site.required_resources[resource] - site.deliverd_resources.get(resource, 0)
+		if missing <= 0:
+			continue
 		routes.append({
 			"source": source,
 			"destination": site,
 			"resource": resource
 		})
-		mark_routes_dirty()
+	mark_routes_dirty()
 
 func _unassign_vehicles_from_route(route_index: int) -> void:
 	for vehicle_type in garage:
@@ -479,33 +505,39 @@ func remove_factory(factory: FactoryInstance) -> void:
 		for cell in GridManager.get_footprint_cells(factory.grid_pos, factory.size):
 			construction_layer.erase_cell(cell)
 	GridManager.remove_building(factory.grid_pos, factory.size)
+	GridManager.set_footprint_astar_solid(factory.grid_pos, factory.size, false)
 	GridManager.set_footprint_astar_weight(factory.grid_pos, factory.size, 5.0)
+	if factory.factory_type != "resourceBox":
+		_drop_routes_touching(factory)
 	mark_routes_dirty()
 	update_path_reachability()
 	factorys.erase(factory)
 
 const FACTORY_ACCEPTED_RESOURCES: Dictionary = {
 	"refinary": ["crudeOil"],
-	"blast": ["ironOre", "copperOre", "goldOre"],
+	"blast": ["ironOre", "copperOre", "goldOre", "coal"],
 	"steelmill": ["ironBeam"],
 	"wiremill": ["copperIngots", "goldBars"],
 	"coalpower": ["coal"],
 	"cementMixing": ["gravel", "sand", "water"],
 	"chip": ["copperWire", "goldWire"],
 	"gaspower": ["fuel"],
-	"mine": []
+	"mine": [],
+	"pumpjack": [],
+	"cargoTerminal": ["ironOre", "copperOre", "goldOre", "coal", "gravel", "sand", "concrete", "asphalt", "ironBeam", "copperIngots", "goldBars", "steelBeam", "copperWire", "goldWire", "crudeOil", "fuel"]
 }
 
 const SUITBEL_DILIVERY_FACTORYS: Dictionary = {
-	"refinary": ["gaspower", "base"],
-	"blast": ["steelmill", "wiremill", "base"],
-	"steelmill": ["base"],
-	"wiremill": ["chip", "base"],
+	"refinary": ["gaspower", "cargoTerminal"],
+	"blast": ["steelmill", "wiremill", "cargoTerminal"],
+	"steelmill": ["cargoTerminal"],
+	"wiremill": ["chip", "cargoTerminal"],
 	"coalpower": null,
-	"cementMixing": ["base"],
-	"chip": ["base"],
+	"cementMixing": ["cargoTerminal"],
+	"chip": ["cargoTerminal"],
 	"gaspower": null,
-	"mine": ["refinary", "base", "cementMixing"]
+	"mine": ["blast", "cargoTerminal", "cementMixing"],
+	"pumpjack": ["refinary"]
 }
 
 func factory_accepts_resouce(factory_type: String, resource: String) -> bool:
@@ -548,7 +580,7 @@ func addDebt(cost: float) -> bool:
 	return true
 
 
-enum  HitchType {PIN, BALL, FIFTH_WHEEL, THREE_POINT}
+enum  HitchType {NONE, PIN, BALL, FIFTH_WHEEL, THREE_POINT}
 
 func getVehicleProperties(vehicle_type: String) -> VehicleData:
 	var resource = load("res://scripts/Vehicles/VehicleTypes/%s.tres" % vehicle_type)
@@ -557,92 +589,93 @@ func getVehicleProperties(vehicle_type: String) -> VehicleData:
 		return null
 	return resource
 
+# cargo weight is set to 1 until i can fix the overweigth cargo
 func getCargoProperties(cargo: String) -> Dictionary:
 	match  cargo:
 		"ironOre": 
 			return {
 				"type": "Bulk",
-				"Weight": 2500	#kg/m³
+				"Weight": 1	#kg/m³
 			}
 		"copperOre":
 			return {
 				"type": "Bulk",
-				"Weight": 2600	#kg/m³
+				"Weight": 1	#kg/m³
 			}
 		"goldOre":
 			return {
 				"type": "Bulk",
-				"Weight": 2700	#kg/m³
+				"Weight": 1	#kg/m³
 			}
 		"coal":
 			return {
 				"type": "Bulk",
-				"Weight": 1200	#kg/m³
+				"Weight": 1	#kg/m³
 			}
 		"gravel":
 			return {
 				"type": "Bulk",
-				"Weight": 1600	#kg/m³
+				"Weight": 1	#kg/m³
 			}
 		"sand":
 			return {
 				"type": "Bulk",
-				"Weight": 1600
+				"Weight": 1
 			}
 		"concrete":
 			return {
 				"type": "Cement",
-				"Weight": 1500
+				"Weight": 1
 			}
 		"asphalt":
 			return {
 				"type": "Bulk",
-				"Weight": 2400
+				"Weight": 1
 			}
 		"ironBeam":
 			return {
 				"type": "Flatbed",
-				"Weigth": 7555
+				"Weigth": 1
 			}
 		"copperIngots":
 			return {
 				"type": "Flatbed",
-				"Weigth": 8500
+				"Weigth": 1
 			}
 		"goldBars":
 			return {
 				"type": "Flatbed",
-				"Weight": 18500
+				"Weight": 1
 			}
 		"steelBeam":
 			return {
 				"type": "Flatbed",
-				"Weight": 7530
+				"Weight": 1
 			}
 		"copperWire":
 			return {
 				"type": "Flatbed",
-				"Weight": 8500
+				"Weight": 1
 			}
 		"goldWire":
 			return {
 				"type": "Flatbed",
-				"Weight": 18500
+				"Weight": 1
 			}
 		"PCBPallet":
 			return {
 				"type": "Flatbed",
-				"Weight": 1800
+				"Weight": 1
 			}
 		"crudeOil":
 			return {
-				"type": "liquid",
-				"Weight": 800
+				"type": "Flatbed",
+				"Weight": 1
 			}
 		"fuel":
 			return {
-				"type": "liquid",
-				"Weight": 800
+				"type": "Flatbed",
+				"Weight": 1
 			}
 		_:
 			return {}
@@ -701,6 +734,9 @@ func spawn_vehicle(vehicle_type: String) -> Node:
 		instance.movement.home_tile = spawn_tile
 		instance.movement.has_home_tile = true
 	
+	if instance is Trailer:
+		instance.set_base(instance.global_position)
+	
 	garage[vehicle_type].append(instance)
 	return instance
 
@@ -744,7 +780,7 @@ func _get_factory_dock(factory: FactoryInstance, purpose: String, anchor_tile: V
 			continue
 		var data: Dictionary = factory.paths[key]
 		var corridor_tile: Vector2i = _corridor_tile_for_path_data(data)
-		var path: PackedVector2Array = GridManager.astar.get_point_path(anchor_tile, corridor_tile)
+		var path: PackedVector2Array = GridManager.get_point_path_open_ends(anchor_tile, corridor_tile)
 		if path.is_empty():
 			continue
 		var length: float = _path_total_length(path)
@@ -789,7 +825,7 @@ func generate_route() -> void:
 		var path_start: Vector2i = load_dock["corridor_tile"] if not load_dock.is_empty() else source.grid_pos
 		var path_end: Vector2i = unload_dock["corridor_tile"] if not unload_dock.is_empty() else destination.grid_pos
 		
-		var raw_offroad: PackedVector2Array = GridManager.astar.get_point_path(path_start, path_end)
+		var raw_offroad: PackedVector2Array = GridManager.get_point_path_open_ends(path_start, path_end)
 		var raw_onroad: Array[Vector2] = _get_road_only_path(path_start, path_end)
 		
 		route["Offroad_route"] = chamfer_path_corners(raw_offroad, ON_ROAD_CHAMFER_DISTANCE)
@@ -797,7 +833,7 @@ func generate_route() -> void:
 
 func _get_road_only_path(start: Vector2i, end: Vector2i) -> Array[Vector2]:
 	var temp_path: Array[Vector2] = []
-	var raw_points = GridManager.astar.get_id_path(start, end)
+	var raw_points = GridManager.get_id_path_open_ends(start, end)
 	if raw_points.is_empty():
 		return temp_path
 	for id in raw_points:
@@ -904,3 +940,28 @@ func create_mine_factory(grid_pos: Vector2i, size: Vector2i, resources: Dictiona
 
 func is_excavator(vehicle_type: String) -> bool:
 	return vehicle_type in EXCAVATOR_TYPES
+
+func is_mine_in_use(mine: FactoryInstance, except_vehicle = null) -> bool:
+	for type in garage:
+		for v in garage[type]:
+			if v == except_vehicle or not is_instance_valid(v):
+				continue
+			var m = v.get("movement")
+			if m != null and m.assigned_mine == mine:
+				return true
+	return true
+
+func show_popup(message: String, duration: float = POPUP_DEFAULT_DURATION) -> void:
+	popup_requested.emit(message, duration)
+
+func show_factory_cost(factory_type: String) -> void:
+	if not BUILDING_DEFS.has(factory_type):
+		return
+	var cost: Dictionary = BUILDING_CONSTRUCTION_COST.get(factory_type, {})
+	var resources: Dictionary = cost.get("resources", {})
+	var parts: Array[String] = []
+	for res in resources:
+		parts.append("%dx %s" % [resources[res], res])
+	var cost_text: String = ", ".join(parts) if not parts.is_empty() else "Free"
+	var display_name: String = BUILDING_DEFS[factory_type]["display"].strip_edges()
+	show_popup("%s - Cost: %s - Build time: %ds" % [display_name, cost_text, int(cost.get("build_time", 0.0))], 4.0)

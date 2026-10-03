@@ -98,9 +98,9 @@ region = Rect2(276, 50, 24, 91)
 atlas = ExtResource("2_cqc5i")
 region = Rect2(257, 57, 19, 80)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6vppo"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_e6wev"]
 atlas = ExtResource("2_cqc5i")
-region = Rect2(88, 80, 11, 27)
+region = Rect2(99, 80, 11, 27)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0pi4w"]
 atlas = ExtResource("2_cqc5i")
@@ -137,6 +137,10 @@ region = Rect2(66, 80, 11, 27)
 [sub_resource type="AtlasTexture" id="AtlasTexture_7wpox"]
 atlas = ExtResource("2_cqc5i")
 region = Rect2(77, 80, 11, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cv7jh"]
+atlas = ExtResource("2_cqc5i")
+region = Rect2(88, 80, 11, 27)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cqc5i"]
 atlas = ExtResource("2_cqc5i")
@@ -257,7 +261,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_6vppo")
+"texture": SubResource("AtlasTexture_e6wev")
 }],
 "loop": true,
 "name": &"cementMixerTruck",
@@ -295,6 +299,9 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7wpox")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cv7jh")
 }],
 "loop": true,
 "name": &"flatbedTruck",
@@ -351,11 +358,12 @@ script = ExtResource("1_0pi4w")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=834666264]
 rotation = 1.5707964
 shape = SubResource("RectangleShape2D_pu4i8")
+disabled = true
 
 [node name="VehicleSprite" type="AnimatedSprite2D" parent="." unique_id=196292407]
 rotation = 1.5707964
 sprite_frames = SubResource("SpriteFrames_rgx34")
-animation = &"valtra_s416"
+animation = &"flatbedTruck"
 
 [node name="frontLeftTireSprite" type="Sprite2D" parent="VehicleSprite" unique_id=1437522137]
 position = Vector2(-5, -7.5)

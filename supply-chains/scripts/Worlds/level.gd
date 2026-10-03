@@ -25,10 +25,14 @@ var noise_moist: Noise
 var noise_ore: Noise
 
 var chunk_size: int = 16
-var render_distance: int = 14
+var render_distance: int = 9
+const CHUNK_BUDGET_USE: int = 5000
 var loaded_chunks: Dictionary = {} # Keeps track of already generated chunks
 var world_size : int = 300   #chunks
 
+var _pending_chunks: Array[Vector2i] = []
+var _last_cam_chunk := Vector2i(1 << 30, 1 << 30)
+var _last_reach := Vector2i(-1,-1)
  
 #temp vars
 var selected_terrainSet: int = 0
@@ -89,7 +93,7 @@ func _ready():
 	Save.apply_pending_load()
 	
 	if camera:
-		update_chunks_around_camera()
+		update_chunks_around_camera(-1)
 
 func _apply_build_stage_tool() -> void:
 	match Global.build_stage:
@@ -157,7 +161,8 @@ func _process(_delta):
 			Global.clickMode = "place_terrainSet"
 		if Input.is_action_just_pressed("select_5"):
 			Global.selcted_tile = Vector2i(0,0)
-			Global.selected_factory_type = "gaspower"
+			Global.selected_factory_type = "blast"
+			Global.show_factory_cost("blast")
 			Global.clickMode = "place_factory"
 	if Input.is_action_just_pressed("esc"):
 		if Global.clickMode != "highlight":
@@ -324,18 +329,22 @@ func commit_airstrip_drag():
 	var raw_footprint = get_airstrip_footprint(airstrip_start, selectedCell, false)
 	
 	if airstrip_edit_index == -1 and raw_footprint["length"] < AIRSTRIP_MIN_DRAG:
-		print("Drag at least ", AIRSTRIP_MIN_DRAG, " tiles to place an airstrip")
+		Global.show_popup("Drag at least %s tiles to place an airstrip" % AIRSTRIP_MIN_DRAG)
 		reset_airstrip_drag_state()
 		return
 	
 	var footprint = get_airstrip_footprint(airstrip_start, selectedCell, true, airstrip_edit_axis)
-	if not is_airstrip_valid(footprint["cells"]):
-		print("Airstrip placement rejected incaid cell in footprint")
+	var own_cells: Array = []
+	if airstrip_edit_index != -1:
+		own_cells = Global.airstrips[airstrip_edit_index]["cells"]
+	if not is_airstrip_valid(footprint["cells"], own_cells):
+		Global.show_popup("Airstrip placement rejected incaid cell in footprint")
 		reset_airstrip_drag_state()
 		return
 	
 	if airstrip_edit_index != -1:
 		var old_strip = Global.airstrips[airstrip_edit_index]
+		GridManager.set_cells_astar_solid(old_strip["cells"], false)
 		for cell in old_strip["cells"]:
 			RoadLayer.erase_cell(cell)
 			GridManager.astar.set_point_weight_scale(cell, 5.0)
@@ -343,8 +352,9 @@ func commit_airstrip_drag():
 		RoadLayer.set_cells_terrain_connect(footprint["cells"], selected_terrainSet, Global.selected_terrain, false)
 		for cell in footprint["cells"]:
 			GridManager.astar.set_point_weight_scale(cell, 1.0)
+		GridManager.set_cells_astar_solid(footprint["cells"], true)
 		Global.mark_routes_dirty()
-		print("Airstrip extended: ", footprint["length"], " tiles")
+		Global.show_popup("Airstrip extended: %s tiles" % footprint["length"])
 	else:
 		var cost: Dictionary = Global.get_area_construction_cost(Global.AIRSTRIP_COST.airstrip["resources"], Global.AIRSTRIP_COST.airstrip["building_time"], footprint["cells"].size())
 		var result: Dictionary = {
@@ -355,7 +365,7 @@ func commit_airstrip_drag():
 		var site = Global.start_construction("airstrip", footprint["cells"], cost, result)
 		if site != null and Global.build_stage == Global.BuildStage.PLACE_RUNWAY:
 			Global.advance_build_stage()
-		print("Airstrip construction started: ", footprint["length"], " tiles")
+		Global.show_popup("Airstrip construction started: %s tiles" % footprint["length"])
 	
 	reset_airstrip_drag_state()
 
@@ -425,10 +435,12 @@ func find_airstrip_end_grab(cell: Vector2i) -> Dictionary:
 			return{"index": i, "anchor": strip["start"], "axis": axis}
 	return {"index": -1, "anchor": Vector2i(-9999, -9999), "axis": ""}
 
-func is_airstrip_valid(cells: Array) -> bool:
+func is_airstrip_valid(cells: Array, ignore_cells: Array = []) -> bool:
 	for cell in cells:
 		if cell in Global.baseTiles:
 			return false
+		if cell in ignore_cells:
+			continue
 		if GridManager.astar.is_in_boundsv(cell) and GridManager.astar.is_point_solid(cell):
 			return false
 	return true
@@ -444,7 +456,7 @@ func commit_taxiway_drag():
 	
 	var footprint = get_taxiway_footprint(taxiway_start, selectedCell)
 	if not is_airstrip_valid(footprint["cells"]):
-		print("Taxiway placement rejected, invalid cell in footprint")
+		Global.show_popup("Cannot place taxiway here: invalid cell in the area")
 		reset_taxiway_drag_state()
 		return
 	
@@ -456,7 +468,7 @@ func commit_taxiway_drag():
 	}
 	Global.start_construction("taxiway", footprint["cells"], cost, result)
 	
-	print("Taxiway construction started: ", footprint["length"], " tiles")
+	Global.show_popup("Taxiway construction started: %s tiles" % footprint["length"])
 	reset_taxiway_drag_state()
 
 func reset_taxiway_drag_state():
@@ -464,6 +476,7 @@ func reset_taxiway_drag_state():
 
 func start_placing_factory(factory_type: String) -> void:
 	Global.selected_factory_type = factory_type
+	Global.show_factory_cost(factory_type)
 	Global.clickMode = "place_factory"
 
 func place_factory() -> void:
@@ -472,6 +485,8 @@ func place_factory() -> void:
 	var cells: Array[Vector2i] = GridManager.get_footprint_cells(selectedCell, def["size"])
 	var cost: Dictionary = Global.BUILDING_CONSTRUCTION_COST.get(Global.selected_factory_type, {})
 	var result: Dictionary = {"factory_type": Global.selected_factory_type}
+	if Global.selected_factory_type == "cargoTerminal" and Global.build_stage == Global.BuildStage.PLACE_TERMINAL:
+		result["starter_stock"] = true
 	var site = Global.start_construction("factory", cells, cost, result)
 	if site == null:
 		return
@@ -498,17 +513,47 @@ func demolish_factory() -> void:
 	
 	Global.remove_factory(factory)
 
-func update_chunks_around_camera() -> void:
-	var cam_tile_pos = TerrainLayer.local_to_map(camera.global_position)
-	var cam_chunk_x = floor(float(cam_tile_pos.x) / chunk_size)
-	var cam_chunk_y = floor(float(cam_tile_pos.y) / chunk_size)
+func update_chunks_around_camera(budget_use: int = CHUNK_BUDGET_USE) -> void:
+	_queue_chunks_around_camera()
+	_generate_pending_chunks(budget_use)
+
+func _queue_chunks_around_camera() -> void:
+	var cam_tile := TerrainLayer.local_to_map(camera.global_position)
+	var cam_chunk := Vector2i(floori(float(cam_tile.x) / chunk_size), floori(float(cam_tile.y / chunk_size)))
 	
-	for x in range(cam_chunk_x - render_distance, cam_chunk_x + render_distance + 1):
-		for y in range(cam_chunk_y - render_distance, cam_chunk_y + render_distance + 1):
-			var chunk_key = Vector2i(x, y)
-			if not loaded_chunks.has(chunk_key):
-				generate_chunk(x, y)
-				loaded_chunks[chunk_key] = true
+	var chunk_px := float(chunk_size * Global.TILE_SIZE)
+	var half_view: Vector2 = get_viewport_rect().size / camera.zoom / 2.0
+	var reach := Vector2i(ceili(half_view.x / chunk_px) + 1, ceili(half_view.y / chunk_px) + 1)
+	reach = reach.min(Vector2i(render_distance, render_distance))
+
+	if cam_chunk == _last_cam_chunk and reach == _last_reach:
+		return
+	_last_cam_chunk = cam_chunk
+	_last_reach = reach
+	
+	var limit: int = world_size / 2
+	_pending_chunks.clear()
+	for x in range(cam_chunk.x - reach.x, cam_chunk.x + reach.x + 1):
+		for y in range(cam_chunk.y - reach.y, cam_chunk.y + reach.y + 1):
+			if absi(x) >= limit or absi(y) >= limit:
+				continue
+			var key := Vector2i(x, y)
+			if not loaded_chunks.has(key):
+				_pending_chunks.append(key)
+	
+	_pending_chunks.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return a.distance_squared_to(cam_chunk) > b.distance_squared_to(cam_chunk))
+
+func _generate_pending_chunks(budget_used: int) -> void:
+	var start := Time.get_ticks_usec()
+	while not _pending_chunks.is_empty():
+		var key: Vector2i = _pending_chunks.pop_back()
+		if loaded_chunks.has(key):
+			continue
+		generate_chunk(key.x, key.y)
+		loaded_chunks[key] = true
+		if budget_used >= 0 and Time.get_ticks_usec() - start > budget_used:
+			break
 
 func generate_chunk(chuck_x : int, chunk_y: int) -> void:
 	var start_x = chuck_x * chunk_size
@@ -516,10 +561,10 @@ func generate_chunk(chuck_x : int, chunk_y: int) -> void:
 	
 	for x in range(start_x, start_x + chunk_size):
 		for y in range(start_y, start_y + chunk_size):
-			setBiome(x,y)
-			placeOres(x,y)
+			var altitude := setBiome(x,y)
+			placeOres(x,y, altitude)
 
-func setBiome(x: int, y: int) -> void:
+func setBiome(x: int, y: int) -> float:
 	var altitude = noise_alt.get_noise_2d(x,y)
 	
 	var base_temp = noise_temp.get_noise_2d(x,y)
@@ -554,11 +599,11 @@ func setBiome(x: int, y: int) -> void:
 				else:
 					TerrainLayer.set_cell(coords, Tiles.TERAIN_SOURCE, Tiles.GRASS_ATLAS)
 			else:
-				var random: float = _cell_rand(x, y, 1)
-				if random <= 0.15:
-					var tree = TreeScene.instantiate()
-					tree.position = TerrainLayer.map_to_local(coords)
-					TreeLayer.add_child(tree)
+#				var random: float = _cell_rand(x, y, 1)
+#				if random <= 0.15:
+#					var tree = TreeScene.instantiate()
+#					tree.position = TerrainLayer.map_to_local(coords)
+#					TreeLayer.add_child(tree)
 				TerrainLayer.set_cell(coords, Tiles.TERAIN_SOURCE, Tiles.FORREST_ATLAS)
 		else:
 			if moisture < -0.05:
@@ -576,11 +621,11 @@ func setBiome(x: int, y: int) -> void:
 			TerrainLayer.set_cell(coords, Tiles.TERAIN_SOURCE, Tiles.MOUNTAIN_ATLAS)
 			
 	update_astar_cell_from_biome(coords, altitude)
+	return altitude
 
-func placeOres(x: int, y: int):
+func placeOres(x: int, y: int, altitude: float) -> void:
 	var coords := Vector2i(x, y)
 	var ore = noise_ore.get_noise_2d(x,y)
-	var altitude = noise_alt.get_noise_2d(x,y)
 	var rng = _cell_rand(x, y, 0)
 	
 	if ore > -0.30 && altitude > 0.10:
@@ -631,14 +676,11 @@ func previewTile():
 	elif Global.clickMode == "highlight":
 		PreviewLayer.set_cell(selectedCell, Tiles.TERAIN_SOURCE, Tiles.WATER_ATLAS)
 
-func update_astar_cell_from_biome(coords: Vector2i, altitude: float):
-	if altitude > 0.40:
+func update_astar_cell_from_biome(coords: Vector2i, altitude: float) -> void:
+	if altitude < -0.10:
 		GridManager.astar.set_point_solid(coords, true)
-	elif altitude < -0.10:
-		GridManager.astar.set_point_solid(coords, true)
-	else:
-		if RoadLayer.get_cell_source_id(coords) == -1 and Global.get_construction_site_at(coords) == null:
-			GridManager.astar.set_point_weight_scale(coords, 5.0)
+	elif RoadLayer.get_cell_source_id(coords) == -1 and not GridManager.occupied_cells.has(coords):
+		GridManager.astar.set_point_weight_scale(coords, 5.0)
 
 func _cell_rand(x: int, y: int, salt: int) -> float:
 	return float(posmod(hash(Vector3i(x, y, Global.world_seed + salt)), 10000)) / 10000.0
@@ -678,21 +720,26 @@ func _finalize_mining_area(start_cell: Vector2i, end_cell: Vector2i) -> void:
 	
 	var existing = GridManager.get_building_at(start_cell)
 	if start_cell == end_cell and existing is FactoryInstance and existing.factory_type == "mine":
+		var previous_mine: FactoryInstance = vehicle.movement.assigned_mine
 		vehicle.movement.assign_mine(existing)
+		if vehicle.movement.assigned_mine != existing and previous_mine != null \
+				and Global.factorys.has(previous_mine):
+			vehicle.movement.assign_mine(previous_mine)
 		_cancel_mining_area_selection()
 		return
 	
 	var rect := _get_mine_rect(start_cell, end_cell)
 	if not GridManager.can_place_building(rect.position, rect.size):
-		print("Cannot place mine: area is obstructed")
+		Global.show_popup("Cannot place mine: area is obstructed")
 		return
 	var resources: Dictionary = Global.scan_area_for_ores(rect)
 	if resources.is_empty():
-		print("Cannot place mine: no ores, sand or gravel in selected area")
+		Global.show_popup("Cannot place mine: no ores, sand or gravel in selected area")
 		return
 	
 	var mine = Global.create_mine_factory(rect.position, rect.size, resources)
 	if mine == null:
 		return
-	vehicle.movement.assign_mine(mine)
+	if not vehicle.movement.assign_mine(mine, true):
+		Global.show_popup("Mine removed: excavator can't reach that area")
 	_cancel_mining_area_selection()

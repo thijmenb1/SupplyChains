@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://cpubpk1hya2ms" path="res://scripts/UI/ui.gd" id="1_gdt2y"]
 [ext_resource type="Texture2D" uid="uid://eqymhfkjm3cg" path="res://assets/resources.png" id="1_nt7q6"]
-[ext_resource type="FontFile" uid="uid://b08ub3taoj725" path="res://tinyNumberFont.ttf" id="2_x4jx1"]
 [ext_resource type="Texture2D" uid="uid://oq44vob1gwo3" path="res://assets/Tilemaps/tilemap_concept.png" id="3_yev5y"]
 [ext_resource type="Texture2D" uid="uid://b7o102dx4d53d" path="res://assets/UI/Icons/garage.png" id="5_wm3ai"]
 [ext_resource type="Texture2D" uid="uid://dcsaf2llywke1" path="res://assets/Vehicles/trucks_topdown_spritesheet.png" id="7_p7vwb"]
@@ -29,49 +28,6 @@
 [ext_resource type="Texture2D" uid="uid://drnrjox80a2f4" path="res://assets/UI/Icons/rectangle-list-regular.png" id="21_331jc"]
 [ext_resource type="PackedScene" uid="uid://bvl6i6kcxr3c1" path="res://scenes/UI/recipeRow.tscn" id="22_eeaqk"]
 [ext_resource type="Script" uid="uid://p1esit41o8w5" path="res://scripts/UI/accepted_orders.gd" id="25_tqkrj"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x4jx1"]
-bg_color = Color(0, 0, 0, 0.5)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_yev5y"]
-atlas = ExtResource("1_nt7q6")
-region = Rect2(0, 0, 6, 6)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gdt2y"]
-atlas = ExtResource("1_nt7q6")
-region = Rect2(6, 0, 6, 6)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wm3ai"]
-atlas = ExtResource("1_nt7q6")
-region = Rect2(12, 0, 6, 6)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8dubc"]
-atlas = ExtResource("1_nt7q6")
-region = Rect2(18, 0, 6, 6)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_p7vwb"]
-atlas = ExtResource("1_nt7q6")
-region = Rect2(24, 0, 6, 6)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ktti3"]
-atlas = ExtResource("1_nt7q6")
-region = Rect2(30, 0, 6, 6)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cgfq5"]
-atlas = ExtResource("1_nt7q6")
-region = Rect2(36, 0, 6, 6)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nt7q6"]
-atlas = ExtResource("1_nt7q6")
-region = Rect2(42, 0, 6, 6)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_x4jx1"]
-atlas = ExtResource("1_nt7q6")
-region = Rect2(48, 0, 6, 6)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gdt2y"]
 bg_color = Color(0, 0, 0, 0.5)
@@ -124,35 +80,27 @@ corner_radius_bottom_left = 5
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yyr6m"]
 atlas = ExtResource("3_yev5y")
-region = Rect2(0, 0, 32, 32)
+region = Rect2(192, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tqkrj"]
 atlas = ExtResource("3_yev5y")
-region = Rect2(96, 0, 32, 32)
+region = Rect2(448, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_uisvg"]
 atlas = ExtResource("3_yev5y")
-region = Rect2(192, 0, 32, 32)
+region = Rect2(544, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rlppe"]
 atlas = ExtResource("3_yev5y")
-region = Rect2(352, 0, 32, 32)
+region = Rect2(0, 64, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ycmcx"]
 atlas = ExtResource("3_yev5y")
-region = Rect2(448, 0, 32, 32)
+region = Rect2(160, 64, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kupmu"]
 atlas = ExtResource("3_yev5y")
-region = Rect2(544, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_catpy"]
-atlas = ExtResource("3_yev5y")
-region = Rect2(0, 64, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_41akx"]
-atlas = ExtResource("3_yev5y")
-region = Rect2(160, 64, 32, 32)
+region = Rect2(256, 64, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_f7tlh"]
 atlas = ExtResource("3_yev5y")
@@ -469,190 +417,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="ResourceBar" type="Panel" parent="Control" unique_id=2124392580]
-visible = false
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -262.5
-offset_top = 10.0
-offset_right = 262.5
-offset_bottom = 34.0
-grow_horizontal = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_x4jx1")
-
-[node name="TextureRect" type="TextureRect" parent="Control/ResourceBar" unique_id=218247265]
-layout_mode = 0
-offset_left = 44.0
-offset_top = 3.0
-offset_right = 50.0
-offset_bottom = 9.0
-scale = Vector2(3, 3)
-texture = SubResource("AtlasTexture_yev5y")
-
-[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect" unique_id=1226493662]
-layout_mode = 0
-offset_left = -12.0
-offset_top = -5.0
-offset_bottom = 6.0
-theme_override_fonts/font = ExtResource("2_x4jx1")
-text = "0"
-horizontal_alignment = 2
-vertical_alignment = 1
-
-[node name="TextureRect2" type="TextureRect" parent="Control/ResourceBar" unique_id=1788731864]
-layout_mode = 0
-offset_left = 101.0
-offset_top = 3.0
-offset_right = 107.0
-offset_bottom = 9.0
-scale = Vector2(3, 3)
-texture = SubResource("AtlasTexture_gdt2y")
-
-[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect2" unique_id=1294491551]
-layout_mode = 0
-offset_left = -12.0
-offset_top = -5.0
-offset_bottom = 6.0
-theme_override_fonts/font = ExtResource("2_x4jx1")
-text = "0"
-horizontal_alignment = 2
-vertical_alignment = 1
-
-[node name="TextureRect3" type="TextureRect" parent="Control/ResourceBar" unique_id=1348715297]
-layout_mode = 0
-offset_left = 158.0
-offset_top = 3.0
-offset_right = 164.0
-offset_bottom = 9.0
-scale = Vector2(3, 3)
-texture = SubResource("AtlasTexture_wm3ai")
-
-[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect3" unique_id=1882509827]
-layout_mode = 0
-offset_left = -12.0
-offset_top = -5.0
-offset_bottom = 6.0
-theme_override_fonts/font = ExtResource("2_x4jx1")
-text = "1"
-horizontal_alignment = 2
-vertical_alignment = 1
-
-[node name="TextureRect4" type="TextureRect" parent="Control/ResourceBar" unique_id=1835847794]
-layout_mode = 0
-offset_left = 215.0
-offset_top = 3.0
-offset_right = 221.0
-offset_bottom = 9.0
-scale = Vector2(3, 3)
-texture = SubResource("AtlasTexture_8dubc")
-
-[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect4" unique_id=1634176268]
-layout_mode = 0
-offset_left = -12.0
-offset_top = -5.0
-offset_bottom = 6.0
-theme_override_fonts/font = ExtResource("2_x4jx1")
-text = "1"
-horizontal_alignment = 2
-vertical_alignment = 1
-
-[node name="TextureRect5" type="TextureRect" parent="Control/ResourceBar" unique_id=1092436269]
-layout_mode = 0
-offset_left = 272.0
-offset_top = 3.0
-offset_right = 278.0
-offset_bottom = 9.0
-scale = Vector2(3, 3)
-texture = SubResource("AtlasTexture_p7vwb")
-
-[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect5" unique_id=490579980]
-layout_mode = 0
-offset_left = -12.0
-offset_top = -5.0
-offset_bottom = 6.0
-theme_override_fonts/font = ExtResource("2_x4jx1")
-text = "1"
-horizontal_alignment = 2
-vertical_alignment = 1
-
-[node name="TextureRect6" type="TextureRect" parent="Control/ResourceBar" unique_id=1727048340]
-layout_mode = 0
-offset_left = 329.0
-offset_top = 3.0
-offset_right = 335.0
-offset_bottom = 9.0
-scale = Vector2(3, 3)
-texture = SubResource("AtlasTexture_ktti3")
-
-[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect6" unique_id=29546694]
-layout_mode = 0
-offset_left = -12.0
-offset_top = -5.0
-offset_bottom = 6.0
-theme_override_fonts/font = ExtResource("2_x4jx1")
-text = "1"
-horizontal_alignment = 2
-vertical_alignment = 1
-
-[node name="TextureRect7" type="TextureRect" parent="Control/ResourceBar" unique_id=1906916454]
-layout_mode = 0
-offset_left = 386.0
-offset_top = 3.0
-offset_right = 392.0
-offset_bottom = 9.0
-scale = Vector2(3, 3)
-texture = SubResource("AtlasTexture_cgfq5")
-
-[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect7" unique_id=1906032306]
-layout_mode = 0
-offset_left = -12.0
-offset_top = -5.0
-offset_bottom = 6.0
-theme_override_fonts/font = ExtResource("2_x4jx1")
-text = "1"
-horizontal_alignment = 2
-vertical_alignment = 1
-
-[node name="TextureRect8" type="TextureRect" parent="Control/ResourceBar" unique_id=556371185]
-layout_mode = 0
-offset_left = 443.0
-offset_top = 3.0
-offset_right = 449.0
-offset_bottom = 9.0
-scale = Vector2(3, 3)
-texture = SubResource("AtlasTexture_nt7q6")
-
-[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect8" unique_id=747839523]
-layout_mode = 0
-offset_left = -12.0
-offset_top = -5.0
-offset_bottom = 6.0
-theme_override_fonts/font = ExtResource("2_x4jx1")
-text = "1"
-horizontal_alignment = 2
-vertical_alignment = 1
-
-[node name="TextureRect9" type="TextureRect" parent="Control/ResourceBar" unique_id=733544937]
-layout_mode = 0
-offset_left = 500.0
-offset_top = 3.0
-offset_right = 506.0
-offset_bottom = 9.0
-scale = Vector2(3, 3)
-texture = SubResource("AtlasTexture_x4jx1")
-
-[node name="Label" type="Label" parent="Control/ResourceBar/TextureRect9" unique_id=105386945]
-layout_mode = 0
-offset_left = -12.0
-offset_top = -5.0
-offset_bottom = 6.0
-theme_override_fonts/font = ExtResource("2_x4jx1")
-text = "1"
-horizontal_alignment = 2
-vertical_alignment = 1
-
 [node name="selectedTileUI" type="Control" parent="Control" unique_id=505668302]
 layout_mode = 1
 anchors_preset = 3
@@ -818,8 +582,8 @@ anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
 offset_left = -43.0
-offset_top = -150.0
-offset_bottom = 150.0
+offset_top = -114.0
+offset_bottom = 114.0
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_tqkrj")
@@ -837,7 +601,7 @@ layout_mode = 0
 offset_left = 5.5
 offset_top = 5.5
 offset_right = 37.5
-offset_bottom = 294.5
+offset_bottom = 222.5
 theme_override_constants/separation = 4
 
 [node name="TextureRect" type="TextureRect" parent="Control/extendedTileUI/Factory/FactoryTiles" unique_id=744310864]
@@ -863,14 +627,6 @@ texture = SubResource("AtlasTexture_ycmcx")
 [node name="TextureRect6" type="TextureRect" parent="Control/extendedTileUI/Factory/FactoryTiles" unique_id=1055282229]
 layout_mode = 2
 texture = SubResource("AtlasTexture_kupmu")
-
-[node name="TextureRect7" type="TextureRect" parent="Control/extendedTileUI/Factory/FactoryTiles" unique_id=243351369]
-layout_mode = 2
-texture = SubResource("AtlasTexture_catpy")
-
-[node name="TextureRect8" type="TextureRect" parent="Control/extendedTileUI/Factory/FactoryTiles" unique_id=634822843]
-layout_mode = 2
-texture = SubResource("AtlasTexture_41akx")
 
 [node name="Base" type="Panel" parent="Control/extendedTileUI" unique_id=347686432]
 visible = false
@@ -1412,6 +1168,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="FactoryUI" type="Panel" parent="Control" unique_id=549559547]
+visible = false
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -1531,6 +1288,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="StoredResourceUI" type="Panel" parent="Control/FactoryUI" unique_id=657333944]
+visible = false
 layout_mode = 0
 offset_left = 250.0
 offset_top = -200.0
