@@ -61,3 +61,4 @@ Things that don't work (yet):
 - no way to know how far construction is
 - no tutorial
 
+## for help go to `help.md`
