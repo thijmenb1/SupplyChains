@@ -380,5 +380,6 @@ position = Vector2(-9.5, 0)
 position = Vector2(10.5, 0)
 
 [node name="PathDebugLine" type="Line2D" parent="." unique_id=909818351]
+visible = false
 width = 2.0
 default_color = Color(1, 0, 0, 1)

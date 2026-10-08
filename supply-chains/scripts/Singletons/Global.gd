@@ -24,7 +24,7 @@ func mark_routes_dirty() -> void:
 	_routes_dirty = true
 
 # Finace vars
-var money: float = 100000
+var money: float = 200
 var debt: float
 const maxDebt: int = 100
 
