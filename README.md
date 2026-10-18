@@ -14,7 +14,7 @@ There where a lot of challenges during development of Supply Chains two of the m
 You can download it at: https://github.com/thijmenb1/SupplyChains/releases/tag/v0.1.3 and there are download instructions there
 
 ## Stuck?
-All the practical information is in the `help.md
+All the practical information is in the `help.md`
 
 ## Known Limitations & In-Progress Features
 Since I am a solo dev a lot of features did not get polished or straight up don't work I have tried my best to make the game as fun as possible with these limitations but not everything is perfect.
