@@ -11,7 +11,7 @@ The goal of the game is to make a large supply chain between factories and mines
 There where a lot of challenges during development of Supply Chains two of the more notable ones are the pathfinding I found it really hard to get the trailers to look sort of realistic behind vehicles and then getting the vehicles to actually follow that path, and the backing into factories that was (almost) impossible to do with pathfinding so I had to find a other solution I landed on pre-backed paths but this was also hard to implement it still doesn't look fully how I want especial with a trailer but it works and looks acceptable.
 
 ## How to play?
-You can download it at: and there are download instructions there
+You can download it at: https://github.com/thijmenb1/SupplyChains/releases/tag/v0.1.3 and there are download instructions there
 
 ## Stuck?
 All the practical information is in the `help.md
