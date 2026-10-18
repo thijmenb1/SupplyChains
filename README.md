@@ -57,6 +57,10 @@ Things that don't work (yet):
 - electricity is not used
 - vehicle load is not set so fuel usage is zero
 - no way to know how far construction is
-- no tutorial
+- the recipe menu doesn't work (its not doing much with the current factories anyway)
+- couple rare visual glitches
+- concrete truck doesn't work (concrete is also almost useless with the current economy)
+- the path of the pumpjack doesn't work
+- no collisions and no road claiming (there could be 100 tractors driving on top of each other on the same road)
 
 ## for help go to `help.md`

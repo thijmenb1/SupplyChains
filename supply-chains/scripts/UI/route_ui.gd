@@ -15,6 +15,7 @@ const ROUTE_LINE_SCENE = preload("res://scenes/UI/route_line.tscn")
 var _last_factory_count: int = -1
 var _last_source_id: int = -1
 var _last_destination_id: int = -1
+var _last_routes_revision: int = -1
 
 var source_factory: String
 
@@ -30,7 +31,8 @@ func _process(_delta):
 	
 	_last_source_id = source.get_selected_id()
 	
-	if TileVbox.get_child_count() != Global.active_route_count():
+	if TileVbox.get_child_count() != Global.active_route_count() or _last_routes_revision != Global.routes_revision:
+		_last_routes_revision = Global.routes_revision
 		_route_view_update()
 
 func _populate_source_dropdown():
@@ -40,7 +42,7 @@ func _populate_source_dropdown():
 		var factory = Global.factorys[i]
 		if Global.SUITBEL_DILIVERY_FACTORYS.get(factory.factory_type, null) == null:
 			continue
-		source.add_item(factory.factory_name, i)
+		source.add_item(Global.get_building_display_name(factory), i)
 	
 	var idx := source.get_item_index(previous_id)
 	if idx != -1:
@@ -66,7 +68,7 @@ func _populate_destination_dropdown():
 		if not allowed.has(factory.factory_type):
 			print("no suitible factory avalible", allowed, "    ", factory.factory_type)
 			continue
-		destination.add_item(factory.factory_name, i)
+		destination.add_item(Global.get_building_display_name(factory), i)
 
 func _populate_resource_dropdown():
 	var previous_text: String = ""
@@ -75,13 +77,20 @@ func _populate_resource_dropdown():
 	resource.clear()
 	
 	var destination_id := destination.get_selected_id()
+	var destination_type: String = Global.factorys[destination_id].factory_type
 	if destination_id == -1 or destination_id >= Global.factorys.size():
 		return
-	var destination_type: String = Global.factorys[destination_id].factory_type
-	var accepted_resources: Array = Global.get_accepted_resources(destination_type)
+	var source_id := source.get_selected_id()
+	var source_type: String = Global.factorys[source_id].factory_type
+	var accepted_resources: Array
+	
+	for resource in Global.get_accepted_resources(destination_type):
+		if Global.get_output_resources(source_type).has(resource):
+			accepted_resources.append(resource)
 	
 	for i in accepted_resources.size():
-		resource.add_item(accepted_resources[i], i)
+		resource.add_item(Global.get_resource_display_name(accepted_resources[i]), i)
+		resource.set_item_metadata(i, accepted_resources[i])
 	
 	for i in resource.item_count:
 		if resource.get_item_text(i) == previous_text:
@@ -95,21 +104,25 @@ func _on_create_route_gui_input(event):
 			Global.show_popup("Can't create route: select a source and destination first")
 			return
 		print("creating route")
+		if resource.get_selected() == -1:
+			Global.show_popup("Can't create route: select a resource first")
+			return
 		Global.routes.append(
 			{
 				"source": Global.factorys[source.get_selected_id()],
 				"destination": Global.factorys[destination.get_selected_id()],
-				"resource": resource.get_item_text(resource.get_selected_id()),
+				"resource": String(resource.get_item_metadata(resource.get_selected())),
 			})
+		Global.routes_revision += 1
 		Global.mark_routes_dirty()
-		var new_line_offroad = ROUTE_LINE_SCENE.instantiate()
-		var new_line_onroad = ROUTE_LINE_SCENE.instantiate()
-		new_line_offroad.route_index = (Global.routes.size() -1)
-		new_line_offroad.road_mode = "offroad"
-		new_line_onroad.route_index = (Global.routes.size() - 1)
-		new_line_onroad.road_mode = "onroad"
-		Global.route_layer.add_child(new_line_onroad)
-		Global.route_layer.add_child(new_line_offroad)
+#		var new_line_offroad = ROUTE_LINE_SCENE.instantiate()
+#		var new_line_onroad = ROUTE_LINE_SCENE.instantiate()
+#		new_line_offroad.route_index = (Global.routes.size() -1)
+#		new_line_offroad.road_mode = "offroad"
+#		new_line_onroad.route_index = (Global.routes.size() - 1)
+#		new_line_onroad.road_mode = "onroad"
+#		Global.route_layer.add_child(new_line_onroad)
+#		Global.route_layer.add_child(new_line_offroad)
 
 func _route_view_update():
 	for child in TileVbox.get_children():

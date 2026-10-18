@@ -79,9 +79,11 @@ func _ready():
 	noise_ore = noiseOreText.noise
 	
 	selected_terrainSet = 0
-	Global.build_stage = Global.BuildStage.PLACE_RESOURCE_BOX
+	Global.build_stage = Global.BuildStage.PLACE_RUNWAY
+	Global.resource_box_placed = false
 	Global.starter_vehicles_spawned = false
 	Global.baseBuild = false
+	Global.first_trade_done = false
 
 	Global.vehicle_layer = $VehicleLayer
 	Global.route_layer = $RouteLayer
@@ -276,7 +278,7 @@ func paint_road():
 			GridManager.astar.set_point_weight_scale(selectedCell, 1.0)
 			if Global.selected_terrain == Tiles.BASE && !Global.baseTiles.has(selectedCell):
 				Global.baseTiles.append(selectedCell)
-				if Global.build_stage == Global.BuildStage.PLACE_BASE_TILES and Global.baseTiles.size() >= 4:
+				if Global.build_stage == Global.BuildStage.PLACE_BASE_TILES and Global.baseTiles.size() >= Global.BASE_TILES_REQUIRED:
 					Global.advance_build_stage()
 					Global.spawn_starter_vehicles()
 	
@@ -492,6 +494,7 @@ func place_factory() -> void:
 		return
 	
 	if Global.selected_factory_type == "resourceBox" and Global.build_stage == Global.BuildStage.PLACE_RESOURCE_BOX:
+		Global.resource_box_placed = true
 		Global.advance_build_stage()
 	elif Global.selected_factory_type == "cargoTerminal" and Global.build_stage == Global.BuildStage.PLACE_TERMINAL:
 		Global.advance_build_stage()

@@ -48,7 +48,5 @@ func focus_on_vehilce(vehicle_id: String) -> void:
 		var Vehilce_coords = Vehicle.global_position
 		camera.following = true
 		camera.follow_vehilce(Vehilce_coords)
-	else:
-		print(vehicle_id)
 	
 	

@@ -1,13 +1,13 @@
 extends Panel
 
-@onready var NameLabel: Label = $Label
+@onready var NameLabel: Label = $LabelClip/Label
 @onready var routeColor: Panel = $RouteColor
 @onready var style_box : StyleBoxFlat = routeColor.get_theme_stylebox("panel").duplicate()
 
 var number: int
 
 func _ready():
-	NameLabel.text = "route " + str(number)
+	NameLabel.text = Global.get_route_display_name(number - 1)
 	if Global.route_color.size() > number -1:
 		style_box.bg_color = Global.route_color[number - 1]
 	else:

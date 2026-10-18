@@ -47,14 +47,15 @@ layout_mode = 2
 
 [node name="Play" type="Button" parent="VBoxContainer" unique_id=286578084]
 layout_mode = 2
-text = "play!"
+text = "Play!"
 
 [node name="setings" type="Button" parent="VBoxContainer" unique_id=1470418076]
 layout_mode = 2
-text = "setings"
+text = "Setings"
 
-[node name="credits" type="Button" parent="VBoxContainer" unique_id=116520238]
+[node name="Exit" type="Button" parent="VBoxContainer" unique_id=116520238]
 layout_mode = 2
-text = "setings"
+text = "Exit"
 
 [connection signal="pressed" from="VBoxContainer/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Exit" to="." method="_on_exit_pressed"]

@@ -19,6 +19,7 @@ var mining_select_vehicle: String = ""
 var routes: Array[Dictionary]
 var route_color: Array[Color] = [Color(0.0, 0.404, 0.624, 1.0), Color(1.0, 0.0, 0.0, 1.0)]
 var _routes_dirty: bool = false
+var routes_revision: int = 0
 
 func mark_routes_dirty() -> void:
 	_routes_dirty = true
@@ -58,7 +59,18 @@ enum BuildStage {
 	READY
 }
 
-var build_stage: BuildStage = BuildStage.PLACE_RESOURCE_BOX
+const BUILD_ORDER: Array = [
+	BuildStage.PLACE_RUNWAY,
+	BuildStage.PLACE_RESOURCE_BOX,
+	BuildStage.PLACE_TERMINAL,
+	BuildStage.PLACE_TAXIWAY,
+	BuildStage.PLACE_BASE_TILES,
+]
+const BASE_TILES_REQUIRED: int = 4
+
+var build_stage: BuildStage = BuildStage.PLACE_RUNWAY
+var resource_box_placed: bool = false
+var first_trade_done: bool = false
 var starter_vehicles_spawned: bool = false
 
 const RESOURCE_BOX_STOCK: Dictionary = {"ironBeam": 10}
@@ -80,9 +92,12 @@ func spawn_starter_vehicles() -> void:
 
 func advance_build_stage() -> void:
 	match build_stage:
-		BuildStage.PLACE_RESOURCE_BOX:
-			build_stage = BuildStage.PLACE_RUNWAY
 		BuildStage.PLACE_RUNWAY:
+			if resource_box_placed:
+				build_stage = BuildStage.PLACE_TERMINAL
+			else:
+				build_stage = BuildStage.PLACE_RESOURCE_BOX
+		BuildStage.PLACE_RESOURCE_BOX:
 			build_stage = BuildStage.PLACE_TERMINAL
 		BuildStage.PLACE_TERMINAL:
 			build_stage = BuildStage.PLACE_TAXIWAY
@@ -90,6 +105,9 @@ func advance_build_stage() -> void:
 			build_stage = BuildStage.PLACE_BASE_TILES
 		BuildStage.PLACE_BASE_TILES:
 			build_stage = BuildStage.READY
+
+func get_tutorial_step() -> int:
+	return BUILD_ORDER.find(build_stage) + 1
 
 func check_resource_box_depleted() -> bool:
 	var box := get_resource_box()
@@ -290,7 +308,6 @@ func create_factory(factory_type: String, grid_pos: Vector2i, size_override: Vec
 	var factory_name := factory_type + "*" + str(same_type_count)
 	var new_factory := FactoryInstance.new(factory_name, grid_pos, size)
 	new_factory.paths = _bake_factory_paths(factory_type, grid_pos)
-	print(new_factory.paths)
 	
 	GridManager.register_building(new_factory, grid_pos, size)
 	if factory_type != "mine":
@@ -380,8 +397,11 @@ func _drop_routes_touching(building) -> void:
 		var route: Dictionary = routes[i]
 		if route.is_empty():
 			continue
+		if route.has("construction_type"):
+			continue
 		if route.get("source") == building or route.get("destination") == building:
 			remove_route(i)
+	_retarget_construction_routes()
 
 func _finish_construction(site: ConstructionSite) -> void:
 	construction_sites.erase(site)
@@ -391,6 +411,7 @@ func _finish_construction(site: ConstructionSite) -> void:
 	_drop_routes_touching(site)
 	_apply_construction_result(site)
 	update_path_reachability()
+	_retarget_construction_routes()
 
 func _apply_construction_result(site: ConstructionSite) -> void:
 	match site.kind:
@@ -463,19 +484,132 @@ func _get_auto_route_source(site: ConstructionSite) -> FactoryInstance:
 	return null
 
 func _auto_route_construction_site(site: ConstructionSite) -> void:
-	var source := _get_auto_route_source(site)
-	if source == null:
-		return
-	for resource in site.required_resources.keys():
-		var missing: int = site.required_resources[resource] - site.deliverd_resources.get(resource, 0)
-		if missing <= 0:
+	_retarget_construction_routes()
+
+const CONSTRUCTION_ROUTE_TYPES: Array[String] = ["Bulk", "Flatbed"]
+
+func _find_construction_route(cargo_type: String) -> int:
+	for i in routes.size():
+		if not routes[i].is_empty() and routes[i].get("construction_type", "") == cargo_type:
+			return i
+	return -1
+
+func _pick_construction_target(cargo_type: String) -> Dictionary:
+	for site in construction_sites:
+		var source := _get_auto_route_source(site)
+		if source == null:
 			continue
-		routes.append({
-			"source": source,
-			"destination": site,
-			"resource": resource
-		})
-	mark_routes_dirty()
+		for resource in site.required_resources.keys():
+			if getCargoProperties(resource).get("type", "") != cargo_type:
+				continue
+			var missing: int = site.required_resources[resource] - site.deliverd_resources.get(resource, 0)
+			if missing > 0:
+				return {"source": source, "destination": site, "resource": resource}
+	return {}
+
+func _construction_target_valid(route: Dictionary, cargo_type: String) -> bool:
+	var site = route.get("destination")
+	if not site is ConstructionSite or not construction_sites.has(site):
+		return false
+	var source = route.get("source")
+	if not source is FactoryInstance or not factorys.has(source) or source != _get_auto_route_source(site):
+		return false
+	var resource: String = route.get("resource", "")
+	if getCargoProperties(resource).get("type", "") != cargo_type:
+		return false
+	return site.required_resources.get(resource, 0) - site.deliverd_resources.get(resource, 0) > 0
+
+func _restart_vehicles_heading_to_destination(route_index: int) -> void:
+	for vehicle_type in garage:
+		for vehicle in garage[vehicle_type]:
+			if vehicle.get("movement") == null:
+				continue
+			var m = vehicle.movement
+			if m.assigned_route_index == route_index and m.is_heading_to_destination():
+				m.assign_route(route_index)
+
+func _retarget_construction_routes() -> void:
+	var changed := false
+	for cargo_type in CONSTRUCTION_ROUTE_TYPES:
+		var index := _find_construction_route(cargo_type)
+		if index != -1 and _construction_target_valid(routes[index], cargo_type):
+			continue
+		var target := _pick_construction_target(cargo_type)
+		if target.is_empty():
+			if index != -1:
+				remove_route(index)
+				changed = true
+			continue
+		target["construction_type"] = cargo_type
+		if index == -1:
+			index = routes.size()
+			for i in routes.size():
+				if routes[i].is_empty():
+					index = i
+					break
+			if index == routes.size():
+				routes.append(target)
+			else:
+				routes[index] = target
+			routes_revision += 1
+		else:
+			routes[index].merge(target, true)
+			_restart_vehicles_heading_to_destination(index)
+		changed = true
+	if changed:
+		mark_routes_dirty()
+
+func get_resource_display_name(resource: String) -> String:
+	return resource.capitalize()
+
+const BUILDING_SHORT_NAMES: Dictionary = {
+	"mine": "Mine",
+	"blast": "Blast",
+	"refinary": "Refinery",
+	"coalpower": "Coal",
+	"solarpanels": "Solar",
+	"steelmill": "Steel",
+	"wiremill": "Wire",
+	"gaspower": "Power",
+	"cementMixing": "Cement",
+	"cargoTerminal": "Terminal",
+	"resourceBox": "Box",
+	"pumpjack": "Pump",
+	"chip": "Chip",
+}
+
+func get_building_display_name(building, short: bool = false) -> String:
+	if building is ConstructionSite:
+		return "Site" if short else "Construction site"
+	if building is FactoryInstance:
+		var base: String
+		if short:
+			base = BUILDING_SHORT_NAMES.get(building.factory_type, building.factory_type.capitalize())
+		else:
+			var def: Dictionary = BUILDING_DEFS.get(building.factory_type, {})
+			base = String(def.get("display", building.factory_type.capitalize())).strip_edges()
+		# only add a number when there is more than one of this type
+		var same_type: Array = []
+		for f in factorys:
+			if f.factory_type == building.factory_type:
+				same_type.append(f)
+		var idx: int = same_type.find(building)
+		if same_type.size() > 1 and idx != -1:
+			return base + " " + str(idx + 1)
+		return base
+	return "?"
+
+func get_route_display_name(route_index: int) -> String:
+	if route_index < 0 or route_index >= routes.size() or routes[route_index].is_empty():
+		return "Route " + str(route_index + 1)
+	var route: Dictionary = routes[route_index]
+	if route.has("construction_type"):
+		return "Construction (" + str(route["construction_type"]) + ")"
+	return "%s > %s (%s)" % [
+		get_building_display_name(route.get("source"), true),
+		get_building_display_name(route.get("destination"), true),
+		get_resource_display_name(route.get("resource", "")),
+	]
 
 func _unassign_vehicles_from_route(route_index: int) -> void:
 	for vehicle_type in garage:
@@ -492,6 +626,7 @@ func remove_route(route_index: int) -> void:
 		return
 	_unassign_vehicles_from_route(route_index)
 	routes[route_index] = {}
+	routes_revision += 1
 
 func active_route_count() -> int:
 	var count := 0
@@ -512,6 +647,9 @@ func remove_factory(factory: FactoryInstance) -> void:
 	mark_routes_dirty()
 	update_path_reachability()
 	factorys.erase(factory)
+	if factory.factory_type != "resourceBox":
+		_retarget_construction_routes()
+
 
 const FACTORY_ACCEPTED_RESOURCES: Dictionary = {
 	"refinary": ["crudeOil"],
@@ -520,10 +658,22 @@ const FACTORY_ACCEPTED_RESOURCES: Dictionary = {
 	"wiremill": ["copperIngots", "goldBars"],
 	"coalpower": ["coal"],
 	"cementMixing": ["gravel", "sand", "water"],
-	"chip": ["copperWire", "goldWire"],
 	"gaspower": ["fuel"],
 	"mine": [],
 	"pumpjack": [],
+	"cargoTerminal": ["ironOre", "copperOre", "goldOre", "coal", "gravel", "sand", "concrete", "asphalt", "ironBeam", "copperIngots", "goldBars", "steelBeam", "copperWire", "goldWire", "crudeOil", "fuel"]
+}
+
+const FACTFACTORY_OUTPUT_RESOURCES: Dictionary = {
+	"refinary": ["fuel"],
+	"blast": ["ironBeam", "copperIngots", "goldBars"],
+	"steelmill": ["steelBeam"],
+	"wiremill": ["copperWire", "goldWire"],
+	"coalpower": [],
+	"cementMixing": ["concrete"],
+	"gaspower": [],
+	"mine": ["ironOre", "copperOre", "goldOre", "coal", "gravel", "sand"],
+	"pumpjack": ["crudeOil"],
 	"cargoTerminal": ["ironOre", "copperOre", "goldOre", "coal", "gravel", "sand", "concrete", "asphalt", "ironBeam", "copperIngots", "goldBars", "steelBeam", "copperWire", "goldWire", "crudeOil", "fuel"]
 }
 
@@ -547,6 +697,9 @@ func factory_accepts_resouce(factory_type: String, resource: String) -> bool:
 
 func get_accepted_resources(factory_type: String) -> Array:
 	return FACTORY_ACCEPTED_RESOURCES.get(factory_type, [])
+
+func get_output_resources(factory_type: String) -> Array:
+	return FACTFACTORY_OUTPUT_RESOURCES.get(factory_type, [])
 	
 func _process(delta):
 	var sim_delta: float = delta * speed_tier

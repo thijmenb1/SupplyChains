@@ -23,7 +23,6 @@ func _init(name: String, pos: Vector2i, sz: Vector2i) -> void:
 	factory_type = type
 	grid_pos = pos
 	size = sz
-	print(factory_type + " " + factory_name)
 	
 func update(delta: float) -> void:
 	if factory_type == "mine":
@@ -83,7 +82,7 @@ func get_recipe(index: int, FactoryType: String = factory_type) -> Dictionary:
 		"refinary":
 					return {
 						"crudeOil": -2,
-						"fule": 1,
+						"fuel": 1,
 						"asphalt": 1,
 					}
 		"blast":
@@ -106,7 +105,7 @@ func get_recipe(index: int, FactoryType: String = factory_type) -> Dictionary:
 		"steelmill":
 				return {
 					"ironBeam": -1,
-					"electricity": -25,
+#					"electricity": -25,
 					"steelBeam": 1
 					}
 		"wiremill":
@@ -117,7 +116,7 @@ func get_recipe(index: int, FactoryType: String = factory_type) -> Dictionary:
 						}
 				return {
 					"goldBars": -2,
-					"electricity": -50,
+#					"electricity": -50,
 					"goldWire": 1,
 				}
 		"coalpower":

@@ -118,7 +118,8 @@ func _collect_state() -> Dictionary:
 			routes_out.append({
 				"source": _building_ref(r["source"]),
 				"destination": _building_ref(r["destination"]),
-				"resource": r["resource"]
+				"resource": r["resource"],
+				"construction_type": r.get("construction_type", "")
 			})
 	
 	var vehicle_out: Array = []
@@ -131,11 +132,14 @@ func _collect_state() -> Dictionary:
 		"money": Global.money,
 		"debt": Global.debt,
 		"trade_orders": Global.trade_orders,
+		"next_order_id": TradeSystem.next_order_id,
 		"base_tiles": Global.baseTiles,
 		"occupied_base_tiles": Global.occupied_base_tiles,
 		"baseBuild": Global.baseBuild,
 		"build_stage": Global.build_stage,
 		"starter_vehicles_spawned": Global.starter_vehicles_spawned,
+		"resource_box_placed": Global.resource_box_placed,
+		"first_trade_done": Global.first_trade_done,
 		"free_buildings_left": Global.free_buildings_left,
 		"airstrips": Global.airstrips,
 		"occupied_airstrips": Global.occupied_airstrips,
@@ -218,11 +222,14 @@ func apply_pending_load() -> void:
 	Global.money = s.get("money", Global.money)
 	Global.debt = s.get("debt", 0.0)
 	Global.trade_orders.assign(s.get("trade_orders", []))
+	TradeSystem.next_order_id = s.get("next_order_id", 0)
 	Global.baseTiles.assign(s.get("base_tiles", []))
 	Global.occupied_base_tiles = s.get("occupied_base_tiles", {})
 	Global.baseBuild = s.get("baseBuild", false)
 	Global.build_stage = s.get("build_stage", Global.build_stage)
 	Global.starter_vehicles_spawned = s.get("starter_vehicles_spawned", false)
+	Global.resource_box_placed = s.get("resource_box_placed", false)
+	Global.first_trade_done = s.get("first_trade_done", false)
 	Global.free_buildings_left = s.get("free_buildings_left", Global.free_buildings_left)
 	Global.airstrips.assign(s.get("airstrips", []))
 	Global.occupied_airstrips = s.get("occupied_airstrips", [])
@@ -257,15 +264,33 @@ func apply_pending_load() -> void:
 		Global.restore_construction_site(ConstructionSite.from_dict(d))
 	
 	Global.routes.clear()
+	var seen_construction: Dictionary = {}
 	for r in s.get("routes", []):
 		var src = _resolve_ref(r.get("source", {}))
 		var dst = _resolve_ref(r.get("destination", {}))
 		if r.is_empty() or src == null or dst == null:
 			Global.routes.append({})
-		else:
-			Global.routes.append({"source": src, "destination": dst, "resource": r["resource"]})
+			continue
+		var route: Dictionary = {"source": src, "destination": dst, "resource": r["resource"]}
+		var c_type: String = r.get("construction_type", "")
+		if c_type == "" and dst is ConstructionSite:
+			var legacy_type: String = Global.getCargoProperties(r["resource"]).get("type", "")
+			if Global.CONSTRUCTION_ROUTE_TYPES.has(legacy_type):
+				c_type = legacy_type
+			else:
+				Global.routes.append({})
+				continue
+		if c_type != "":
+			if seen_construction.has(c_type):
+				Global.routes.append({})
+				continue
+			seen_construction[c_type] = true
+			route["construction_type"] = c_type
+		Global.routes.append(route)
 	
+	Global.routes_revision += 1
 	Global.update_path_reachability()
+	Global._retarget_construction_routes()
 	Global.generate_route()
 	Global._routes_dirty = false
 	
@@ -331,8 +356,10 @@ func start_new_game(slot: int) -> void:
 	_reset_runtime_state()
 	Global.money = 100000
 	Global.debt = 0.0
-	Global.build_stage = Global.BuildStage.PLACE_RESOURCE_BOX
+	Global.build_stage = Global.BuildStage.PLACE_RUNWAY
 	Global.free_buildings_left = {"base": 4, "resourceBox": 1}
+	Global.resource_box_placed = false
+	Global.first_trade_done = false
 	Global.elapsed_game_seconds = Global.START_HOURS * Global.MINUTES_PER_HOUR * Global.SECONDS_PER_MINUTE
 	Global.pending_load = {}
 	autosave_enabled = true

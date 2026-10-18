@@ -62,4 +62,7 @@ for every resource that the construction site needs a route get created form the
 make shure you have the resource in your terminal
 
 ## mines
-you can create a mine by pressing the route button on a excavator you can then drag over the resource and the mine is created
+you can create a mine by pressing the route button on a excavator you can then drag over the resource and the mine is created.
+
+## savegames
+save games are located at: `C:\Users\YourName\AppData\Roaming\Godot\app_userdata\SupplyChains\saves` you can safely delete it to reset the save slot the name of the file is save_slot-1.

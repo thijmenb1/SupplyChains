@@ -31,6 +31,7 @@ const ATLAS_VAL_IMG: Dictionary = {
 	"copperWire": Vector2i(36,0),
 	"goldWire": Vector2i(42,0),
 	"PCBPallet": Vector2i(54, 0),
+	"fuel": Vector2i(18,0)
 }
 
 func _process(delta):

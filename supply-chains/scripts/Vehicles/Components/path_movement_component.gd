@@ -543,6 +543,9 @@ func _arrive_no_dock(stage: ROUTE_STAGE) -> void:
 	route_waiting = true
 	route_wait_timer = 0.0
 
+func is_heading_to_destination() -> bool:
+	return assigned_route_index != -1 and (route_stage == ROUTE_STAGE.TO_DEST or route_stage == ROUTE_STAGE.AT_DEST)
+
 func clear_route() -> void:
 	var hitch = attachments.get_hitch() if attachments else null
 	if hitch != null:
@@ -702,10 +705,17 @@ func _handle_route_transfer() -> void:
 		if cargo_component == null:
 			return
 		var destination = route_data["destination"]
-		var amount: float = cargo_component.cargo.get(resource, 0.0)
-		if amount > 0:
-			cargo_component.unload_vehicle(resource, amount)
-			destination.deposit_resource(resource, int(amount))
+		var to_unload: Array = [resource]
+		if route_data.has("construction_type"):
+			to_unload = []
+			for item in cargo_component.cargo.keys():
+				if destination.required_resources.has(item):
+					to_unload.append(item)
+		for item in to_unload:
+			var amount: float = cargo_component.cargo.get(item, 0.0)
+			if amount > 0:
+				cargo_component.unload_vehicle(item, amount)
+				destination.deposit_resource(item, int(amount))
 	
 func _path_length(pts: Array[Vector2]) -> float:
 	var total := 0.0

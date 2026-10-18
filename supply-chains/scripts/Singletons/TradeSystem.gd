@@ -33,29 +33,51 @@ const TRADE_BASE_PRICES: Dictionary = {
 
 const MAX_ORDERS := 10
 const MIN_ORDERS := 2
-const ORDER_GENERATION_PROBEBILITY := 0.05
-const MIN_ORDER_LIFETIME := 240 #in game sec (4m)
+const ORDER_CHECK_INTERVAL := 60.0 #in game sec
+const ORDER_CHANCE_EMPTY := 0.6
+const ORDER_CHANCE_FULL := 0.05
+const ORDER_GENERATION_PROBEBILITY := 0.1
+const MIN_ORDER_LIFETIME := 300 #in game sec (5m)
 const MAX_ORDER_LIFETIME := 3600 #in game sec (1h)
 const MIN_QUANTITY := 1
 const MAX_QUANTITY := 15
 
-var _next_order_id: int = 0
-var _last_minute: int = -1
+var next_order_id: int = 0
+var _last_check: float = -INF
 
 const PLANE_SPAWN_MIN_DIST := 3000.0
 const PLANE_SPAWN_MAX_DIST := 8000.0
 
 func _ready() -> void:
-	if Global.trade_orders.size() < MIN_ORDERS:
-		generate_order()
-		generate_order()
+	_fill_to_min()
 
 func _process(_delta: float) -> void:
 	_expire_old_orders()
-	if Global.elapsed_game_seconds / 60 >= _last_minute:
-		_last_minute = ceil(Global.elapsed_game_seconds / 60)
-		if randf() <= ORDER_GENERATION_PROBEBILITY:
-			generate_order()
+	var since: float = Global.elapsed_game_seconds - _last_check
+	if since >= 0.0 and since < ORDER_CHECK_INTERVAL:
+		return
+	_last_check = Global.elapsed_game_seconds
+
+	var open: int = _open_order_count()
+	if open >= MAX_ORDERS:
+		return
+	if open < MIN_ORDERS:
+		_fill_to_min()
+		return
+	var chance: float = lerpf(ORDER_CHANCE_EMPTY, ORDER_CHANCE_FULL, float(open) / MAX_ORDERS)
+	if randf() <= chance:
+		generate_order()
+
+func _open_order_count() -> int:
+	var n: int = 0
+	for o in Global.trade_orders:
+		if not o["accepted"]:
+			n += 1
+	return n
+
+func _fill_to_min() -> void:
+	while _open_order_count() < MIN_ORDERS:
+		generate_order()
 
 func _expire_old_orders() -> void:
 	for i in range(Global.trade_orders.size() -1, -1, -1):
@@ -65,13 +87,16 @@ func _expire_old_orders() -> void:
 			Global.trade_orders.remove_at(i)
 
 func generate_order() -> Dictionary:
+	for o in Global.trade_orders:
+		next_order_id = maxi(next_order_id, int(o["id"]) + 1)
+
 	var resource_keys: Array = TRADE_BASE_PRICES.keys()
 	var resource: String = resource_keys[randi_range(0, resource_keys.size() -1)]
 	var base_price: float = TRADE_BASE_PRICES.get(resource, 10.0)
 	var price_variance: float = randf_range(0.85, 1.2)
 	
 	var order: Dictionary = {
-		"id": _next_order_id,
+		"id": next_order_id,
 		"trader": generate_name(),
 		"resource": resource,
 		"quantity": randi_range(MIN_QUANTITY, MAX_QUANTITY),
@@ -79,7 +104,7 @@ func generate_order() -> Dictionary:
 		"expires_at": Global.elapsed_game_seconds + randi_range(MIN_ORDER_LIFETIME, MAX_ORDER_LIFETIME),
 		"accepted": false
 	}
-	_next_order_id += 1
+	next_order_id += 1
 	Global.trade_orders.append(order)
 	return order
 
@@ -158,6 +183,7 @@ func spawn_delivery_plane(order: Dictionary, airstrip_index: int) -> DeliveryPla
 	return plane
 
 func _on_delivery_finished(order: Dictionary, airstrip_index: int) -> void:
+	Global.first_trade_done = true
 	var payout: float = snapped(order["quantity"] * order["price_per_unit"], 0.01)
 	Global.money += payout
 	Global.occupied_airstrips.erase(airstrip_index)
