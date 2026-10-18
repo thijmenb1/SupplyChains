@@ -1,55 +1,23 @@
-# Supply Chains - Godot
+# Supply Chains
 
-A supply chain management simulation game built in Godot, where you transport resources, manage vehicles, and build efficient logistics systems.
+Supply Chains is a game inspired by transport fever and mindustry centered around building road networks and logistics chains around construction and mining operations, with farming and forestry planned for a future update.
 
-## About the Project
+![alt text]({280CBDD7-CF83-48CE-ACBA-669342FE881B}.png)
 
-Supply Chains is a strategic logistics and resource-management game built in Godot 4. Players are tasked with:
+## The goal
+The goal of the game is to make a large supply chain between factories and mines and then sell the products you produce with the factories to expand your supply chain.
 
-- Transporting resources between production and destination points
-- Managing a growing vehicle fleet
-- Building and improving infrastructure
-- Creating efficient delivery routes
-- Optimizing profits while balancing costs and logistics
+## Challenges
+There where a lot of challenges during development of Supply Chains two of the more notable ones are the pathfinding I found it really hard to get the trailers to look sort of realistic behind vehicles and then getting the vehicles to actually follow that path, and the backing into factories that was (almost) impossible to do with pathfinding so I had to find a other solution I landed on pre-backed paths but this was also hard to implement it still doesn't look fully how I want especial with a trailer but it works and looks acceptable.
 
-## Built With
+## How to play?
+You can download it at: and there are download instructions there
 
-- Godot 4.6.3
-- GDScript
-- AStar pathfinding for route and grid logic
+## Stuck?
+All the practical information is in the `help.md
 
-## Project Structure
-
-### Core Game Systems
-
-- `supply-chains/scripts/Singletons/Global.gd`
-  - Shared game state
-  - Money, resources, vehicle garage, and route data
-- `supply-chains/scripts/Singletons/GridManager.gd`
-  - Grid placement logic
-  - Building occupancy checks
-  - A* pathfinding and road weight management
-- `supply-chains/scripts/Vehicles/`
-  - Vehicle logic, engines, attachments, and behavior
-- `supply-chains/scripts/UI/`
-  - Shop, trade, garage, route management, HUD, and selection panels
-- `supply-chains/scripts/Factories/`
-  - Factory and production logic
-- `supply-chains/assets/`
-  - Art, tiles, and vehicle assets
-
-### Main Features
-
-- Vehicle management and garage system
-- Trailer and attachment support
-- Factory and route-based resource flow
-- Trade order system
-- Map generation with terrain and road systems
-- Real-time route calculation and pathfinding
-
-## Known Limitations & In-Progress Features ⚠️
-
-Since I am a solo dev a lot of features did not get polished or straight up don't work i have tried my best to make the game as fun as possible with these limitations but not everything is perfect.
+## Known Limitations & In-Progress Features
+Since I am a solo dev a lot of features did not get polished or straight up don't work I have tried my best to make the game as fun as possible with these limitations but not everything is perfect.
 Things that don't work (yet):
 - the articulated dumptruck. just didn't have time to make the articulation work
 - there is currently only one hard coded plane did not have time for the rest
@@ -62,5 +30,3 @@ Things that don't work (yet):
 - concrete truck doesn't work (concrete is also almost useless with the current economy)
 - the path of the pumpjack doesn't work
 - no collisions and no road claiming (there could be 100 tractors driving on top of each other on the same road)
-
-## for help go to `help.md`

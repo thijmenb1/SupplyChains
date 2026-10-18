@@ -665,7 +665,7 @@ const FACTORY_ACCEPTED_RESOURCES: Dictionary = {
 }
 
 const FACTFACTORY_OUTPUT_RESOURCES: Dictionary = {
-	"refinary": ["fuel"],
+	"refinary": ["fuel", "asphalt"],
 	"blast": ["ironBeam", "copperIngots", "goldBars"],
 	"steelmill": ["steelBeam"],
 	"wiremill": ["copperWire", "goldWire"],

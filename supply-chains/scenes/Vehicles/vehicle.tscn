@@ -344,13 +344,6 @@ animations = [{
 atlas = ExtResource("2_cqc5i")
 region = Rect2(14, 44, 3, 7)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_heswj"]
-load_path = "res://.godot/imported/trucks_topdown_spritesheet.png-44a324e648d07981d3cc0bb564088482.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_1oqne"]
-atlas = SubResource("CompressedTexture2D_heswj")
-region = Rect2(14, 44, 3, 7)
-
 [node name="VehicleBody" type="CharacterBody2D" unique_id=181190044]
 position = Vector2(7, 0)
 script = ExtResource("1_0pi4w")
@@ -371,7 +364,7 @@ texture = SubResource("AtlasTexture_dyji8")
 
 [node name="frontRightTireSprite" type="Sprite2D" parent="VehicleSprite" unique_id=1122049355]
 position = Vector2(5, -7.5)
-texture = SubResource("AtlasTexture_1oqne")
+texture = SubResource("AtlasTexture_dyji8")
 
 [node name="RearAttatchmentPoint" type="Marker2D" parent="." unique_id=550559128]
 position = Vector2(-9.5, 0)

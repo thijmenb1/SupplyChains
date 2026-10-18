@@ -211,6 +211,9 @@ func _reset_runtime_state() -> void:
 		Global.garage[type] = []
 	VehicleManager.vehicles.clear()
 	GridManager.road_colors.clear()
+	Global.trade_orders.clear()
+	TradeSystem.next_order_id = 0
+	TradeSystem._planes.clear()
 	
 	
 func apply_pending_load() -> void:
@@ -354,7 +357,7 @@ func _restore_vehicles(list: Array) -> void:
 func start_new_game(slot: int) -> void:
 	Global.loaded_save_index = slot
 	_reset_runtime_state()
-	Global.money = 100000
+	Global.money = 200
 	Global.debt = 0.0
 	Global.build_stage = Global.BuildStage.PLACE_RUNWAY
 	Global.free_buildings_left = {"base": 4, "resourceBox": 1}

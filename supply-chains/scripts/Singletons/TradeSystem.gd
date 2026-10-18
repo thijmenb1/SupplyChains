@@ -47,11 +47,13 @@ var _last_check: float = -INF
 
 const PLANE_SPAWN_MIN_DIST := 3000.0
 const PLANE_SPAWN_MAX_DIST := 8000.0
+var _planes: Dictionary = {}
 
 func _ready() -> void:
 	_fill_to_min()
 
 func _process(_delta: float) -> void:
+	_release_orphaned_orders()
 	_expire_old_orders()
 	var since: float = Global.elapsed_game_seconds - _last_check
 	if since >= 0.0 and since < ORDER_CHECK_INTERVAL:
@@ -180,10 +182,12 @@ func spawn_delivery_plane(order: Dictionary, airstrip_index: int) -> DeliveryPla
 	order["place"] = str(airstrip_index + 1)
 	order["loaded"] = 0
 	plane.delivery_finished.connect(_on_delivery_finished)
+	_planes[order["id"]] = plane
 	return plane
 
 func _on_delivery_finished(order: Dictionary, airstrip_index: int) -> void:
 	Global.first_trade_done = true
+	_planes.erase(order["id"])
 	var payout: float = snapped(order["quantity"] * order["price_per_unit"], 0.01)
 	Global.money += payout
 	Global.occupied_airstrips.erase(airstrip_index)
@@ -191,3 +195,31 @@ func _on_delivery_finished(order: Dictionary, airstrip_index: int) -> void:
 		if Global.trade_orders[i]["id"] == order["id"]:
 			Global.trade_orders.remove_at(i)
 			break
+
+func _release_orphaned_orders() -> void:
+	for o in Global.trade_orders:
+		if not o.get("accepted", false):
+			continue
+		if is_instance_valid(_planes.get(o["id"])):
+			continue
+		_planes.erase(o["id"])
+		_cancel_order(o)
+
+	var full: Array = []
+	for o in Global.trade_orders:
+		if o.get("accepted", false) and o.has("airstrip"):
+			full.append(o["airstrip"])
+	for a in Global.occupied_airstrips.duplicate():
+		if not full.has(a):
+			Global.occupied_airstrips.erase(a)
+
+func _cancel_order(o: Dictionary) -> void:
+	var terminal: FactoryInstance = Global.get_warehouse()
+	if terminal != null:
+		var res: String = o["resource"]
+		terminal.outputResources[res] = int(terminal.outputResources.get(res, 0)) + int(o["quantity"])
+	for k in ["airtrip", "place", "loaded", "stage", "arrival_time", "mode"]:
+		o.erase(k)
+	o["accepeted"] = false
+	o["expires_at"] = maxf(o["expires_at"], Global.elapsed_game_seconds + MIN_ORDER_LIFETIME)
+	

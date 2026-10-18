@@ -206,7 +206,7 @@ func get_production_hint_text() -> String:
 		if gravel_stock >= 5:
 			return _step(9, "Build a blast furnace: select it in the build menu (or press 5) and place it near your base. It turns iron ore into iron beams (needs 4 iron beams and 5 gravel)")
 		if not _has_mine_with("gravel"):
-			return _step(7, "Buy an excavator in the shop, select it, choose mine and drag over an area with gravel. The blast furnace needs 5 gravel")
+			return _step(7, "Buy an excavator in the shop, select it, choose mine and drag over an area with atleast gravel but if posible also place it over iron and or copper so you can reuse your mine. The blast furnace needs 5 gravel")
 		var gravel_route: int = _find_route("mine", "cargoTerminal", "gravel")
 		if gravel_route == -1:
 			return _step(8, "Open the route menu and create a route from your mine to the cargo terminal for gravel")
@@ -224,7 +224,7 @@ func get_production_hint_text() -> String:
 		return _step(10, "Your vehicles are delivering the materials for the blast furnace, please wait")
 	
 	if not _has_mine_with("ironOre"):
-		return _step(11, "Place a mine on iron ore. An excavator works one mine, so buy a second excavator, select it, choose mine and drag over the iron ore")
+		return _step(11, "Place a mine on iron ore. Use the same excavator form the gravel place it ontop of iron if its not")
 	
 	var ore_route: int = _find_route("mine", "blast", "ironOre")
 	if ore_route == -1:

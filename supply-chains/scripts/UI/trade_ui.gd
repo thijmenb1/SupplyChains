@@ -24,8 +24,6 @@ func populate() -> void:
 			push_error("order is empty", order)
 			return
 		
-		if order["accepted"] == true:
-			continue
 		var new_card = TRADE_TILE_SCENE.instantiate()
 		new_card.order = order
 		new_card.index = i
