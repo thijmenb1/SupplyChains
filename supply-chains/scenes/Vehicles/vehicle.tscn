@@ -150,6 +150,10 @@ region = Rect2(37, 28, 11, 21)
 atlas = ExtResource("2_cqc5i")
 region = Rect2(0, 0, 15, 24)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_y6i81"]
+atlas = ExtResource("2_cqc5i")
+region = Rect2(18, 50, 15, 30)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_gne0h"]
 atlas = ExtResource("2_cqc5i")
 region = Rect2(187, 0, 79, 56)
@@ -325,6 +329,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_y6i81")
+}],
+"loop": true,
+"name": &"liebherr_ta230_lintronic_rear",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_gne0h")
 }],
 "loop": true,
@@ -356,7 +368,7 @@ disabled = true
 [node name="VehicleSprite" type="AnimatedSprite2D" parent="." unique_id=196292407]
 rotation = 1.5707964
 sprite_frames = SubResource("SpriteFrames_rgx34")
-animation = &"flatbedTruck"
+animation = &"liebherr_ta230_lintronic"
 
 [node name="frontLeftTireSprite" type="Sprite2D" parent="VehicleSprite" unique_id=1437522137]
 position = Vector2(-5, -7.5)

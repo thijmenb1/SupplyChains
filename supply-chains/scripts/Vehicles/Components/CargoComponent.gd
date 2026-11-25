@@ -9,36 +9,14 @@ var cargo: Dictionary = {}
 var cargoWeight: float = 0.0
 var cargoVolume: float = 0.0
 
+const BULK_FRAMES := {"ironOre": 1, "copperOre": 2, "goldOre": 3, "asphalt": 4, "coal": 5, "gravel": 6, "sand": 7}
+const FLATBED_FRAMES := { "ironBeam": 1, "copperWire": 2, "goldBars": 3, "copperIngots": 4, "steelBeam": 5, "goldWire": 6, "crudeOil": 7, "fuel": 8}
+
 const CARGO_FRAMES: Dictionary = {
-	"flatbedTruck": {
-		"ironBeam": 1,
-		"copperWire": 2,
-		"goldBars": 3,
-		"copperIngots": 4,
-		"steelBeam": 5,
-		"goldWire": 6,
-		"crudeOil": 7,
-		"fuel": 8,
-	},
-	"flatbedTrailer": {
-		"ironBeam": 1,
-		"copperWire": 2,
-		"goldBars": 3,
-		"copperIngots": 4,
-		"steelBeam": 5,
-		"goldWire": 6,
-		"crudeOil": 7,
-		"fuel": 8,
-	},
-	"bulkTrailer": {
-		"ironOre": 1,
-		"copperOre": 2,
-		"goldOre": 3,
-		"asphalt": 4,
-		"coal": 5,
-		"gravel": 6,
-		"sand": 7
-	}
+	"flatbedTruck": FLATBED_FRAMES,
+	"flatbedTrailer": FLATBED_FRAMES,
+	"bulkTrailer": BULK_FRAMES,
+	"liebherr_ta230_lintronic": BULK_FRAMES,
 }
 
 func setup(t_vehicle: CharacterBody2D, t_transport: VehicleTransport) -> void:

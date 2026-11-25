@@ -18,6 +18,7 @@ var drivetrain: DrivetrainComponent
 var attachments: AttachmentComponent
 var cargo: CargoComponent
 var movement: PathMovementComponent
+var articulation: ArticulationComponent
 
 func _ready():
 	vehicleID = vehicleType + "*" + str(vehicleNumber)
@@ -54,6 +55,8 @@ func update_cargo_sprite() -> void:
 	if frame_count <= 1:
 		return
 	animatedSprite.frame = clampi(cargo.get_sprite_frame(vehicleType), 0, frame_count - 1)
+	if articulation:
+		articulation.set_cargo_frame(cargo.get_sprite_frame(vehicleType))
 
 func _build_components() -> void:
 	if vehicleSpecs.attachments != null:
@@ -77,6 +80,12 @@ func _build_components() -> void:
 		movement = PathMovementComponent.new()
 		add_child(movement)
 		movement.setup(self, vehicleSpecs.dimensions, vehicleSpecs.mobility, drivetrain, attachments, front_left_wheel, front_right_wheel, pathDebugLine)
+
+	if vehicleSpecs.dimensions != null and vehicleSpecs.dimensions.articulated:
+		articulation = ArticulationComponent.new()
+		add_child(articulation)
+		articulation.setup(self, vehicleSpecs.dimensions)
+		
 
 func get_total_weight() -> float:
 	var weight := float(vehicleSpecs.mobility.weight)
@@ -103,6 +112,6 @@ func _on_out_of_fuel() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var clickable_rect = Rect2(Vector2(-12, -6.5), Vector2(24, 13))
-		if clickable_rect.has_point(get_local_mouse_position()):
+		if clickable_rect.has_point(get_local_mouse_position()) or (articulation != null and articulation.mouse_over_rear()):
 			Global.vehicle_ui_selected = vehicleID
 			Global.set_deferred("vehicle_ui_open", true)

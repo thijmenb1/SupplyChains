@@ -219,6 +219,8 @@ func tick(delta: float) -> void:
 		current_speed = move_toward(current_speed, 0.0, drivetrain.get_braking_rate() * delta)
 		vehicle.velocity = Vector2.RIGHT.rotated(vehicle.rotation) * current_speed * Global.speed_tier
 		vehicle.move_and_slide()
+		if vehicle.articulation:
+			vehicle.articulation.tick(delta, 0.0)
 		if not current_path.is_empty() and path_index >= current_path.size() and path_phase != PATHPHASE.TO_STAGING:
 			current_path.clear()
 			handelArival()
@@ -328,7 +330,10 @@ func tick(delta: float) -> void:
 		front_left_wheel.rotation = current_steer_angle
 	if front_rigth_wheel:
 		front_rigth_wheel.rotation = current_steer_angle
-
+	
+	if vehicle.articulation:
+		vehicle.articulation.tick(delta, current_steer_angle / max_steer_rad)
+	
 	if not shifting_gears:
 		var target_max_speed: float = drivetrain.get_calculated_speed()
 		if is_reversing:
@@ -402,7 +407,7 @@ func tick(delta: float) -> void:
 	var speed_direction: float = -1.0 if is_reversing else 1.0
 	vehicle.velocity = Vector2.RIGHT.rotated(vehicle.rotation) * (current_speed * speed_direction) * Global.speed_tier
 	vehicle.move_and_slide()
-
+	
 	if abs(current_steer_angle) > 0.001:
 		var wheel_base: float = pathfinding.wheelbase_pixel
 		var angular_velocity: float = (current_speed / wheel_base) * tan(current_steer_angle) * speed_direction
@@ -620,6 +625,12 @@ func _tick_docking(delta: float) -> void:
 	var vehicle_tangent: Vector2 = _tangent_along(docking_points, dock_distance)
 	vehicle.global_position = vehicle_pos
 	vehicle.rotation = vehicle_tangent.angle() + (PI if reverse_in else 0.0)
+	
+	if vehicle.articulation:
+		var rl: float = vehicle.articulation.rear_length
+		var rear_dist: float = dock_distance + (rl if reverse_in else -rl)
+		var rear_tangenet: Vector2 = _tangent_along(docking_points, clampf(rear_dist, 0.0, path_len))
+		vehicle.articulation.set_rear_heading(rear_tangenet.angle() + (PI if reverse_in else 0.0))
 	
 	var hitched = attachments.get_hitch() if attachments else null
 	if hitched != null and hitched.is_coupled:
